@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Malla Interactiva - Ciencia de Datos UC</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
+  h1 { text-align: center; color: #005b96; }
+  .semestre { display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+  .materia {
+    width: 220px;
+    height: 80px;
+    margin: 10px;
+    padding: 10px;
+    background: #aaa;
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0.6;
+    text-align: center;
+  }
+  .materia.brillo { background: #00bcd4; opacity: 1; }
+  .materia.aprobado { background: #4caf50; opacity: 1; }
+  .materia.aprobado::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background: red;
+    transform: rotate(45deg);
+  }
+</style>
+</head>
+<body>
+<h1>Malla Interactiva - Ciencia de Datos UC</h1>
+
+<!-- Primer Semestre -->
+<div class="semestre" id="sem1">
+  <div class="materia" id="IC1103">Introducción a la Programación</div>
+  <div class="materia" id="MAT1107">Introducción al Cálculo</div>
+  <div class="materia" id="MAT1207">Álgebra y Geometría</div>
+  <div class="materia" id="MAT0007">Taller de Matemáticas</div>
+</div>
+
+<!-- Segundo Semestre -->
+<div class="semestre" id="sem2">
+  <div class="materia" id="IIC2233">Programación Avanzada</div>
+  <div class="materia" id="MAT1610">Cálculo I</div>
+  <div class="materia" id="IMT2210">Álgebra Lineal para Ciencia de Datos</div>
+  <div class="materia" id="IMT2200">Introducción a Ciencia de Datos</div>
+</div>
+
+<!-- Tercer Semestre -->
+<div class="semestre" id="sem3">
+  <div class="materia" id="IMT2220">Cálculo para Ciencia de Datos</div>
+  <div class="materia" id="IMT2230">Álgebra Lineal Avanzada y Modelamiento</div>
+  <div class="materia" id="ETI195">Ética para Ciencia de Datos y Estadística</div>
+  <div class="materia" id="IIC1253">Matemáticas Discretas</div>
+</div>
+
+<!-- Cuarto Semestre -->
+<div class="semestre" id="sem4">
+  <div class="materia" id="EYP1025">Modelos Probabilísticos</div>
+  <div class="materia" id="IC2133">Estructuras de Datos y Algoritmos</div>
+  <div class="materia" id="IC2413">Bases de Datos</div>
+  <div class="materia" id="IMT2250">Optimización para Ciencia de Datos</div>
+</div>
+
+<!-- Quinto Semestre -->
+<div class="semestre" id="sem5">
+  <div class="materia" id="EYP2114">Inferencia Estadística</div>
+  <div class="materia" id="IIC2613">Inteligencia Artificial</div>
+  <div class="materia" id="LIC2440">Procesamiento de Datos Masivos</div>
+</div>
+
+<!-- Sexto Semestre -->
+<div class="semestre" id="sem6">
+  <div class="materia" id="EYP2101">Procesos Estocásticos Aplicados</div>
+  <div class="materia" id="EYP2301">Análisis de Regresión</div>
+  <div class="materia" id="C2026">Visualización de Información</div>
+  <div class="materia" id="IIC2433">Minería de Datos</div>
+</div>
+
+<!-- Séptimo Semestre -->
+<div class="semestre" id="sem7">
+  <div class="materia" id="EYP2111">Simulación</div>
+  <div class="materia" id="EYP2801">Métodos Bayesianos</div>
+  <div class="materia" id="IMT2260">Teoría de Aprendizaje Automático</div>
+</div>
+
+<!-- Octavo Semestre -->
+<div class="semestre" id="sem8">
+  <div class="materia" id="IMT2270">Proyecto de Graduación</div>
+</div>
+
+<script>
+  // Ramos y sus prerrequisitos
+  const ramos = {
+    "IC1103": [],
+    "MAT1107": [],
+    "MAT1207": [],
+    "MAT0007": [],
+    "IIC2233": ["IC1103"],
+    "MAT1610": ["MAT1107"],
+    "IMT2210": ["IC1103","MAT1107","MAT1207"],
+    "IMT2200": ["IC1103","MAT1207"],
+    "IMT2220": ["MAT1610"], 
+    "IMT2230": ["MAT1610","IMT2210"],
+    "ETI195": ["IIC2233","IMT2200"],
+    "IIC1253": ["IMT2210"],
+    "EYP1025": ["IMT2220","IMT2230"],
+    "IC2133": ["IIC2233","IIC1253"],
+    "IC2413": ["IIC2233"],
+    "IMT2250": ["IMT2220","IMT2210"],
+    "EYP2114": ["EYP1025"],
+    "IIC2613": ["EYP1025","IIC2233"],
+    "LIC2440": ["IC2413","IC2133"],
+    "EYP2101": ["EYP2114"],
+    "EYP2301": ["EYP2114"],
+    "C2026": ["IC1103"],
+    "IIC2433": ["IC1103","EYP1025","IMT2210"],
+    "EYP2111": ["EYP2101"],
+    "EYP2801": ["EYP2114"],
+    "IMT2260": ["EYP2114","LIC2440","IMT2250"],
+    "IMT2270": ["EYP2801","IMT2260","IMT2250","ETI195"]
+  };
+
+  let aprobados = [];
+
+  function actualizar() {
+    for (let ramo in ramos) {
+      const el = document.getElementById(ramo);
+      if (aprobados.includes(ramo)) {
+        el.classList.add("aprobado");
+        el.classList.remove("brillo");
+      } else {
+        const pre = ramos[ramo];
+        const listo = pre.every(p => aprobados.includes(p));
+        if (listo) el.classList.add("brillo");
+        else el.classList.remove("brillo");
+      }
+    }
+  }
+
+  Object.keys(ramos).forEach(ramo => {
+    document.getElementById(ramo).addEventListener("click", () => {
+      if (aprobados.includes(ramo)) {
+        aprobados = aprobados.filter(r => r !== ramo);
+      } else {
+        aprobados.push(ramo);
+      }
+      actualizar();
+    });
+  });
+
+  actualizar();
+</script>
+</body>
+</html>
