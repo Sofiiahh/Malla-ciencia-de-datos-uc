@@ -52,13 +52,13 @@
 
   th, td {
     border: 1px solid #666;
-    padding: 12px 6px; /* más espacio vertical */
+    padding: 15px 6px; /* más espacio vertical */
     text-align: center;
     vertical-align: middle;
     font-size: 13px;
     cursor: pointer;
     word-wrap: break-word;
-    min-height: 70px; /* altura mínima de las celdas */
+    min-height: 80px; /* altura mínima de las celdas */
   }
 
   th {
@@ -87,16 +87,17 @@
   }
 
   td input {
-    width: 100%;
+    width: 90%;
     border: none;
-    background: transparent;
+    background: #fff7f7;
     text-align: center;
     font-size: 13px;
-    min-height: 25px; /* más espacio vertical en OFG */
+    min-height: 35px; /* más espacio vertical en OFG */
+    border-radius: 4px;
   }
 
   td input:focus {
-    outline: none;
+    outline: 2px solid #2EC4B6;
   }
 
   .curso-nombre {
@@ -115,7 +116,7 @@
     max-width: 800px;
     margin: 30px auto;
     border: 1px solid #666;
-    padding: 12px;
+    padding: 15px;
     background: #fff;
     border-radius: 5px;
     font-size: 14px;
@@ -170,12 +171,6 @@
     <td id="OFG6"><input type="text" placeholder="OFG"/></td>
     <td id="OFG7"><input type="text" placeholder="OFG"/></td>
     <td id="OFG8"><input type="text" placeholder="OFG"/></td>
-  </tr>
-
-  <!-- Extra -->
-  <tr>
-    <td id="EXT1"></td><td id="EXT2"></td><td id="EXT3"></td><td id="EXT4"></td>
-    <td id="EXT5"></td><td id="EXT6"></td><td id="EXT7"></td><td id="EXT8"></td>
   </tr>
 </table>
 
@@ -249,6 +244,8 @@ function actualizarMalla(){
     const c = cursos[cod];
     const td = document.getElementById(cod);
     if(!td) return;
+    // Si es un OFG, no modificar el input
+    if(cod.startsWith("OFG")) return;
     td.innerHTML = `<div class="curso-nombre">${c.nombre}</div><div class="curso-sigla">${c.sigla}</div>`;
     td.className="";
     if(c.aprobado){
@@ -261,8 +258,9 @@ function actualizarMalla(){
   });
 }
 
-// Activar/Desactivar cursos y OFG
+// Activar/Desactivar cursos (excepto OFG)
 function toggleAprobado(cod){
+  if(cod.startsWith("OFG")) return; // OFG solo editable manual
   const c = cursos[cod];
   if(!c) return;
   if(!estanPrerrequisitosAprobados(c)) return;
@@ -272,4 +270,13 @@ function toggleAprobado(cod){
 
 document.addEventListener("DOMContentLoaded",()=>{
   actualizarMalla();
-  Object
+  Object.keys(cursos).forEach(cod=>{
+    const td = document.getElementById(cod);
+    if(td){
+      td.addEventListener("click",()=>toggleAprobado(cod));
+    }
+  });
+});
+</script>
+</body>
+</html>
