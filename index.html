@@ -1,58 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Malla Curricular Interactiva</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Malla Curricular Interactiva — Ciencia de Datos UC</title>
 
 <style>
-  body { font-family: Arial, sans-serif; background: #f7f7f7; }
-  h1 { text-align: center; margin: 20px 0; }
-  
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    text-align: center;
+    padding: 15px;
+  }
   table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
   }
-  
   th, td {
-    border: 1px solid #999;
+    border: 1px solid #666;
     padding: 6px;
     text-align: center;
     vertical-align: middle;
+    font-size: 13px;
     cursor: pointer;
     word-wrap: break-word;
-    min-width: 80px;
   }
-
-  th { background-color: #444; color: #fff; }
-
-  .bloqueado {
-    background-color: #d1d1d1;
-    opacity: .6;
+  th {
+    background: #333;
+    color: white;
+    font-size: 15px;
+  }
+  td.bloqueado {
+    background: #FF6A00;
+    color: white;
     cursor: not-allowed;
+    opacity: 0.8;
   }
-  .desbloqueado {
-    background-color: #bcdcff;
+  td.desbloqueado {
+    background: #FF9EBB;
     font-weight: bold;
   }
-  .aprobado {
-    background-color: #2dac55;
+  td.aprobado {
+    background: #2EC4B6;
     text-decoration: line-through;
     color: white;
+    font-weight: bold;
+  }
+  td input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+  }
+  td input:focus {
+    outline: none;
+  }
+  .curso-nombre {
+    font-size: 13px;
+  }
+  .curso-sigla {
+    font-size: 11px;
+    font-style: italic;
+    opacity: 0.85;
   }
 </style>
 </head>
-<body>
 
-<h1>Malla Curricular Interactiva - Ciencia de Datos UC</h1>
+<body>
+<h1>Malla Interactiva — Ciencia de Datos UC</h1>
 
 <table>
   <tr>
-    <th>1° Sem</th><th>2° Sem</th><th>3° Sem</th><th>4° Sem</th>
-    <th>5° Sem</th><th>6° Sem</th><th>7° Sem</th><th>8° Sem</th>
+    <th>1° Semestre</th><th>2° Semestre</th><th>3° Semestre</th><th>4° Semestre</th>
+    <th>5° Semestre</th><th>6° Semestre</th><th>7° Semestre</th><th>8° Semestre</th>
   </tr>
-  
+
+  <!-- FILAS DE CURSOS -->
   <tr>
     <td id="IC1103"></td><td id="IIC2233"></td><td id="IMT2220"></td><td id="EYP1025"></td>
     <td id="EYP2114"></td><td id="EYP2101"></td><td id="EYP2111"></td><td id="IMT2270"></td>
@@ -67,7 +95,7 @@
   </tr>
   <tr>
     <td id="MAT0007"></td><td id="IMT2200"></td><td id="IIC1253"></td><td id="IMT2250"></td>
-    <td id="EX5"></td><td id="IIC2433"></td><td id="EX7"></td><td id="EX8"></td>
+    <td id="OTRO"></td><td id="IIC2433"></td><td id="OPR_MINOR_7"></td><td id="OPR_MINOR_8"></td>
   </tr>
 
   <!-- OFG -->
@@ -75,77 +103,116 @@
     <td id="OFG1"></td><td id="OFG2"></td><td id="OFG3"></td><td id="OFG4"></td>
     <td id="OFG5"></td><td id="OFG6"></td><td id="OFG7"></td><td id="OFG8"></td>
   </tr>
+
+  <!-- Extra -->
+  <tr>
+    <td id="EXT1"></td><td id="EXT2"></td><td id="EXT3"></td><td id="EXT4"></td>
+    <td id="EXT5"></td><td id="EXT6"></td><td id="EXT7"></td><td id="EXT8"></td>
+  </tr>
 </table>
 
 <script>
+// --- Cursos con prerrequisitos corregidos ---
 const cursos = {
-  "IC1103": { n:"Introducción a la Programación", pre:[] },
-  "MAT1107": { n:"Introducción al Cálculo", pre:[] },
-  "MAT1207": { n:"Álgebra y Geometría", pre:[] },
-  "MAT0007": { n:"Taller de Matemáticas", pre:[] },
+  // 1° semestre
+  IC1103:{nombre:"Introducción a la Programación",sigla:"IC1103",prereq:[]},
+  MAT1107:{nombre:"Introducción al Cálculo",sigla:"MAT1107",prereq:[]},
+  MAT1207:{nombre:"Introducción al Álgebra y Geometría",sigla:"MAT1207",prereq:[]},
+  MAT0007:{nombre:"Taller Matemáticas p/ Estadística",sigla:"MAT0007",prereq:[]},
 
-  "IIC2233": { n:"Programación Avanzada", pre:["IC1103"] },
-  "MAT1610": { n:"Cálculo I", pre:["MAT1107"] },
-  "IMT2210": { n:"Álgebra Lineal CD", pre:["MAT1207"] },
-  "IMT2200": { n:"Intro Ciencia de Datos", pre:["IC1103"] },
+  // 2°
+  IIC2233:{nombre:"Programación Avanzada",sigla:"IIC2233",prereq:["IC1103"]},
+  MAT1610:{nombre:"Cálculo I",sigla:"MAT1610",prereq:["MAT1107"]},
+  IMT2210:{nombre:"Álgebra Lineal CD",sigla:"IMT2210",prereq:["IC1103","MAT1107","MAT1207"]},
+  IMT2200:{nombre:"Intro a Ciencia de Datos",sigla:"IMT2200",prereq:["IC1103","MAT1207"]},
 
-  "IMT2220": { n:"Cálculo CD", pre:["MAT1610"] },
-  "IMT2230": { n:"Álgebra Avanzada Model.", pre:["IMT2210"] },
-  "ETI195": { n:"Ética CD", pre:["IIC2233"] },
-  "IIC1253": { n:"Matemáticas Discretas", pre:["IC1103"] },
+  // 3°
+  IMT2220:{nombre:"Cálculo p/ Ciencia Datos",sigla:"IMT2220",prereq:["MAT1610"]},
+  IMT2230:{nombre:"Álgebra Lineal Avanzada",sigla:"IMT2230",prereq:["MAT1610","IMT2210"]},
+  ETI195:{nombre:"Ética CD y Estadística",sigla:"ETI195",prereq:["IIC2233","IMT2200"]},
+  IIC1253:{nombre:"Matemáticas Discretas",sigla:"IIC1253",prereq:["IMT2210"]},
 
-  "EYP1025": { n:"Modelos Probabilísticos", pre:["IMT2220"] },
-  "IC2133": { n:"EDA", pre:["IIC2233"] },
-  "IC2413": { n:"Bases de Datos", pre:["IIC2233"] },
-  "IMT2250": { n:"Optimización CD", pre:["IMT2230"] },
+  // 4°
+  EYP1025:{nombre:"Modelos Probabilísticos",sigla:"EYP1025",prereq:["IMT2220","IMT2230"]},
+  IC2133:{nombre:"Estructuras de Datos",sigla:"IC2133",prereq:["IIC2233","IIC1253"]},
+  IC2413:{nombre:"Bases de Datos",sigla:"IC2413",prereq:["IIC2233"]},
+  IMT2250:{nombre:"Optimización p/ CD",sigla:"IMT2250",prereq:["IMT2220","IMT2210"]},
 
-  "EYP2114": { n:"Inferencia Estadística", pre:["EYP1025"] },
-  "IIC2613": { n:"Inteligencia Artificial", pre:["IC2413"] },
-  "LIC2440": { n:"Big Data", pre:["IC2413"] },
-  "EYP2101": { n:"Procesos Estocásticos", pre:["EYP2114"] },
-  "EYP2301": { n:"Regresión", pre:["EYP2114"] },
+  // 5°
+  EYP2114:{nombre:"Inferencia Estadística",sigla:"EYP2114",prereq:["EYP1025"]},
+  IIC2613:{nombre:"Inteligencia Artificial",sigla:"IIC2613",prereq:["EYP1025","IIC2233"]},
+  LIC2440:{nombre:"Procesamiento Datos Masivos",sigla:"LIC2440",prereq:["IC2413","IC2133"]},
+  OTRO:{nombre:"Optativo/MINOR",sigla:"OPR",prereq:[]},
 
-  "C2026": { n:"Visualización", pre:["IC2413"] },
-  "IIC2433": { n:"Minería de Datos", pre:["IC2413"] },
-  "IMT2260": { n:"Machine Learning", pre:["IMT2250"] },
+  // 6°
+  EYP2101:{nombre:"Procesos Estocásticos",sigla:"EYP2101",prereq:["EYP2114"]},
+  EYP2301:{nombre:"Análisis de Regresión",sigla:"EYP2301",prereq:["EYP2114"]},
+  C2026:{nombre:"Visualización Información",sigla:"C2026",prereq:["IC1103"]},
+  IIC2433:{nombre:"Minería de Datos",sigla:"IIC2433",prereq:["IC1103","EYP1025","IMT2210"]},
 
-  "EYP2111": { n:"Simulación", pre:["EYP2101"] },
-  "EYP2801": { n:"Bayes", pre:["EYP2101"] },
+  // 7°
+  EYP2111:{nombre:"Simulación",sigla:"EYP2111",prereq:["EYP2101"]},
+  EYP2801:{nombre:"Métodos Bayesianos",sigla:"EYP2801",prereq:["EYP2114"]},
+  IMT2260:{nombre:"Teoría de AA",sigla:"IMT2260",prereq:["EYP2114","LIC2440","IMT2250"]},
+  OPR_MINOR_7:{nombre:"Optativo/MINOR",sigla:"OPR-7",prereq:[]},
 
-  "IMT2270": { n:"Proyecto de Grado", pre:["IMT2260","EYP2801","ETI195"] }
+  // 8°
+  IMT2270:{nombre:"Proyecto de Graduación",sigla:"IMT2270",prereq:["EYP2801","IMT2260","IMT2250","ETI195"]},
+  OPR_MINOR_8:{nombre:"Optativo/MINOR",sigla:"OPR-8",prereq:[]},
 };
 
-// OFG clickeables
-for (let i=1;i<=8;i++){
-  cursos[`OFG${i}`]={ n:`OFG ${i}`, pre:[] };
+// Para seguir el estado
+Object.keys(cursos).forEach(c => cursos[c].aprobado = false);
+
+// OFG y Extras
+const editables = ["OFG1","OFG2","OFG3","OFG4","OFG5","OFG6","OFG7","OFG8",
+                   "EXT1","EXT2","EXT3","EXT4","EXT5","EXT6","EXT7","EXT8"];
+
+function prerreqOK(c) {
+  return c.prereq.every(p => cursos[p] && cursos[p].aprobado);
 }
 
-function preOK(c){ return cursos[c].pre.every(p=>cursos[p].ok); }
+function render() {
+  Object.keys(cursos).forEach(id => {
+    const c = cursos[id];
+    const td = document.getElementById(id);
+    if (!td) return;
 
-function render(){
-  for(const c in cursos){
-    const td = document.getElementById(c);
-    if(!td) continue;
-    td.innerHTML = `<div>${cursos[c].n}</div><div>${c}</div>`;
-    td.className = cursos[c].ok ? "aprobado" :
-                   preOK(c) ? "desbloqueado" : "bloqueado";
+    td.className = "";
+    td.innerHTML =
+      `<div class='curso-nombre'>${c.nombre}</div>
+       <div class='curso-sigla'>${c.sigla}</div>`;
+
+    if (c.aprobado) td.classList.add("aprobado");
+    else if (prerreqOK(c)) td.classList.add("desbloqueado");
+    else td.classList.add("bloqueado");
+  });
+
+  editables.forEach(id=>{
+    const td=document.getElementById(id);
+    td.className="desbloqueado";
+    if(!td.innerHTML.includes("input"))
+      td.innerHTML=`<input placeholder="OFG/Extra"/>`;
+  });
+}
+
+function toggle(id) {
+  if(cursos[id]){
+    if(!prerreqOK(cursos[id])) return;
+    cursos[id].aprobado = !cursos[id].aprobado;
+    render();
+  } else if(editables.includes(id)){
+    const td=document.getElementById(id);
+    td.classList.toggle("aprobado");
   }
-}
-
-function toggle(c){
-  if(!preOK(c)) return;
-  cursos[c].ok = !cursos[c].ok;
-  render();
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
   render();
-  for(const c in cursos){
-    const td=document.getElementById(c);
-    if(td) td.onclick=()=>toggle(c);
-  }
+  [...document.querySelectorAll("td")].forEach(td=>{
+    td.addEventListener("click",()=>toggle(td.id));
+  });
 });
 </script>
-
 </body>
 </html>
