@@ -1,24 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Malla Curricular Interactiva</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #f5f5f5; margin:0; padding:0; }
-  h1 { text-align: center; margin: 20px 0; }
-  table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 20px; }
-  th, td { border: 1px solid #999; padding: 6px; text-align: center; vertical-align: middle; cursor: pointer; transition: background-color 0.3s; word-wrap: break-word; }
-  th { background-color: #444; color: #fff; }
-  td div { line-height: 1.2; }
-  td.aprobado { text-decoration: line-through; color: white; font-weight: bold; }
-  td.destacado { font-weight: bold; color:white; }
-  td.desbloqueado { font-weight: bold; }
-  td.bloqueado { opacity: 0.6; }
-  td.extra { background-color: #F8C1D5; }
-  td input { width: 100%; border: none; background: transparent; text-align: center; font-size: 14px; }
-  td input:focus { outline: none; }
-  .semestre { font-weight: bold; background-color: #ddd; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-bottom: 20px;
+  }
+  th, td {
+    border: 1px solid #999;
+    padding: 6px;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    word-wrap: break-word;
+    width: 12.5%;
+    min-width: 80px;
+  }
+  th {
+    background-color: #444;
+    color: #fff;
+  }
+  td div {
+    line-height: 1.2;
+  }
+  td.aprobado {
+    text-decoration: line-through;
+    color: white;
+    font-weight: bold;
+  }
+  td.desbloqueado {
+    font-weight: bold;
+    background-color: #58D68D88;
+  }
+  td.bloqueado {
+    opacity: 0.6;
+    background-color: #E74C3C;
+    cursor: not-allowed;
+  }
+  td.extra {
+    background-color: #F8C1D5;
+    cursor: default;
+  }
+  td input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 14px;
+  }
+  td input:focus {
+    outline: none;
+  }
+  .semestre {
+    font-weight: bold;
+    background-color: #ddd;
+  }
+  .curso-nombre {
+    font-size: 14px;
+    font-weight: normal;
+  }
+  .curso-sigla {
+    font-size: 11px;
+    color: #555;
+  }
 </style>
 </head>
 <body>
@@ -27,110 +87,177 @@
 
 <table>
   <tr>
-    <th class="semestre">1er Semestre</th>
-    <th class="semestre">2do Semestre</th>
-    <th class="semestre">3er Semestre</th>
-    <th class="semestre">4to Semestre</th>
-    <th class="semestre">5to Semestre</th>
-    <th class="semestre">6to Semestre</th>
-    <th class="semestre">7mo Semestre</th>
-    <th class="semestre">8vo Semestre</th>
+    <th class="semestre">1ER SEMESTRE</th>
+    <th class="semestre">2DO SEMESTRE</th>
+    <th class="semestre">3ER SEMESTRE</th>
+    <th class="semestre">4TO SEMESTRE</th>
+    <th class="semestre">5TO SEMESTRE</th>
+    <th class="semestre">6TO SEMESTRE</th>
+    <th class="semestre">7MO SEMESTRE</th>
+    <th class="semestre">8VO SEMESTRE</th>
   </tr>
 
-  <!-- FILAS DE CURSOS -->
+  <!-- Cursos -->
   <tr>
-    <td id="FIL2001"></td>
     <td id="IC1103"></td>
     <td id="IIC2233"></td>
     <td id="IMT2220"></td>
+    <td id="EYP1025"></td>
     <td id="EYP2114"></td>
-    <td id="IIC2613"></td>
-    <td id="LIC2440"></td>
     <td id="EYP2101"></td>
+    <td id="EYP2111"></td>
+    <td id="IMT2270"></td>
   </tr>
   <tr>
     <td id="MAT1107"></td>
     <td id="MAT1610"></td>
     <td id="IMT2230"></td>
     <td id="IC2133"></td>
-    <td id="IMT2250"></td>
+    <td id="IIC2613"></td>
     <td id="EYP2301"></td>
-    <td id="C2026"></td>
-    <td id="IIC2433"></td>
+    <td id="EYP2801"></td>
+    <td></td>
   </tr>
   <tr>
     <td id="MAT1207"></td>
     <td id="IMT2210"></td>
     <td id="ETI195"></td>
     <td id="IC2413"></td>
+    <td id="LIC2440"></td>
+    <td id="C2026"></td>
     <td id="IMT2260"></td>
-    <td id="EYP2111"></td>
-    <td id="OTRO"></td>
-    <td id="IMT2270"></td>
+    <td></td>
   </tr>
   <tr>
     <td id="MAT0007"></td>
     <td id="IMT2200"></td>
     <td id="IIC1253"></td>
-    <td id="IMT2250_2"></td>
-    <td id="EYP2801"></td>
-    <td id="IMT2260_2"></td>
-    <td id="IMT2270_2"></td>
-    <td id="OTRO_2"></td>
+    <td id="IMT2250"></td>
+    <td id="OTRO"></td>
+    <td id="IIC2433"></td>
+    <td id="OPR_MINOR_7"></td>
+    <td id="OPR_MINOR_8"></td>
   </tr>
 
-  <!-- FILA EXTRA PARA OFG / CURSOS ADICIONALES -->
+  <!-- OFG -->
   <tr>
-    <td colspan="8"><input type="text" id="ofgInput" placeholder="Escribe aquí tus OFG o cursos extra"></td>
+    <td><input type="text" id="ofg1" placeholder="OFG (FIL2001)" /></td>
+    <td><input type="text" id="ofg2" placeholder="OFG (TEOLOGICO)" /></td>
+    <td><input type="text" id="ofg3" placeholder="OFG" /></td>
+    <td><input type="text" id="ofg4" placeholder="OFG" /></td>
+    <td><input type="text" id="ofg5" placeholder="OFG" /></td>
+    <td><input type="text" id="ofg6" placeholder="OFG" /></td>
+    <td><input type="text" id="ofg7" placeholder="OFG" /></td>
+    <td><input type="text" id="ofg8" placeholder="OFG" /></td>
+  </tr>
+
+  <!-- Cursos extra -->
+  <tr>
+    <td class="extra" id="extra1"></td>
+    <td class="extra" id="extra2"></td>
+    <td class="extra" id="extra3"></td>
+    <td class="extra" id="extra4"></td>
+    <td class="extra" id="extra5"></td>
+    <td class="extra" id="extra6"></td>
+    <td class="extra" id="extra7"></td>
+    <td class="extra" id="extra8"></td>
   </tr>
 </table>
 
 <script>
-// OBJETO CURSOS CON PRERREQUISITOS MÚLTIPLES
 const cursos = {
-  "FIL2001": { nombre: "Filosofía", sigla:"FIL2001", aprobado: false, esExtra:true },
-  "IC1103": { nombre:"Introducción a la Programación", sigla:"IC1103", aprobado:false },
-  "IIC2233": { nombre:"Programación Avanzada", sigla:"IIC2233", prereq:["IC1103"], aprobado:false },
-  "IMT2220": { nombre:"Cálculo para Ciencia de Datos", sigla:"IMT2220", prereq:["MAT1610"], aprobado:false },
-  "EYP2114": { nombre:"Inferencia Estadística", sigla:"EYP2114", prereq:["IMT2220","IMT2230"], aprobado:false }, // requiere 2 cursos
-  "IIC2613": { nombre:"Inteligencia Artificial", sigla:"IIC2613", prereq:["EYP2114"], aprobado:false },
-  "LIC2440": { nombre:"Procesamiento de Datos Masivos", sigla:"LIC2440", prereq:["IC2413"], aprobado:false },
-  "EYP2101": { nombre:"Procesos Estocásticos Aplicados", sigla:"EYP2101", prereq:["EYP2114"], aprobado:false },
-  "MAT1107": { nombre:"Introducción al Cálculo", sigla:"MAT1107", aprobado:false },
-  "MAT1610": { nombre:"Cálculo I", sigla:"MAT1610", prereq:["MAT1107"], aprobado:false },
-  "IMT2230": { nombre:"Álgebra Lineal Avanzada", sigla:"IMT2230", prereq:["MAT1610"], aprobado:false },
-  "IC2133": { nombre:"Estructuras de Datos", sigla:"IC2133", prereq:["IIC2233"], aprobado:false },
-  "IMT2250": { nombre:"Optimización para Ciencia de Datos", sigla:"IMT2250", prereq:["IMT2220","IMT2210"], aprobado:false }, // requiere 2 cursos
-  "EYP2301": { nombre:"Análisis de Regresión", sigla:"EYP2301", prereq:["EYP2114"], aprobado:false },
-  "C2026": { nombre:"Visualización de Información", sigla:"C2026", prereq:["IC1103"], aprobado:false },
-  "IIC2433": { nombre:"Minería de Datos", sigla:"IIC2433", prereq:["IC1103","EYP2114"], aprobado:false }, // requiere 2 cursos
-  "MAT1207": { nombre:"Introducción al Álgebra y Geometría", sigla:"MAT1207", aprobado:false },
-  "IMT2210": { nombre:"Álgebra Lineal para Ciencia de Datos", sigla:"IMT2210", prereq:["IC1103","MAT1107"], aprobado:false }, // requiere 2 cursos
-  "ETI195": { nombre:"Ética para Ciencia de Datos y Estadística", sigla:"ETI195", prereq:["IIC2233"], aprobado:false },
-  "IC2413": { nombre:"Bases de Datos", sigla:"IC2413", prereq:["IIC2233"], aprobado:false },
-  "IMT2260": { nombre:"Teoría de Aprendizaje Automático", sigla:"IMT2260", prereq:["EYP2114","LIC2440"], aprobado:false }, // requiere 2 cursos
-  "EYP2111": { nombre:"Simulación", sigla:"EYP2111", prereq:["EYP2101"], aprobado:false },
-  "OTRO": { nombre:"Otro", sigla:"OTRO", aprobado:false, esExtra:true },
-  "IMT2250_2": { nombre:"Optimización Avanzada", sigla:"IMT2250_2", aprobado:false },
-  "IMT2260_2": { nombre:"Aprendizaje Avanzado", sigla:"IMT2260_2", aprobado:false },
-  "IMT2270": { nombre:"Proyecto de Graduación", sigla:"IMT2270_2", aprobado:false },
-  "OTRO_2": { nombre:"Otro Extra", sigla:"OTRO_2", aprobado:false, esExtra:true },
+  "IC1103": { nombre: "[translate:INTRODUCCIÓN A LA PROGRAMACIÓN]", sigla:"IC1103", aprobado: false, semestre:1 },
+  "MAT1107": { nombre: "[translate:INTRODUCCIÓN AL CÁLCULO]", sigla:"MAT1107", aprobado: false, semestre:1 },
+  "MAT1207": { nombre: "[translate:INTRODUCCIÓN AL ÁLGEBRA Y GEOMETRÍA]", sigla:"MAT1207", aprobado:false, semestre:1 },
+  "MAT0007": { nombre: "[translate:TALLER DE MATEMÁTICAS PARA ESTADISTICA]", sigla:"MAT0007", aprobado:false, semestre:1 },
+
+  "IIC2233": { nombre: "[translate:PROGRAMACIÓN AVANZADA]", sigla:"IIC2233", prereq:["IC1103"], aprobado:false, semestre:2 },
+  "MAT1610": { nombre: "[translate:CÁLCULO I]", sigla:"MAT1610", prereq:["MAT1107"], aprobado:false, semestre:2 },
+  "IMT2210": { nombre: "[translate:ÁLGEBRA LINEAL PARA CIENCIA DE DATOS]", sigla:"IMT2210", aprobado:false, semestre:2 },
+  "IMT2200": { nombre: "[translate:INTRODUCCIÓN A CIENCIA DE DATOS]", sigla:"IMT2200", aprobado:false, semestre:2 },
+
+  "IMT2220": { nombre: "[translate:CÁLCULO PARA CIENCIA DE DATOS]", sigla:"IMT2220", aprobado:false, semestre:3 },
+  "IMT2230": { nombre: "[translate:ÁLGEBRA LINEAL AVANZADA Y MODELAMIENTO]", sigla:"IMT2230", aprobado:false, semestre:3 },
+  "ETI195": { nombre: "[translate:ETICA PARA CIENCIA DE DATOS Y ESTADÍSTICA]", sigla:"ETI195", aprobado:false, semestre:3 },
+  "IIC1253": { nombre: "[translate:MATEMÁTICAS DISCRETAS]", sigla:"IIC1253", aprobado:false, semestre:3 },
+
+  "EYP1025": { nombre: "[translate:MODELOS PROBABILÍSTICOS]", sigla:"EYP1025", aprobado:false, semestre:4 },
+  "IC2133": { nombre: "[translate:ESTRUCTURAS DE DATOS Y ALGORITMOS]", sigla:"IC2133", aprobado:false, semestre:4 },
+  "IC2413": { nombre: "[translate:BASES DE DATOS]", sigla:"IC2413", aprobado:false, semestre:4 },
+  "IMT2250": { nombre: "[translate:OPTIMIZACIÓN PARA CIENCIA DE DATOS]", sigla:"IMT2250", aprobado:false, semestre:4 },
+
+  "EYP2114": { nombre: "[translate:INFERENCIA ESTADISTICA]", sigla:"EYP2114", aprobado:false, semestre:5 },
+  "IIC2613": { nombre: "[translate:INTELIGENCIA ARTIFICIAL]", sigla:"IIC2613", aprobado:false, semestre:5 },
+  "LIC2440": { nombre: "[translate:PROCESAMIENTO DATOS MASIVOS]", sigla:"LIC2440", aprobado:false, semestre:5 },
+  "OTRO": { nombre: "[translate:OPR O MINOR]", sigla:"OPR_MINOR_5", aprobado:false, semestre:5 },
+
+  "EYP2101": { nombre: "[translate:PROCESOS ESTOCÁSTICOS APLICADOS]", sigla:"EYP2101", aprobado:false, semestre:6 },
+  "EYP2301": { nombre: "[translate:ANÁLISIS DE REGRESIÓN]", sigla:"EYP2301", aprobado:false, semestre:6 },
+  "C2026": { nombre: "[translate:VISUALIZACIÓN DE INFORMACIÓN]", sigla:"C2026", aprobado:false, semestre:6 },
+  "IIC2433": { nombre: "[translate:MINERÍA DE DATOS]", sigla:"IIC2433", aprobado:false, semestre:6 },
+
+  "EYP2111": { nombre: "[translate:SIMULACIÓN]", sigla:"EYP2111", aprobado:false, semestre:7 },
+  "EYP2801": { nombre: "[translate:MÉTODOS BAYESIANOS]", sigla:"EYP2801", aprobado:false, semestre:7 },
+  "IMT2260": { nombre: "[translate:TEORÍA DE APRENDIZAJE AUTOMÁTICO]", sigla:"IMT2260", aprobado:false, semestre:7 },
+  "OPR_MINOR_7": { nombre: "[translate:OPR O MINOR]", sigla:"OPR_MINOR_7", aprobado:false, semestre:7 },
+
+  "IMT2270": { nombre: "[translate:PROYECTO DE GRADUACIÓN]", sigla:"IMT2270", aprobado:false, semestre:8 },
+  "OPR_MINOR_8": { nombre: "[translate:OPR O MINOR]", sigla:"OPR_MINOR_8", aprobado:false, semestre:8 }
 };
 
-// COLORES DINÁMICOS
-const colores = ["#F1948A","#5DADE2","#F4D03F","#58D68D","#AF7AC5","#F7DC6F","#45B39D","#DC7633"];
-let usados = [];
-
 function getColor() {
-  if (usados.length === colores.length) usados = [];
-  let disponibles = colores.filter(c => !usados.includes(c));
-  let color = disponibles[Math.floor(Math.random()*disponibles.length)];
-  usados.push(color);
-  return color;
+  const colores = ["#F1948A", "#5DADE2", "#F4D03F", "#58D68D", "#AF7AC5", "#F7DC6F", "#45B39D", "#DC7633"];
+  return colores[Math.floor(Math.random() * colores.length)];
 }
 
-// FUNCION PARA ACTUALIZAR TODA LA MALLA
+function estanPrerrequisitosAprobados(curso) {
+  if (!curso.prereq) return true;
+  return curso.prereq.every(cod => cursos[cod] && cursos[cod].aprobado);
+}
+
 function actualizarMalla() {
-  for (const codigo in cursos) {
-    const curso = cursos[codigo];
-    const elemento = document.getElementById(c
+  Object.keys(cursos).forEach(cod => {
+    const curso = cursos[cod];
+    const td = document.getElementById(cod);
+    if (!td) return;
+
+    td.className = "";
+    td.style.backgroundColor = "";
+    td.innerHTML = `<div class="curso-nombre">${curso.nombre}</div><div class="curso-sigla">${curso.sigla}</div>`;
+
+    if (curso.aprobado) {
+      td.classList.add("aprobado");
+      td.style.backgroundColor = "#27AE60"; // verde para aprobado
+    } else if (estanPrerrequisitosAprobados(curso)) {
+      td.classList.add("desbloqueado");
+      td.style.backgroundColor = getColor();
+      td.style.cursor = "pointer";
+    } else {
+      td.classList.add("bloqueado");
+      td.style.cursor = "not-allowed";
+      td.style.backgroundColor = "#E74C3C";
+    }
+  });
+}
+
+function toggleAprobado(codigo) {
+  const curso = cursos[codigo];
+  if (!curso) return;
+  if (!estanPrerrequisitosAprobados(curso)) return; 
+  curso.aprobado = !curso.aprobado;
+  actualizarMalla();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  actualizarMalla();
+  Object.keys(cursos).forEach(cod => {
+    const td = document.getElementById(cod);
+    if (td) {
+      td.addEventListener("click", () => toggleAprobado(cod));
+    }
+  });
+});
+</script>
+
+</body>
+</html>
