@@ -14,7 +14,6 @@
     overflow-x: hidden;
   }
 
-  /* Fondo decorativo con ondas suaves */
   body::before {
     content: '';
     position: fixed;
@@ -177,7 +176,7 @@
   <p><span class="color-box" style="background:#2EC4B6;"></span> Aprobado (tachado)</p>
   <p><span class="color-box" style="background:#FF9EBB;"></span> Desbloqueado (puede aprobarse)</p>
   <p><span class="color-box" style="background:#FF6A00;"></span> Bloqueado (prerrequisitos no cumplidos)</p>
-  <p>OFG: puedes escribir su nombre y luego tacharlo con doble clic para marcar como aprobado.</p>
+  <p>OFG: puedes escribir su nombre y luego tacharlo con doble clic para marcar como aprobado (cambia de color).</p>
 </div>
 
 <script>
@@ -242,7 +241,6 @@ function actualizarMalla(){
     const c = cursos[cod];
     const td = document.getElementById(cod);
     if(!td) return;
-    // Si es un OFG, no modificar el input
     if(cod.startsWith("OFG")) return;
     td.innerHTML = `<div class="curso-nombre">${c.nombre}</div><div class="curso-sigla">${c.sigla}</div>`;
     td.className="";
@@ -256,7 +254,6 @@ function actualizarMalla(){
   });
 }
 
-// Activar/Desactivar cursos (excepto OFG)
 function toggleAprobado(cod){
   if(cod.startsWith("OFG")) return;
   const c = cursos[cod];
@@ -266,16 +263,18 @@ function toggleAprobado(cod){
   actualizarMalla();
 }
 
-// --- Tachado de OFG ---
+// --- Tachado y color de OFG ---
 function toggleOFG(event){
   const input = event.target;
   if(input.dataset.tachado === "true"){
     input.style.textDecoration = "none";
     input.style.color = "#000";
+    input.style.backgroundColor = "#fff7f7";
     input.dataset.tachado = "false";
   } else {
     input.style.textDecoration = "line-through";
-    input.style.color = "#999";
+    input.style.color = "#fff";
+    input.style.backgroundColor = "#2EC4B6";
     input.dataset.tachado = "true";
   }
 }
