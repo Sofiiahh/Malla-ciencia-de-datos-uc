@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Malla Curricular Interactiva</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5; }
-    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-    th, td { border: 1px solid #999; padding: 8px; text-align: center; vertical-align: middle; cursor: pointer; transition: all 0.2s; }
-    th { background-color: #444; color: #fff; }
-    td div { line-height: 1.2; }
-    .aprobado { background-color: #5DADE2; color: white; }
-    .desbloqueado { background-color: #F4D03F; }
-    .bloqueado { background-color: #F1948A; }
-    .ofg { background-color: #F8C1D5; }
-    .extra { background-color: #F8C1D5; }
-  </style>
+<meta charset="UTF-8">
+<title>Malla Curricular Interactiva</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f5f5f5; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+  th, td { border: 1px solid #999; padding: 8px; text-align: center; vertical-align: middle; cursor: pointer; transition: all 0.2s; }
+  th { background-color: #444; color: #fff; }
+  td div { line-height: 1.2; }
+  .aprobado { background-color: #5DADE2; color: white; text-decoration: line-through; }
+  .desbloqueado { background-color: #F4D03F; }
+  .bloqueado { background-color: #F1948A; }
+  .extra { background-color: #F8C1D5; }
+</style>
 </head>
 <body>
 
@@ -53,9 +52,9 @@
     <td id="IMT2250"></td>
   </tr>
   <tr>
-    <td id="FIL2001" class="ofg">Filosofía</td>
-    <td id="TEOLOGICO" class="ofg">OFG</td>
-    <td id="ETI195_ofg" class="ofg">OFG</td>
+    <td id="FIL2001" class="extra"></td>
+    <td id="TEOLOGICO" class="extra"></td>
+    <td id="ETI195_ofg" class="extra"></td>
     <td></td>
   </tr>
 </table>
@@ -96,53 +95,36 @@
 
 <script>
 const cursos = {
-  // Primer semestre
   "IC1103": { nombre: "Introducción a la Programación", prereq: [], aprobado: false },
   "MAT1107": { nombre: "Introducción al Cálculo", prereq: [], aprobado: false },
   "MAT1207": { nombre: "Introducción al Álgebra y Geometría", prereq: [], aprobado: false },
   "MAT0007": { nombre: "Taller de Matemáticas para Estadística", prereq: [], aprobado: false },
-  "FIL2001": { nombre: "Filosofía", prereq: [], aprobado: false, esExtra: false },
-
-  // Segundo semestre
+  "FIL2001": { nombre: "Filosofía", prereq: [], aprobado: false, esExtra:true },
   "IIC2233": { nombre: "Programación Avanzada", prereq: ["IC1103"], aprobado: false },
   "MAT1610": { nombre: "Cálculo I", prereq: ["MAT1107"], aprobado: false },
   "IMT2210": { nombre: "Álgebra Lineal para Ciencia de Datos", prereq: ["IC1103","MAT1107","MAT1207"], aprobado: false },
   "IMT2200": { nombre: "Introducción a Ciencia de Datos", prereq: ["IC1103","MAT1207"], aprobado: false },
-  "TEOLOGICO": { nombre: "OFG", prereq: [], aprobado: false, esExtra: false },
-
-  // Tercer semestre
+  "TEOLOGICO": { nombre: "OFG", prereq: [], aprobado: false, esExtra:true },
   "IMT2220": { nombre: "Cálculo para Ciencia de Datos", prereq: ["MAT1610"], aprobado: false, simultaneo: ["IMT2210"] },
   "IMT2230": { nombre: "Álgebra Lineal Avanzada y Modelamiento", prereq: ["MAT1610","IMT2210"], aprobado: false },
   "ETI195": { nombre: "Ética para Ciencia de Datos y Estadística", prereq: ["IIC2233","IMT2200"], aprobado: false },
   "IIC1253": { nombre: "Matemáticas Discretas", prereq: ["IMT2210"], aprobado: false },
-
-  // Cuarto semestre
   "EYP1025": { nombre: "Modelos Probabilísticos", prereq: ["IMT2220","IMT2230"], aprobado: false },
   "IC2133": { nombre: "Estructuras de Datos y Algoritmos", prereq: ["IIC2233","IIC1253"], aprobado: false },
   "IC2413": { nombre: "Bases de Datos", prereq: ["IIC2233"], aprobado: false },
   "IMT2250": { nombre: "Optimización para Ciencia de Datos", prereq: ["IMT2220","IMT2210"], aprobado: false },
-
-  // Quinto semestre
   "EYP2114": { nombre: "Inferencia Estadística", prereq: ["EYP1025"], aprobado: false },
   "IIC2613": { nombre: "Inteligencia Artificial", prereq: ["EYP1025","IIC2233"], aprobado: false },
   "LIC2440": { nombre: "Procesamiento de Datos Masivos", prereq: ["IC2413","IC2133"], aprobado: false },
-
-  // Sexto semestre
   "EYP2101": { nombre: "Procesos Estocásticos Aplicados", prereq: ["EYP2114"], aprobado: false },
   "EYP2301": { nombre: "Análisis de Regresión", prereq: ["EYP2114"], aprobado: false },
   "C2026": { nombre: "Visualización de Información", prereq: ["IC1103"], aprobado: false },
   "IIC2433": { nombre: "Minería de Datos", prereq: ["IC1103","EYP1025","IMT2210"], aprobado: false },
-
-  // Séptimo semestre
   "EYP2111": { nombre: "Simulación", prereq: ["EYP2101"], aprobado: false },
   "EYP2801": { nombre: "Métodos Bayesianos", prereq: ["EYP2114"], aprobado: false },
   "IMT2260": { nombre: "Teoría de Aprendizaje Automático", prereq: ["EYP2114","LIC2440","IMT2250"], aprobado: false },
-
-  // Octavo semestre
   "IMT2270": { nombre: "Proyecto de Graduación", prereq: ["EYP2801","IMT2260","IMT2250","ETI195"], aprobado: false },
-
-  // Apartado extra
-  "OTRO": { nombre: "Otro", prereq: [], aprobado: false, esExtra: true }
+  "OTRO": { nombre: "Otro", prereq: [], aprobado: false, esExtra:true }
 };
 
 function actualizarMalla() {
@@ -151,7 +133,38 @@ function actualizarMalla() {
     const elemento = document.getElementById(codigo);
     if (!elemento) continue;
 
-    // Nombre arriba, sigla debajo
-    elemento.innerHTML = `<
-::contentReference[oaicite:0]{index=0}
- 
+    elemento.innerHTML = `<div>${curso.nombre}</div><div style="font-weight:bold; margin-top:4px;">${codigo}</div>`;
+
+    if (curso.esExtra) {
+      elemento.className = curso.aprobado ? "aprobado extra" : "extra";
+      continue;
+    }
+
+    const prereqCumplidos = curso.prereq.every(c => cursos[c].aprobado);
+    if (curso.aprobado) {
+      elemento.className = "aprobado";
+    } else if (prereqCumplidos) {
+      elemento.className = "desbloqueado";
+    } else {
+      elemento.className = "bloqueado";
+    }
+  }
+}
+
+function toggleAprobado(codigo) {
+  cursos[codigo].aprobado = !cursos[codigo].aprobado;
+  actualizarMalla();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  for (const codigo in cursos) {
+    const elemento = document.getElementById(codigo);
+    if (elemento) {
+      elemento.addEventListener("click", () => toggleAprobado(codigo));
+    }
+  }
+  actualizarMalla();
+});
+</script>
+</body>
+</html>
