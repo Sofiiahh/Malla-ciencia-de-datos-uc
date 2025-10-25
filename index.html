@@ -25,36 +25,22 @@
     min-width: 80px;
   }
 
-  th {
-    background-color: #444;
-    color: #fff;
-  }
+  th { background-color: #444; color: #fff; }
 
-  td div { line-height: 1.2; }
-
-  /* ✅ SOLO 3 COLORES */
   .bloqueado {
-    background-color: #cfcfcf;
-    opacity: 0.6;
+    background-color: #d1d1d1;
+    opacity: .6;
     cursor: not-allowed;
   }
   .desbloqueado {
-    background-color: #cfe9ff;
+    background-color: #bcdcff;
     font-weight: bold;
   }
   .aprobado {
-    background-color: #3eb96d;
+    background-color: #2dac55;
     text-decoration: line-through;
     color: white;
   }
-
-  input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    text-align: center;
-  }
-  input:focus { outline: none; }
 </style>
 </head>
 <body>
@@ -67,148 +53,96 @@
     <th>5° Sem</th><th>6° Sem</th><th>7° Sem</th><th>8° Sem</th>
   </tr>
   
-  <!-- FILA 1 -->
   <tr>
-    <td id="IC1103"></td>
-    <td id="IIC2233"></td>
-    <td id="IMT2220"></td>
-    <td id="EYP1025"></td>
-    <td id="EYP2114"></td>
-    <td id="EYP2101"></td>
-    <td id="EYP2111"></td>
-    <td id="IMT2270"></td>
+    <td id="IC1103"></td><td id="IIC2233"></td><td id="IMT2220"></td><td id="EYP1025"></td>
+    <td id="EYP2114"></td><td id="EYP2101"></td><td id="EYP2111"></td><td id="IMT2270"></td>
+  </tr>
+  <tr>
+    <td id="MAT1107"></td><td id="MAT1610"></td><td id="IMT2230"></td><td id="IC2133"></td>
+    <td id="IIC2613"></td><td id="EYP2301"></td><td id="EYP2801"></td><td></td>
+  </tr>
+  <tr>
+    <td id="MAT1207"></td><td id="IMT2210"></td><td id="ETI195"></td><td id="IC2413"></td>
+    <td id="LIC2440"></td><td id="C2026"></td><td id="IMT2260"></td><td></td>
+  </tr>
+  <tr>
+    <td id="MAT0007"></td><td id="IMT2200"></td><td id="IIC1253"></td><td id="IMT2250"></td>
+    <td id="EX5"></td><td id="IIC2433"></td><td id="EX7"></td><td id="EX8"></td>
   </tr>
 
-  <!-- FILA 2 -->
+  <!-- OFG -->
   <tr>
-    <td id="MAT1107"></td>
-    <td id="MAT1610"></td>
-    <td id="IMT2230"></td>
-    <td id="IC2133"></td>
-    <td id="IIC2613"></td>
-    <td id="EYP2301"></td>
-    <td id="EYP2801"></td>
-    <td></td>
-  </tr>
-
-  <!-- FILA 3 -->
-  <tr>
-    <td id="MAT1207"></td>
-    <td id="IMT2210"></td>
-    <td id="ETI195"></td>
-    <td id="IC2413"></td>
-    <td id="LIC2440"></td>
-    <td id="C2026"></td>
-    <td id="IMT2260"></td>
-    <td></td>
-  </tr>
-
-  <!-- FILA 4 -->
-  <tr>
-    <td id="MAT0007"></td>
-    <td id="IMT2200"></td>
-    <td id="IIC1253"></td>
-    <td id="IMT2250"></td>
-    <td id="EXTRA5"></td>
-    <td id="IIC2433"></td>
-    <td id="EXTRA7"></td>
-    <td id="EXTRA8"></td>
-  </tr>
-
-  <!-- FILA OFG -->
-  <tr>
-    <td id="OFG1"></td>
-    <td id="OFG2"></td>
-    <td id="OFG3"></td>
-    <td id="OFG4"></td>
-    <td id="OFG5"></td>
-    <td id="OFG6"></td>
-    <td id="OFG7"></td>
-    <td id="OFG8"></td>
+    <td id="OFG1"></td><td id="OFG2"></td><td id="OFG3"></td><td id="OFG4"></td>
+    <td id="OFG5"></td><td id="OFG6"></td><td id="OFG7"></td><td id="OFG8"></td>
   </tr>
 </table>
 
 <script>
-// ✅ Cursos con prerrequisitos reales
 const cursos = {
-  "IC1103": { nombre:"Introducción a la Programación", prereq:[] },
-  "MAT1107": { nombre:"Introducción al Cálculo", prereq:[] },
-  "MAT1207": { nombre:"Álgebra y Geometría", prereq:[] },
-  "MAT0007": { nombre:"Taller de Matemáticas", prereq:[] },
+  "IC1103": { n:"Introducción a la Programación", pre:[] },
+  "MAT1107": { n:"Introducción al Cálculo", pre:[] },
+  "MAT1207": { n:"Álgebra y Geometría", pre:[] },
+  "MAT0007": { n:"Taller de Matemáticas", pre:[] },
 
-  "IIC2233": { nombre:"Programación Avanzada", prereq:["IC1103"] },
-  "MAT1610": { nombre:"Cálculo I", prereq:["MAT1107"] },
-  "IMT2210": { nombre:"Álgebra Lineal CD", prereq:["MAT1207"] },
-  "IMT2200": { nombre:"Intro Ciencia de Datos", prereq:["IC1103"] },
+  "IIC2233": { n:"Programación Avanzada", pre:["IC1103"] },
+  "MAT1610": { n:"Cálculo I", pre:["MAT1107"] },
+  "IMT2210": { n:"Álgebra Lineal CD", pre:["MAT1207"] },
+  "IMT2200": { n:"Intro Ciencia de Datos", pre:["IC1103"] },
 
-  "IMT2220": { nombre:"Cálculo CD", prereq:["MAT1610"] },
-  "IMT2230": { nombre:"Álgebra Avanzada Model.", prereq:["IMT2210"] },
-  "ETI195": { nombre:"Ética CD", prereq:["IIC2233"] },
-  "IIC1253": { nombre:"Matemáticas Discretas", prereq:["IC1103"] },
+  "IMT2220": { n:"Cálculo CD", pre:["MAT1610"] },
+  "IMT2230": { n:"Álgebra Avanzada Model.", pre:["IMT2210"] },
+  "ETI195": { n:"Ética CD", pre:["IIC2233"] },
+  "IIC1253": { n:"Matemáticas Discretas", pre:["IC1103"] },
 
-  "EYP1025": { nombre:"Modelos Probabilísticos", prereq:["IMT2220"] },
-  "IC2133": { nombre:"EDA", prereq:["IIC2233"] },
-  "IC2413": { nombre:"Bases de Datos", prereq:["IIC2233"] },
-  "IMT2250": { nombre:"Optimización CD", prereq:["IMT2230"] },
+  "EYP1025": { n:"Modelos Probabilísticos", pre:["IMT2220"] },
+  "IC2133": { n:"EDA", pre:["IIC2233"] },
+  "IC2413": { n:"Bases de Datos", pre:["IIC2233"] },
+  "IMT2250": { n:"Optimización CD", pre:["IMT2230"] },
 
-  "EYP2114": { nombre:"Inferencia Estadística", prereq:["EYP1025"] },
-  "IIC2613": { nombre:"Inteligencia Artificial", prereq:["IC2413"] },
-  "LIC2440": { nombre:"Big Data", prereq:["IC2413"] },
-  "EYP2101": { nombre:"Procesos Estoc.", prereq:["EYP2114"] },
-  "EYP2301": { nombre:"Regresión", prereq:["EYP2114"] },
+  "EYP2114": { n:"Inferencia Estadística", pre:["EYP1025"] },
+  "IIC2613": { n:"Inteligencia Artificial", pre:["IC2413"] },
+  "LIC2440": { n:"Big Data", pre:["IC2413"] },
+  "EYP2101": { n:"Procesos Estocásticos", pre:["EYP2114"] },
+  "EYP2301": { n:"Regresión", pre:["EYP2114"] },
 
-  "C2026": { nombre:"Visualización", prereq:["IC2413"] },
-  "IIC2433": { nombre:"Minería de Datos", prereq:["IC2413"] },
-  "IMT2260": { nombre:"Machine Learning", prereq:["IMT2250"] },
+  "C2026": { n:"Visualización", pre:["IC2413"] },
+  "IIC2433": { n:"Minería de Datos", pre:["IC2413"] },
+  "IMT2260": { n:"Machine Learning", pre:["IMT2250"] },
 
-  "EYP2111": { nombre:"Simulación", prereq:["EYP2101"] },
-  "EYP2801": { nombre:"Bayes", prereq:["EYP2101"] },
+  "EYP2111": { n:"Simulación", pre:["EYP2101"] },
+  "EYP2801": { n:"Bayes", pre:["EYP2101"] },
 
-  "IMT2270": { nombre:"Proyecto de Grado", prereq:["IMT2260","EYP2801","ETI195"] }
+  "IMT2270": { n:"Proyecto de Grado", pre:["IMT2260","EYP2801","ETI195"] }
 };
 
-// ✅ Agregar OFG sin prerrequisitos pero clickeables
-for (let i=1; i<=8; i++){
-  cursos[`OFG${i}`] = { nombre: `OFG ${i}`, prereq:[] };
+// OFG clickeables
+for (let i=1;i<=8;i++){
+  cursos[`OFG${i}`]={ n:`OFG ${i}`, pre:[] };
 }
 
-function prerrequisitosOk(c){
-  return cursos[c].prereq.every(p=>cursos[p].aprobado);
-}
+function preOK(c){ return cursos[c].pre.every(p=>cursos[p].ok); }
 
-function actualizar(){
+function render(){
   for(const c in cursos){
-    const celda = document.getElementById(c);
-    if(!celda) continue;
-
-    celda.innerHTML = `<div>${cursos[c].nombre}</div><div>${c}</div>`;
-    celda.className = "";
-
-    if(cursos[c].aprobado){
-      celda.classList.add("aprobado");
-    }
-    else if(prerrequisitosOk(c)){
-      celda.classList.add("desbloqueado");
-    }
-    else{
-      celda.classList.add("bloqueado");
-    }
+    const td = document.getElementById(c);
+    if(!td) continue;
+    td.innerHTML = `<div>${cursos[c].n}</div><div>${c}</div>`;
+    td.className = cursos[c].ok ? "aprobado" :
+                   preOK(c) ? "desbloqueado" : "bloqueado";
   }
 }
 
 function toggle(c){
-  if(!prerrequisitosOk(c)) return;
-  cursos[c].aprobado = !cursos[c].aprobado;
-  actualizar();
+  if(!preOK(c)) return;
+  cursos[c].ok = !cursos[c].ok;
+  render();
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
-  actualizar();
+document.addEventListener("DOMContentLoaded",()=>{
+  render();
   for(const c in cursos){
-    const celda = document.getElementById(c);
-    if(celda){
-      celda.addEventListener("click", ()=>toggle(c));
-    }
+    const td=document.getElementById(c);
+    if(td) td.onclick=()=>toggle(c);
   }
 });
 </script>
