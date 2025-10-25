@@ -13,6 +13,7 @@
     position: relative;
     overflow-x: hidden;
   }
+
   /* Fondo decorativo con ondas suaves */
   body::before {
     content: '';
@@ -46,17 +47,18 @@
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 
   th, td {
     border: 1px solid #666;
-    padding: 6px;
+    padding: 12px 6px; /* más espacio vertical */
     text-align: center;
     vertical-align: middle;
     font-size: 13px;
     cursor: pointer;
     word-wrap: break-word;
+    min-height: 70px; /* altura mínima de las celdas */
   }
 
   th {
@@ -89,6 +91,8 @@
     border: none;
     background: transparent;
     text-align: center;
+    font-size: 13px;
+    min-height: 25px; /* más espacio vertical en OFG */
   }
 
   td input:focus {
@@ -103,6 +107,26 @@
     font-size: 11px;
     font-style: italic;
     opacity: 0.85;
+  }
+
+  /* Recuadro de leyenda */
+  .leyenda {
+    width: 90%;
+    max-width: 800px;
+    margin: 30px auto;
+    border: 1px solid #666;
+    padding: 12px;
+    background: #fff;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .color-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
   }
 </style>
 </head>
@@ -155,8 +179,16 @@
   </tr>
 </table>
 
+<!-- Recuadro de Leyenda -->
+<div class="leyenda">
+  <p><span class="color-box" style="background:#2EC4B6;"></span> Aprobado (tachado)</p>
+  <p><span class="color-box" style="background:#FF9EBB;"></span> Desbloqueado (puede aprobarse)</p>
+  <p><span class="color-box" style="background:#FF6A00;"></span> Bloqueado (prerrequisitos no cumplidos)</p>
+  <p>OFG: puedes escribir su nombre y luego tacharlo para marcar como aprobado.</p>
+</div>
+
 <script>
-// --- Cursos con prerrequisitos exactos ---
+// --- Cursos con prerrequisitos ---
 const cursos = {
   IC1103:{nombre:"Introducción a la Programación",sigla:"IC1103",prereq:[]},
   MAT1107:{nombre:"Introducción al Cálculo",sigla:"MAT1107",prereq:[]},
@@ -206,7 +238,7 @@ const cursos = {
   OFG8:{nombre:"OFG",sigla:"OFG8",prereq:[]},
 };
 
-// --- Funciones para colores ---
+// --- Funciones ---
 function estanPrerrequisitosAprobados(curso){
   if(!curso.prereq) return true;
   return curso.prereq.every(cod=>cursos[cod] && cursos[cod].aprobado);
@@ -229,7 +261,7 @@ function actualizarMalla(){
   });
 }
 
-// --- Activar/Desactivar cursos y OFG ---
+// Activar/Desactivar cursos y OFG
 function toggleAprobado(cod){
   const c = cursos[cod];
   if(!c) return;
@@ -240,13 +272,4 @@ function toggleAprobado(cod){
 
 document.addEventListener("DOMContentLoaded",()=>{
   actualizarMalla();
-  Object.keys(cursos).forEach(cod=>{
-    const td = document.getElementById(cod);
-    if(td){
-      td.addEventListener("click",()=>toggleAprobado(cod));
-    }
-  });
-});
-</script>
-</body>
-</html>
+  Object
