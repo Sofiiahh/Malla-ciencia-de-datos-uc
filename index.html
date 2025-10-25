@@ -1,26 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Malla Curricular Interactiva — Ciencia de Datos UC</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Malla Interactiva — Ciencia de Datos UC</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    background: #f9f9f9;
     margin: 0;
     padding: 0;
+    background: #f9f9f9;
+    position: relative;
+    overflow-x: hidden;
   }
+  /* Fondo decorativo con ondas suaves */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -150px;
+    left: -150px;
+    width: 1200px;
+    height: 1200px;
+    background: radial-gradient(circle at 20% 30%, #2EC4B6 0%, transparent 50%), 
+                radial-gradient(circle at 80% 70%, #FF9EBB 0%, transparent 50%);
+    z-index: -1;
+    opacity: 0.2;
+    transform: rotate(25deg);
+  }
+
+  h2.carrera {
+    text-align: center;
+    margin: 10px 0 0 0;
+    font-size: 24px;
+    color: #333;
+  }
+
   h1 {
     text-align: center;
-    padding: 15px;
+    margin: 5px 0 20px 0;
+    font-size: 20px;
+    color: #444;
   }
+
   table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
+    margin-bottom: 30px;
   }
+
   th, td {
     border: 1px solid #666;
     padding: 6px;
@@ -30,39 +58,47 @@
     cursor: pointer;
     word-wrap: break-word;
   }
+
   th {
     background: #333;
     color: white;
-    font-size: 15px;
+    font-size: 14px;
   }
+
   td.bloqueado {
     background: #FF6A00;
     color: white;
     cursor: not-allowed;
     opacity: 0.8;
   }
+
   td.desbloqueado {
     background: #FF9EBB;
     font-weight: bold;
   }
+
   td.aprobado {
     background: #2EC4B6;
     text-decoration: line-through;
     color: white;
     font-weight: bold;
   }
+
   td input {
     width: 100%;
     border: none;
     background: transparent;
     text-align: center;
   }
+
   td input:focus {
     outline: none;
   }
+
   .curso-nombre {
     font-size: 13px;
   }
+
   .curso-sigla {
     font-size: 11px;
     font-style: italic;
@@ -72,7 +108,9 @@
 </head>
 
 <body>
-<h1>Malla Interactiva — Ciencia de Datos UC</h1>
+
+<h2 class="carrera">Carrera: Ciencia de Datos – Universidad Católica</h2>
+<h1>Malla Interactiva</h1>
 
 <table>
   <tr>
@@ -100,8 +138,14 @@
 
   <!-- OFG -->
   <tr>
-    <td id="OFG1"></td><td id="OFG2"></td><td id="OFG3"></td><td id="OFG4"></td>
-    <td id="OFG5"></td><td id="OFG6"></td><td id="OFG7"></td><td id="OFG8"></td>
+    <td id="OFG1"><input type="text" placeholder="OFG"/></td>
+    <td id="OFG2"><input type="text" placeholder="OFG"/></td>
+    <td id="OFG3"><input type="text" placeholder="OFG"/></td>
+    <td id="OFG4"><input type="text" placeholder="OFG"/></td>
+    <td id="OFG5"><input type="text" placeholder="OFG"/></td>
+    <td id="OFG6"><input type="text" placeholder="OFG"/></td>
+    <td id="OFG7"><input type="text" placeholder="OFG"/></td>
+    <td id="OFG8"><input type="text" placeholder="OFG"/></td>
   </tr>
 
   <!-- Extra -->
@@ -112,105 +156,95 @@
 </table>
 
 <script>
-// --- Cursos con prerrequisitos corregidos ---
+// --- Cursos con prerrequisitos exactos ---
 const cursos = {
-  // 1° semestre
   IC1103:{nombre:"Introducción a la Programación",sigla:"IC1103",prereq:[]},
   MAT1107:{nombre:"Introducción al Cálculo",sigla:"MAT1107",prereq:[]},
   MAT1207:{nombre:"Introducción al Álgebra y Geometría",sigla:"MAT1207",prereq:[]},
   MAT0007:{nombre:"Taller Matemáticas p/ Estadística",sigla:"MAT0007",prereq:[]},
 
-  // 2°
   IIC2233:{nombre:"Programación Avanzada",sigla:"IIC2233",prereq:["IC1103"]},
   MAT1610:{nombre:"Cálculo I",sigla:"MAT1610",prereq:["MAT1107"]},
   IMT2210:{nombre:"Álgebra Lineal CD",sigla:"IMT2210",prereq:["IC1103","MAT1107","MAT1207"]},
   IMT2200:{nombre:"Intro a Ciencia de Datos",sigla:"IMT2200",prereq:["IC1103","MAT1207"]},
 
-  // 3°
-  IMT2220:{nombre:"Cálculo p/ Ciencia Datos",sigla:"IMT2220",prereq:["MAT1610"]},
+  IMT2220:{nombre:"Cálculo p/ Ciencia Datos",sigla:"IMT2220",prereq:["MAT1610"],simultaneo:["IMT2210"]},
   IMT2230:{nombre:"Álgebra Lineal Avanzada",sigla:"IMT2230",prereq:["MAT1610","IMT2210"]},
   ETI195:{nombre:"Ética CD y Estadística",sigla:"ETI195",prereq:["IIC2233","IMT2200"]},
   IIC1253:{nombre:"Matemáticas Discretas",sigla:"IIC1253",prereq:["IMT2210"]},
 
-  // 4°
   EYP1025:{nombre:"Modelos Probabilísticos",sigla:"EYP1025",prereq:["IMT2220","IMT2230"]},
   IC2133:{nombre:"Estructuras de Datos",sigla:"IC2133",prereq:["IIC2233","IIC1253"]},
   IC2413:{nombre:"Bases de Datos",sigla:"IC2413",prereq:["IIC2233"]},
-  IMT2250:{nombre:"Optimización p/ CD",sigla:"IMT2250",prereq:["IMT2220","IMT2210"]},
+  IMT2250:{nombre:"Optimización CD",sigla:"IMT2250",prereq:["IMT2220","IMT2210"]},
 
-  // 5°
   EYP2114:{nombre:"Inferencia Estadística",sigla:"EYP2114",prereq:["EYP1025"]},
   IIC2613:{nombre:"Inteligencia Artificial",sigla:"IIC2613",prereq:["EYP1025","IIC2233"]},
   LIC2440:{nombre:"Procesamiento Datos Masivos",sigla:"LIC2440",prereq:["IC2413","IC2133"]},
   OTRO:{nombre:"Optativo/MINOR",sigla:"OPR",prereq:[]},
 
-  // 6°
-  EYP2101:{nombre:"Procesos Estocásticos",sigla:"EYP2101",prereq:["EYP2114"]},
+  EYP2101:{nombre:"Procesos Estocásticos Aplicados",sigla:"EYP2101",prereq:["EYP2114"]},
   EYP2301:{nombre:"Análisis de Regresión",sigla:"EYP2301",prereq:["EYP2114"]},
   C2026:{nombre:"Visualización Información",sigla:"C2026",prereq:["IC1103"]},
   IIC2433:{nombre:"Minería de Datos",sigla:"IIC2433",prereq:["IC1103","EYP1025","IMT2210"]},
 
-  // 7°
   EYP2111:{nombre:"Simulación",sigla:"EYP2111",prereq:["EYP2101"]},
   EYP2801:{nombre:"Métodos Bayesianos",sigla:"EYP2801",prereq:["EYP2114"]},
-  IMT2260:{nombre:"Teoría de AA",sigla:"IMT2260",prereq:["EYP2114","LIC2440","IMT2250"]},
-  OPR_MINOR_7:{nombre:"Optativo/MINOR",sigla:"OPR-7",prereq:[]},
+  IMT2260:{nombre:"Teoría Aprendizaje Automático",sigla:"IMT2260",prereq:["EYP2114","LIC2440","IMT2250"]},
+  OPR_MINOR_7:{nombre:"Optativo/MINOR",sigla:"OPR_MINOR_7",prereq:[]},
 
-  // 8°
   IMT2270:{nombre:"Proyecto de Graduación",sigla:"IMT2270",prereq:["EYP2801","IMT2260","IMT2250","ETI195"]},
-  OPR_MINOR_8:{nombre:"Optativo/MINOR",sigla:"OPR-8",prereq:[]},
+  OPR_MINOR_8:{nombre:"Optativo/MINOR",sigla:"OPR_MINOR_8",prereq:[]},
+
+  OFG1:{nombre:"OFG",sigla:"OFG1",prereq:[]},
+  OFG2:{nombre:"OFG",sigla:"OFG2",prereq:[]},
+  OFG3:{nombre:"OFG",sigla:"OFG3",prereq:[]},
+  OFG4:{nombre:"OFG",sigla:"OFG4",prereq:[]},
+  OFG5:{nombre:"OFG",sigla:"OFG5",prereq:[]},
+  OFG6:{nombre:"OFG",sigla:"OFG6",prereq:[]},
+  OFG7:{nombre:"OFG",sigla:"OFG7",prereq:[]},
+  OFG8:{nombre:"OFG",sigla:"OFG8",prereq:[]},
 };
 
-// Para seguir el estado
-Object.keys(cursos).forEach(c => cursos[c].aprobado = false);
-
-// OFG y Extras
-const editables = ["OFG1","OFG2","OFG3","OFG4","OFG5","OFG6","OFG7","OFG8",
-                   "EXT1","EXT2","EXT3","EXT4","EXT5","EXT6","EXT7","EXT8"];
-
-function prerreqOK(c) {
-  return c.prereq.every(p => cursos[p] && cursos[p].aprobado);
+// --- Funciones para colores ---
+function estanPrerrequisitosAprobados(curso){
+  if(!curso.prereq) return true;
+  return curso.prereq.every(cod=>cursos[cod] && cursos[cod].aprobado);
 }
 
-function render() {
-  Object.keys(cursos).forEach(id => {
-    const c = cursos[id];
-    const td = document.getElementById(id);
-    if (!td) return;
-
-    td.className = "";
-    td.innerHTML =
-      `<div class='curso-nombre'>${c.nombre}</div>
-       <div class='curso-sigla'>${c.sigla}</div>`;
-
-    if (c.aprobado) td.classList.add("aprobado");
-    else if (prerreqOK(c)) td.classList.add("desbloqueado");
-    else td.classList.add("bloqueado");
-  });
-
-  editables.forEach(id=>{
-    const td=document.getElementById(id);
-    td.className="desbloqueado";
-    if(!td.innerHTML.includes("input"))
-      td.innerHTML=`<input placeholder="OFG/Extra"/>`;
+function actualizarMalla(){
+  Object.keys(cursos).forEach(cod=>{
+    const c = cursos[cod];
+    const td = document.getElementById(cod);
+    if(!td) return;
+    td.innerHTML = `<div class="curso-nombre">${c.nombre}</div><div class="curso-sigla">${c.sigla}</div>`;
+    td.className="";
+    if(c.aprobado){
+      td.classList.add("aprobado");
+    } else if(estanPrerrequisitosAprobados(c)){
+      td.classList.add("desbloqueado");
+    } else {
+      td.classList.add("bloqueado");
+    }
   });
 }
 
-function toggle(id) {
-  if(cursos[id]){
-    if(!prerreqOK(cursos[id])) return;
-    cursos[id].aprobado = !cursos[id].aprobado;
-    render();
-  } else if(editables.includes(id)){
-    const td=document.getElementById(id);
-    td.classList.toggle("aprobado");
-  }
+// --- Activar/Desactivar cursos y OFG ---
+function toggleAprobado(cod){
+  const c = cursos[cod];
+  if(!c) return;
+  if(!estanPrerrequisitosAprobados(c)) return;
+  c.aprobado = !c.aprobado;
+  actualizarMalla();
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-  render();
-  [...document.querySelectorAll("td")].forEach(td=>{
-    td.addEventListener("click",()=>toggle(td.id));
+  actualizarMalla();
+  Object.keys(cursos).forEach(cod=>{
+    const td = document.getElementById(cod);
+    if(td){
+      td.addEventListener("click",()=>toggleAprobado(cod));
+    }
   });
 });
 </script>
