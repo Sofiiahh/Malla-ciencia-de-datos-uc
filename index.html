@@ -80,24 +80,38 @@
 
   td.aprobado {
     background: #2EC4B6;
-    text-decoration: line-through;
     color: white;
     font-weight: bold;
   }
 
+  td.aprobado .curso-nombre,
+  td.aprobado .curso-sigla {
+    text-decoration: line-through;
+  }
+
   td input {
     width: 90%;
+    height: 35px;
     border: none;
     background: #fff7f7;
     text-align: center;
     font-size: 13px;
-    min-height: 35px;
     border-radius: 4px;
     cursor: text;
   }
 
   td input:focus {
     outline: 2px solid #2EC4B6;
+  }
+
+  /* Input OFG ocupa todo el TD cuando aprobado */
+  td.aprobado input {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    color: white;
+    text-decoration: line-through;
+    font-weight: bold;
   }
 
   .curso-nombre {
@@ -176,11 +190,11 @@
   <p><span class="color-box" style="background:#2EC4B6;"></span> Aprobado (tachado)</p>
   <p><span class="color-box" style="background:#FF9EBB;"></span> Desbloqueado (puede aprobarse)</p>
   <p><span class="color-box" style="background:#FF6A00;"></span> Bloqueado (prerrequisitos no cumplidos)</p>
-  <p>OFG: puedes escribir su nombre y luego tacharlo con doble clic para marcar como aprobado (cambia de color).</p>
+  <p>OFG: puedes escribir su nombre y luego doble clic para aprobar (cambia de color de fondo).</p>
 </div>
 
 <script>
-// --- Cursos con prerrequisitos ---
+// Cursos con prerrequisitos
 const cursos = {
   IC1103:{nombre:"Introducción a la Programación",sigla:"IC1103",prereq:[]},
   MAT1107:{nombre:"Introducción al Cálculo",sigla:"MAT1107",prereq:[]},
@@ -230,7 +244,7 @@ const cursos = {
   OFG8:{nombre:"OFG",sigla:"OFG8",prereq:[]},
 };
 
-// --- Funciones ---
+// Funciones
 function estanPrerrequisitosAprobados(curso){
   if(!curso.prereq) return true;
   return curso.prereq.every(cod=>cursos[cod] && cursos[cod].aprobado);
@@ -263,26 +277,15 @@ function toggleAprobado(cod){
   actualizarMalla();
 }
 
-// --- Tachado y color de OFG ---
+// Aprobar OFG
 function toggleOFG(event){
-  const input = event.target;
-  if(input.dataset.tachado === "true"){
-    input.style.textDecoration = "none";
-    input.style.color = "#000";
-    input.style.backgroundColor = "#fff7f7";
-    input.dataset.tachado = "false";
-  } else {
-    input.style.textDecoration = "line-through";
-    input.style.color = "#fff";
-    input.style.backgroundColor = "#2EC4B6";
-    input.dataset.tachado = "true";
-  }
+  const td = event.target.parentElement;
+  td.classList.toggle("aprobado");
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
   actualizarMalla();
 
-  // Cursos normales
   Object.keys(cursos).forEach(cod=>{
     const td = document.getElementById(cod);
     if(td){
@@ -290,11 +293,9 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
   });
 
-  // OFG
   for(let i=1;i<=8;i++){
     const inputOFG = document.querySelector(`#OFG${i} input`);
     if(inputOFG){
-      inputOFG.dataset.tachado = "false";
       inputOFG.addEventListener("dblclick", toggleOFG);
     }
   }
