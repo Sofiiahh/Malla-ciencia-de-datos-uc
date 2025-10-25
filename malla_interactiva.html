@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Malla Curricular Interactiva</title>
-<style>
-  body { font-family: Arial, sans-serif; background: #f5f5f5; }
-  table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-  th, td { border: 1px solid #999; padding: 8px; text-align: center; vertical-align: middle; cursor: pointer; transition: all 0.2s; }
-  th { background-color: #444; color: #fff; }
-  td div { line-height: 1.2; }
-  .aprobado { background-color: #5DADE2; color: white; }
-  .desbloqueado { background-color: #F4D03F; }
-  .bloqueado { background-color: #F1948A; }
-  .ofg { background-color: #F8C1D5; }
-  .extra { background-color: #F8C1D5; }
-</style>
+  <meta charset="UTF-8">
+  <title>Malla Curricular Interactiva</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #999; padding: 8px; text-align: center; vertical-align: middle; cursor: pointer; transition: all 0.2s; }
+    th { background-color: #444; color: #fff; }
+    td div { line-height: 1.2; }
+    .aprobado { background-color: #5DADE2; color: white; }
+    .desbloqueado { background-color: #F4D03F; }
+    .bloqueado { background-color: #F1948A; }
+    .ofg { background-color: #F8C1D5; }
+    .extra { background-color: #F8C1D5; }
+  </style>
 </head>
 <body>
 
@@ -152,40 +152,6 @@ function actualizarMalla() {
     if (!elemento) continue;
 
     // Nombre arriba, sigla debajo
-    elemento.innerHTML = `<div>${curso.nombre}</div><div style="font-weight:bold; margin-top:4px;">${codigo}</div>`;
-
-    if (curso.esExtra) {
-      elemento.className = curso.aprobado ? "aprobado extra" : "extra";
-      continue; // No afecta a otros cursos
-    }
-
-    const prereqCumplidos = curso.prereq.every(c => cursos[c].aprobado);
-    const simultaneoOK = curso.simultaneo ? curso.simultaneo.every(s => cursos[s].aprobado || cursos[s].simultaneo) : true;
-
-    if (curso.aprobado) {
-      elemento.className = "aprobado";
-    } else if (prereqCumplidos || simultaneoOK) {
-      elemento.className = "desbloqueado";
-    } else {
-      elemento.className = "bloqueado";
-    }
-  }
-}
-
-function toggleAprobado(codigo) {
-  cursos[codigo].aprobado = !cursos[codigo].aprobado;
-  actualizarMalla();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  for (const codigo in cursos) {
-    const elemento = document.getElementById(codigo);
-    if (elemento) {
-      elemento.addEventListener("click", () => toggleAprobado(codigo));
-    }
-  }
-  actualizarMalla();
-});
-</script>
-</body>
-</html>
+    elemento.innerHTML = `<
+::contentReference[oaicite:0]{index=0}
+ 
