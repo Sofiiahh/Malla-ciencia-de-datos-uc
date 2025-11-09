@@ -1,1 +1,108 @@
+<script>
+// Cursos con prerrequisitos
+const cursos = {
+  IC1103:{nombre:"Introducción a la Programación",sigla:"IC1103",prereq:[]},
+  MAT1107:{nombre:"Introducción al Cálculo",sigla:"MAT1107",prereq:[]},
+  MAT1207:{nombre:"Introducción al Álgebra y Geometría",sigla:"MAT1207",prereq:[]},
+  MAT0007:{nombre:"Taller Matemáticas p/ Estadística",sigla:"MAT0007",prereq:[]},
 
+  IIC2233:{nombre:"Programación Avanzada",sigla:"IIC2233",prereq:["IC1103"]},
+  MAT1610:{nombre:"Cálculo I",sigla:"MAT1610",prereq:["MAT1107"]},
+  IMT2210:{nombre:"Álgebra Lineal CD",sigla:"IMT2210",prereq:["IC1103","MAT1107","MAT1207"]},
+  IMT2200:{nombre:"Intro a Ciencia de Datos",sigla:"IMT2200",prereq:["IC1103","MAT1207"]},
+
+  IMT2220:{nombre:"Cálculo p/ Ciencia Datos",sigla:"IMT2220",prereq:["MAT1610"],simultaneo:["IMT2210"]},
+  IMT2230:{nombre:"Álgebra Lineal Avanzada",sigla:"IMT2230",prereq:["MAT1610","IMT2210"]},
+  ETI195:{nombre:"Ética CD y Estadística",sigla:"ETI195",prereq:["IIC2233","IMT2200"]},
+  IIC1253:{nombre:"Matemáticas Discretas",sigla:"IIC1253",prereq:["IMT2210"]},
+
+  EYP1025:{nombre:"Modelos Probabilísticos",sigla:"EYP1025",prereq:["IMT2220","IMT2230"]},
+  IC2133:{nombre:"Estructuras de Datos",sigla:"IC2133",prereq:["IIC2233","IIC1253"]},
+  IC2413:{nombre:"Bases de Datos",sigla:"IC2413",prereq:["IIC2233"]},
+  IMT2250:{nombre:"Optimización CD",sigla:"IMT2250",prereq:["IMT2220","IMT2210"]},
+
+  EYP2114:{nombre:"Inferencia Estadística",sigla:"EYP2114",prereq:["EYP1025"]},
+  IIC2613:{nombre:"Inteligencia Artificial",sigla:"IIC2613",prereq:["EYP1025","IIC2233"]},
+  LIC2440:{nombre:"Procesamiento Datos Masivos",sigla:"LIC2440",prereq:["IC2413","IC2133"]},
+  OTRO:{nombre:"Optativo/MINOR",sigla:"OPR",prereq:[]},
+
+  EYP2101:{nombre:"Procesos Estocásticos Aplicados",sigla:"EYP2101",prereq:["EYP2114"]},
+  EYP2301:{nombre:"Análisis de Regresión",sigla:"EYP2301",prereq:["EYP2114"]},
+  C2026:{nombre:"Visualización Información",sigla:"C2026",prereq:["IC1103"]},
+  IIC2433:{nombre:"Minería de Datos",sigla:"IIC2433",prereq:["IC1103","EYP1025","IMT2210"]},
+
+  EYP2111:{nombre:"Simulación",sigla:"EYP2111",prereq:["EYP2101"]},
+  EYP2801:{nombre:"Métodos Bayesianos",sigla:"EYP2801",prereq:["EYP2114"]},
+  IMT2260:{nombre:"Teoría Aprendizaje Automático",sigla:"IMT2260",prereq:["EYP2114","LIC2440","IMT2250"]},
+  OPR_MINOR_7:{nombre:"Optativo/MINOR",sigla:"OPR_MINOR_7",prereq:[]},
+
+  IMT2270:{nombre:"Proyecto de Graduación",sigla:"IMT2270",prereq:["EYP2801","IMT2260","IMT2250","ETI195"]},
+  OPR_MINOR_8:{nombre:"Optativo/MINOR",sigla:"OPR_MINOR_8",prereq:[]},
+
+  OFG1:{nombre:"OFG",sigla:"OFG1",prereq:[]},
+  OFG2:{nombre:"OFG",sigla:"OFG2",prereq:[]},
+  OFG3:{nombre:"OFG",sigla:"OFG3",prereq:[]},
+  OFG4:{nombre:"OFG",sigla:"OFG4",prereq:[]},
+  OFG5:{nombre:"OFG",sigla:"OFG5",prereq:[]},
+  OFG6:{nombre:"OFG",sigla:"OFG6",prereq:[]},
+  OFG7:{nombre:"OFG",sigla:"OFG7",prereq:[]},
+  OFG8:{nombre:"OFG",sigla:"OFG8",prereq:[]},
+};
+
+// Funciones
+function estanPrerrequisitosAprobados(curso){
+  if(!curso.prereq) return true;
+  return curso.prereq.every(cod=>cursos[cod] && cursos[cod].aprobado);
+}
+
+function actualizarMalla(){
+  Object.keys(cursos).forEach(cod=>{
+    const c = cursos[cod];
+    const td = document.getElementById(cod);
+    if(!td) return;
+    if(cod.startsWith("OFG")) return;
+    td.innerHTML = `<div class="curso-nombre">${c.nombre}</div><div class="curso-sigla">${c.sigla}</div>`;
+    td.className="";
+    if(c.aprobado){
+      td.classList.add("aprobado");
+    } else if(estanPrerrequisitosAprobados(c)){
+      td.classList.add("desbloqueado");
+    } else {
+      td.classList.add("bloqueado");
+    }
+  });
+}
+
+function toggleAprobado(cod){
+  if(cod.startsWith("OFG")) return;
+  const c = cursos[cod];
+  if(!c) return;
+  if(!estanPrerrequisitosAprobados(c)) return;
+  c.aprobado = !c.aprobado;
+  actualizarMalla();
+}
+
+// Aprobar OFG
+function toggleOFG(event){
+  const td = event.target.parentElement;
+  td.classList.toggle("aprobado");
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  actualizarMalla();
+
+  Object.keys(cursos).forEach(cod=>{
+    const td = document.getElementById(cod);
+    if(td){
+      td.addEventListener("click",()=>toggleAprobado(cod));
+    }
+  });
+
+  for(let i=1;i<=8;i++){
+    const inputOFG = document.querySelector(`#OFG${i} input`);
+    if(inputOFG){
+      inputOFG.addEventListener("dblclick", toggleOFG);
+    }
+  }
+});
+</script>
