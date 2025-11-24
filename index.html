@@ -3,13 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Malla Interactiva CD UC — Plan Personalizado</title>
+<title>Malla Interactiva Licenciatura en Ciencia de Datos UC</title>
 <style>
-body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-h1,h2,h3 { text-align:center; }
-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom:20px; }
-th, td { border:1px solid #666; padding:10px; text-align:center; vertical-align:middle; min-height:80px; font-size:13px; word-wrap:break-word; }
-th { color:white; }
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9;
+  position: relative;
+  overflow-x: hidden;
+}
+body::before {
+  content:'';
+  position: fixed;
+  top:-100px; left:-100px;
+  width:1200px; height:1200px;
+  background: radial-gradient(circle at 20% 30%, #FFD6F7 0%, transparent 50%),
+              radial-gradient(circle at 80% 70%, #D6FFFF 0%, transparent 50%);
+  z-index:-1;
+  opacity:0.2;
+  transform: rotate(20deg);
+}
+h1,h2 {
+  text-align:center;
+  margin:10px 0;
+}
+table {
+  width:90%;
+  max-width:1200px;
+  margin: 20px auto;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+th, td {
+  border:1px solid #666;
+  padding:10px;
+  text-align:center;
+  vertical-align:middle;
+  min-height:80px;
+  font-size:13px;
+  cursor:pointer;
+  word-wrap:break-word;
+}
+th { color:white; font-size:14px; }
+td.aprobado { background:#2EC4B6; color:white; text-decoration:line-through; font-weight:bold; }
+td.bloqueado { background:#FF6A00; color:white; opacity:0.8; cursor:not-allowed; }
+td.desbloqueado { background:#FF9EBB; font-weight:bold; }
+td.sugerido { background:#4CAF50; color:white; font-weight:bold; }
+td.futuro { background:#FFD700; color:#000; font-weight:bold; }
+td input { width:90%; height:35px; border:none; background:#fff7f7; text-align:center; font-size:13px; border-radius:4px; }
+td input:focus { outline:2px solid #2EC4B6; }
+td.aprobado input { width:100%; height:100%; background:transparent; color:white; text-decoration:line-through; font-weight:bold; cursor:default; }
+.curso-nombre { font-size:13px; }
+.curso-sigla { font-size:11px; font-style:italic; opacity:0.85; }
+
 .sem1 th{background:#FFC3A0;}
 .sem2 th{background:#FFB3C1;}
 .sem3 th{background:#C1FFC3;}
@@ -18,149 +65,158 @@ th { color:white; }
 .sem6 th{background:#FFF5A0;}
 .sem7 th{background:#FFBFA0;}
 .sem8 th{background:#BFFFC1;}
-.aprobado { background:#2EC4B6; color:white; text-decoration:line-through; font-weight:bold;}
-.sugerido { background:#4CAF50; color:white; font-weight:bold;}
-.futuro { background:#FFD700; color:black; font-weight:bold;}
-.bloqueado { background:#FF6A00; color:white; opacity:0.8;}
-.curso-nombre { font-size:13px; }
-.curso-sigla { font-size:11px; font-style:italic; opacity:0.85; }
+
 .legend {max-width:800px; margin:20px auto; background:#fff; border:1px solid #666; border-radius:5px; padding:15px; font-size:14px;}
 .color-box {display:inline-block; width:20px; height:20px; margin-right:8px; vertical-align:middle;}
 </style>
 </head>
 <body>
 
-<h1>Malla Interactiva CD UC</h1>
-<h2>Selecciona los ramos que ya aprobaste</h2>
+<h1>Malla Interactiva Licenciatura en Ciencia de Datos UC</h1>
+<h2>Plan de Acción: Indica los ramos que ya aprobaste</h2>
 
-<form id="formAprobados"></form>
-<button id="generarPlan" style="display:block; margin:10px auto; padding:10px 20px;">Generar Plan de Acción</button>
+<label style="text-align:center; display:block; margin-bottom:15px;">Selecciona tu semestre actual:
+<select id="semestreActual">
+  <option value="1">1° Semestre</option>
+  <option value="2">2° Semestre</option>
+  <option value="3">3° Semestre</option>
+  <option value="4">4° Semestre</option>
+  <option value="5">5° Semestre</option>
+  <option value="6">6° Semestre</option>
+  <option value="7">7° Semestre</option>
+  <option value="8">8° Semestre</option>
+</select>
+</label>
 
-<div id="planMalla"></div>
+<table>
+<tr class="sem1"><th>1° Semestre</th><th class="sem2">2° Semestre</th><th class="sem3">3° Semestre</th><th class="sem4">4° Semestre</th>
+<th class="sem5">5° Semestre</th><th class="sem6">6° Semestre</th><th class="sem7">7° Semestre</th><th class="sem8">8° Semestre</th></tr>
+
+<tr>
+<td id="IC1103"></td><td id="IIC2233"></td><td id="IMT2220"></td><td id="EYP1025"></td>
+<td id="EYP2114"></td><td id="EYP2101"></td><td id="EYP2111"></td><td id="IMT2270"></td>
+</tr>
+<tr>
+<td id="MAT1107"></td><td id="MAT1610"></td><td id="IMT2230"></td><td id="IC2133"></td>
+<td id="IIC2613"></td><td id="EYP2301"></td><td id="EYP2801"></td><td></td>
+</tr>
+<tr>
+<td id="MAT1207"></td><td id="IMT2210"></td><td id="ETI195"></td><td id="IC2413"></td>
+<td id="LIC2440"></td><td id="C2026"></td><td id="IMT2260"></td><td></td>
+</tr>
+<tr>
+<td id="MAT0007"></td><td id="IMT2200"></td><td id="IIC1253"></td><td id="IMT2250"></td>
+<td id="OTRO"></td><td id="IIC2433"></td><td id="OPR_MINOR_7"></td><td id="OPR_MINOR_8"></td>
+</tr>
+<tr>
+<td id="OFG1"><input type="text" placeholder="OFG"/></td>
+<td id="OFG2"><input type="text" placeholder="OFG"/></td>
+<td id="OFG3"><input type="text" placeholder="OFG"/></td>
+<td id="OFG4"><input type="text" placeholder="OFG"/></td>
+<td id="OFG5"><input type="text" placeholder="OFG"/></td>
+<td id="OFG6"><input type="text" placeholder="OFG"/></td>
+<td id="OFG7"><input type="text" placeholder="OFG"/></td>
+<td id="OFG8"><input type="text" placeholder="OFG"/></td>
+</tr>
+</table>
 
 <div class="legend">
 <p><span class="color-box" style="background:#2EC4B6;"></span> Aprobado</p>
+<p><span class="color-box" style="background:#FF9EBB;"></span> Desbloqueado</p>
 <p><span class="color-box" style="background:#4CAF50;"></span> Sugerido este semestre</p>
 <p><span class="color-box" style="background:#FFD700;"></span> Futuro (prerrequisitos cumplidos)</p>
 <p><span class="color-box" style="background:#FF6A00;"></span> Bloqueado</p>
 </div>
 
+<h2>Plan de Acción</h2>
+<div id="sugeridos"></div>
+
 <script>
-// Ramos por semestre
 const ramos = {
-1:{IC1103:"Introducción a la Programación",MAT1107:"Introducción al Cálculo",MAT1207:"Introducción al Álgebra y Geometría",MAT0007:"Taller Matemáticas p/Estadística","OFG1":"OFG (FIL2001)"},
-2:{IIC2233:"Programación Avanzada",MAT1610:"Cálculo I",IMT2210:"Álgebra Lineal CD",IMT2200:"Introducción a Ciencia de Datos","OFG2":"OFG (TEOLOGICO)"},
-3:{IMT2220:"Cálculo para Ciencia de Datos",IMT2230:"Álgebra Lineal Avanzada y Modelamiento",ETI195:"Ética CD y Estadística",IIC1253:"Matemáticas Discretas","OFG3":"OFG"},
-4:{EYP1025:"Modelos Probabilísticos",IC2133:"Estructuras de Datos y Algoritmos",IC2413:"Bases de Datos",IMT2250:"Optimización CD","OFG4":"OFG"},
-5:{EYP2114:"Inferencia Estadística",IIC2613:"Inteligencia Artificial",LIC2440:"Procesamiento Datos Masivos","OTRO":"OPR/MINOR","OFG5":"OFG"},
-6:{EYP2101:"Procesos Estocásticos Aplicados",EYP2301:"Análisis de Regresión",C2026:"Visualización Información",IIC2433:"Minería de Datos","OFG6":"OFG"},
-7:{EYP2111:"Simulación",EYP2801:"Métodos Bayesianos",IMT2260:"Teoría Aprendizaje Automático","OPR_MINOR_7":"OPR/MINOR","OFG7":"OFG"},
-8:{IMT2270:"Proyecto de Graduación","OPR_MINOR_8":"OPR/MINOR","OPR_MINOR_9":"OPR/MINOR","OPR_MINOR_10":"OPR/MINOR","OFG8":"OFG"}
+IC1103:{nombre:"Introducción a la Programación", creditos:10, prereq:[]},
+MAT1107:{nombre:"Introducción al Cálculo", creditos:10, prereq:[]},
+MAT1207:{nombre:"Introducción al Álgebra y Geometría", creditos:10, prereq:[]},
+MAT0007:{nombre:"Taller Matemáticas p/ Estadística", creditos:10, prereq:[]},
+IIC2233:{nombre:"Programación Avanzada", creditos:10, prereq:["IC1103"]},
+MAT1610:{nombre:"Cálculo I", creditos:10, prereq:["MAT1107"]},
+IMT2210:{nombre:"Álgebra Lineal CD", creditos:10, prereq:["IC1103","MAT1107","MAT1207"]},
+IMT2200:{nombre:"Introducción a Ciencia de Datos", creditos:10, prereq:["IC1103","MAT1207"]},
+IMT2220:{nombre:"Cálculo para Ciencia de Datos", creditos:10, prereq:["MAT1610"]},
+IMT2230:{nombre:"Álgebra Lineal Avanzada y Modelamiento", creditos:10, prereq:["MAT1610","IMT2210"]},
+ETI195:{nombre:"Ética CD y Estadística", creditos:10, prereq:["IIC2233","IMT2200"]},
+IIC1253:{nombre:"Matemáticas Discretas", creditos:10, prereq:["IMT2210"]},
+EYP1025:{nombre:"Modelos Probabilísticos", creditos:10, prereq:["IMT2220","IMT2230"]},
+IC2133:{nombre:"Estructuras de Datos y Algoritmos", creditos:10, prereq:["IIC2233","IIC1253"]},
+IC2413:{nombre:"Bases de Datos", creditos:10, prereq:["IIC2233","IIC1253"]},
+IMT2250:{nombre:"Optimización CD", creditos:10, prereq:["IMT2220","IMT2210"]},
+EYP2114:{nombre:"Inferencia Estadística", creditos:10, prereq:["EYP1025"]},
+IIC2613:{nombre:"Inteligencia Artificial", creditos:10, prereq:["EYP1025","IIC2233"]},
+LIC2440:{nombre:"Procesamiento Datos Masivos", creditos:10, prereq:["IC2413","IC2133"]},
+EYP2101:{nombre:"Procesos Estocásticos Aplicados", creditos:10, prereq:["EYP2114"]},
+EYP2301:{nombre:"Análisis de Regresión", creditos:10, prereq:["EYP2114"]},
+C2026:{nombre:"Visualización Información", creditos:10, prereq:["IC1103"]},
+IIC2433:{nombre:"Minería de Datos", creditos:10, prereq:["IC1103","EYP1025","IMT2210"]},
+EYP2111:{nombre:"Simulación", creditos:10, prereq:["EYP2101"]},
+EYP2801:{nombre:"Métodos Bayesianos", creditos:10, prereq:["EYP2114"]},
+IMT2260:{nombre:"Teoría Aprendizaje Automático", creditos:10, prereq:["IMT2250","EYP1025"]},
+IMT2270:{nombre:"Proyecto de Graduación", creditos:10, prereq:["EYP2801","IMT2260","IMT2250","ETI195"]},
+OTRO:{nombre:"Optativo/MINOR", creditos:10, prereq:[]},
+OPR_MINOR_7:{nombre:"Optativo/MINOR", creditos:10, prereq:[]},
+OPR_MINOR_8:{nombre:"Optativo/MINOR", creditos:10, prereq:[]},
 };
 
-// Prerrequisitos
-const prereq = {
-IC1103:[], MAT1107:[], MAT1207:[], MAT0007:[],
-IIC2233:["IC1103"], MAT1610:["MAT1107"], IMT2210:["IC1103","MAT1107","MAT1207"], IMT2200:["IC1103","MAT1207"],
-IMT2220:["MAT1610"], IMT2230:["MAT1610","IMT2210"], ETI195:["IIC2233","IMT2200"], IIC1253:["IMT2210"],
-EYP1025:["IMT2220","IMT2230"], IC2133:["IIC2233","IIC1253"], IC2413:["IIC2233","IIC1253"], IMT2250:["IMT2220","IMT2210"],
-EYP2114:["EYP1025"], IIC2613:["EYP1025","IIC2233"], LIC2440:["IC2413","IC2133"], OTRO:[],
-EYP2101:["EYP2114"], EYP2301:["EYP2114"], C2026:["IC1103"], IIC2433:["IC1103","EYP1025","IMT2210"],
-EYP2111:["EYP2101"], EYP2801:["EYP2114"], IMT2260:["IMT2250","EYP1025"], IMT2270:["EYP2801","IMT2260","IMT2250","ETI195"],
-"OPR_MINOR_7":[], "OPR_MINOR_8":[], "OPR_MINOR_9":[], "OPR_MINOR_10":[],
-"OFG1":[], "OFG2":[], "OFG3":[], "OFG4":[], "OFG5":[], "OFG6":[], "OFG7":[], "OFG8":[]
-};
+let aprobados = [];
 
-const creditosPorRamo = 10;
-let aprobados=[];
+function estanDesbloqueado(curso){return ramos[curso].prereq.every(pr => aprobados.includes(pr));}
 
-// Generar formulario
-function generarFormulario(){
-  const form=document.getElementById('formAprobados');
-  for(let s=1;s<=8;s++){
-    let fs=document.createElement('fieldset');
-    let legend=document.createElement('legend');
-    legend.textContent=`${s}° Semestre`;
-    fs.appendChild(legend);
-    for(const cod in ramos[s]){
-      let label=document.createElement('label');
-      label.style.display="block";
-      let input=document.createElement('input');
-      input.type="checkbox"; input.value=cod;
-      label.appendChild(input);
-      label.append(` ${ramos[s][cod]} (${cod})`);
-      fs.appendChild(label);
-    }
-    form.appendChild(fs);
-  }
-}
-
-function estanDesbloqueado(cod){
-  return prereq[cod].every(p=>aprobados.includes(p));
-}
-
-// Generar malla con colores por semestre
-function generarMalla(){
-  const planMalla=document.getElementById('planMalla');
-  aprobados=[];
-  document.querySelectorAll('#formAprobados input[type=checkbox]').forEach(cb=>{if(cb.checked) aprobados.push(cb.value);});
-
-  let html='<h3>Plan de acción personalizado:</h3><table>';
-  html+='<tr class="sem1"><th>1° Sem</th><th class="sem2">2° Sem</th><th class="sem3">3° Sem</th><th class="sem4">4° Sem</th><th class="sem5">5° Sem</th><th class="sem6">6° Sem</th><th class="sem7">7° Sem</th><th class="sem8">8° Sem</th></tr>';
-
-  // máximo 60 créditos por semestre
-  let pendientes = Object.keys(prereq).filter(c=>!aprobados.includes(c));
-  let semActual=1;
-  let sems=[];
-  for(let s=1;s<=8;s++) sems[s]=[];
-
-  while(pendientes.length>0){
-    let creditos=0;
-    for(let s=1;s<=8;s++){
-      if(pendientes.length==0) break;
-      for(let i=0;i<pendientes.length;i++){
-        let c=pendientes[i];
-        if(creditos>=60) break;
-        if(estanDesbloqueado(c)){
-          sems[s].push(c);
-          creditos+=creditosPorRamo;
-          pendientes.splice(i,1); i--;
-        }
+function actualizarMalla(){
+  Object.keys(ramos).forEach(cod=>{
+    const td = document.getElementById(cod);
+    if(!td) return;
+    td.innerHTML = `<div class="curso-nombre">${ramos[cod].nombre}</div><div class="curso-sigla">${cod}</div>`;
+    td.className="";
+    if(aprobados.includes(cod)) td.classList.add("aprobado");
+    else if(estanDesbloqueado(cod)) td.classList.add("desbloqueado");
+    else td.classList.add("bloqueado");
+    td.onclick = ()=>{
+      if(!aprobados.includes(cod) && estanDesbloqueado(cod)){
+        aprobados.push(cod);
+        actualizarMalla();
+        calcularSugeridos();
       }
-    }
-    if(pendientes.length>0) semActual++;
-    if(semActual>8) break;
-  }
-
-  // Encontrar max filas
-  let maxFilas=0;
-  for(let s=1;s<=8;s++) maxFilas=Math.max(maxFilas,sems[s].length);
-
-  // generar tabla
-  for(let i=0;i<maxFilas;i++){
-    html+='<tr>';
-    for(let s=1;s<=8;s++){
-      let cod=sems[s][i];
-      if(cod){
-        let clase=aprobados.includes(cod)?'aprobado':estanDesbloqueado(cod)?'sugerido':'bloqueado';
-        html+=`<td class="${clase}"><div class="curso-nombre">${ramosPorCodigo(cod)}</div><div class="curso-sigla">${cod}</div></td>`;
-      }else html+='<td></td>';
-    }
-    html+='</tr>';
-  }
-
-  html+='</table>';
-  planMalla.innerHTML=html;
+    };
+  });
 }
 
-function ramosPorCodigo(cod){
-  for(let s in ramos){ if(ramos[s][cod]) return ramos[s][cod]; }
-  return cod;
+function calcularSugeridos(){
+  const semActual = parseInt(document.getElementById('semestreActual').value);
+  let total = 0;
+  let sugeridos = [];
+  const tds = Array.from(document.querySelectorAll('table td'));
+  tds.forEach((td,i)=>{
+    const cod = td.id;
+    if(!ramos[cod] || aprobados.includes(cod)) return;
+    const sem = Math.floor(i/4)+1;
+    td.classList.remove('sugerido','futuro');
+    if(sem === semActual){
+      if(estanDesbloqueado(cod) && total + ramos[cod].creditos <=60){
+        sugeridos.push(cod);
+        total += ramos[cod].creditos;
+        td.classList.add('sugerido');
+      }
+    } else if(estanDesbloqueado(cod)){
+      td.classList.add('futuro');
+    }
+  });
+  document.getElementById('sugeridos').innerHTML = sugeridos.map(c=>`${c} – ${ramos[c].nombre} (${ramos[c].creditos}cr)`).join('<br>');
 }
 
-document.getElementById('generarPlan').addEventListener('click', generarMalla);
+document.getElementById('semestreActual').addEventListener('change', calcularSugeridos);
 
-generarFormulario();
+document.addEventListener("DOMContentLoaded",()=>{
+  actualizarMalla();
+  calcularSugeridos();
+});
 </script>
 </body>
 </html>
