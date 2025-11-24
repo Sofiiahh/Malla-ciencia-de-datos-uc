@@ -6,9 +6,9 @@
 <title>Malla Interactiva CD UC — Plan Personalizado</title>
 <style>
 body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-h1,h2,h3 { text-align: center; }
-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 20px; }
-th, td { border: 1px solid #666; padding: 10px; text-align: center; vertical-align: middle; min-height: 60px; font-size: 13px; }
+h1,h2,h3 { text-align:center; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom:20px; }
+th, td { border:1px solid #666; padding:10px; text-align:center; vertical-align:middle; min-height:80px; font-size:13px; word-wrap:break-word; }
 th { color:white; }
 .sem1 th{background:#FFC3A0;}
 .sem2 th{background:#FFB3C1;}
@@ -18,15 +18,14 @@ th { color:white; }
 .sem6 th{background:#FFF5A0;}
 .sem7 th{background:#FFBFA0;}
 .sem8 th{background:#BFFFC1;}
-.aprobado { background: #2EC4B6; color:white; text-decoration: line-through; font-weight:bold;}
-.sugerido { background: #4CAF50; color:white; font-weight:bold;}
-.futuro { background: #FFD700; color:black; font-weight:bold;}
-.bloqueado { background: #FF6A00; color:white; opacity:0.8;}
-.legend {max-width: 800px; margin: 20px auto; background:#fff; border:1px solid #666; border-radius:5px; padding:15px; font-size:14px;}
+.aprobado { background:#2EC4B6; color:white; text-decoration:line-through; font-weight:bold;}
+.sugerido { background:#4CAF50; color:white; font-weight:bold;}
+.futuro { background:#FFD700; color:black; font-weight:bold;}
+.bloqueado { background:#FF6A00; color:white; opacity:0.8;}
+.curso-nombre { font-size:13px; }
+.curso-sigla { font-size:11px; font-style:italic; opacity:0.85; }
+.legend {max-width:800px; margin:20px auto; background:#fff; border:1px solid #666; border-radius:5px; padding:15px; font-size:14px;}
 .color-box {display:inline-block; width:20px; height:20px; margin-right:8px; vertical-align:middle;}
-#planAccion {max-width:800px;margin:20px auto;background:#fff;border:1px solid #666;border-radius:5px;padding:15px;font-size:14px;}
-form {max-width:800px; margin:20px auto; background:#fff; padding:15px; border-radius:5px; border:1px solid #666;}
-fieldset {margin-bottom:15px;}
 </style>
 </head>
 <body>
@@ -34,32 +33,32 @@ fieldset {margin-bottom:15px;}
 <h1>Malla Interactiva CD UC</h1>
 <h2>Selecciona los ramos que ya aprobaste</h2>
 
-<form id="formAprobados">
-</form>
+<form id="formAprobados"></form>
+<button id="generarPlan" style="display:block; margin:10px auto; padding:10px 20px;">Generar Plan de Acción</button>
 
-<button id="generarPlan" style="display:block; margin:0 auto 20px auto; padding:10px 20px; font-size:16px;">Generar Plan de Acción</button>
-
-<div id="planAccion"></div>
+<div id="planMalla"></div>
 
 <div class="legend">
-  <p><span class="color-box" style="background:#2EC4B6;"></span> Aprobado</p>
-  <p><span class="color-box" style="background:#4CAF50;"></span> Sugerido este semestre</p>
-  <p><span class="color-box" style="background:#FFD700;"></span> Futuro (prerrequisitos cumplidos)</p>
-  <p><span class="color-box" style="background:#FF6A00;"></span> Bloqueado</p>
+<p><span class="color-box" style="background:#2EC4B6;"></span> Aprobado</p>
+<p><span class="color-box" style="background:#4CAF50;"></span> Sugerido este semestre</p>
+<p><span class="color-box" style="background:#FFD700;"></span> Futuro (prerrequisitos cumplidos)</p>
+<p><span class="color-box" style="background:#FF6A00;"></span> Bloqueado</p>
 </div>
 
 <script>
+// Ramos por semestre
 const ramos = {
-1:{IC1103:"Introducción a la Programación",MAT1107:"Introducción al Cálculo",MAT1207:"Introducción al Álgebra y Geometría",MAT0007:"Taller Matemáticas p/Estadística"},
-2:{IIC2233:"Programación Avanzada",MAT1610:"Cálculo I",IMT2210:"Álgebra Lineal CD",IMT2200:"Introducción a Ciencia de Datos"},
-3:{IMT2220:"Cálculo para Ciencia de Datos",IMT2230:"Álgebra Lineal Avanzada y Modelamiento",ETI195:"Ética CD y Estadística",IIC1253:"Matemáticas Discretas"},
-4:{EYP1025:"Modelos Probabilísticos",IC2133:"Estructuras de Datos y Algoritmos",IC2413:"Bases de Datos",IMT2250:"Optimización CD"},
-5:{EYP2114:"Inferencia Estadística",IIC2613:"Inteligencia Artificial",LIC2440:"Procesamiento Datos Masivos",OTRO:"Optativo/MINOR"},
-6:{EYP2101:"Procesos Estocásticos Aplicados",EYP2301:"Análisis de Regresión",C2026:"Visualización Información",IIC2433:"Minería de Datos"},
-7:{EYP2111:"Simulación",EYP2801:"Métodos Bayesianos",IMT2260:"Teoría Aprendizaje Automático",OPR_MINOR_7:"Optativo/MINOR"},
-8:{IMT2270:"Proyecto de Graduación",OPR_MINOR_8:"Optativo/MINOR"}
+1:{IC1103:"Introducción a la Programación",MAT1107:"Introducción al Cálculo",MAT1207:"Introducción al Álgebra y Geometría",MAT0007:"Taller Matemáticas p/Estadística","OFG1":"OFG (FIL2001)"},
+2:{IIC2233:"Programación Avanzada",MAT1610:"Cálculo I",IMT2210:"Álgebra Lineal CD",IMT2200:"Introducción a Ciencia de Datos","OFG2":"OFG (TEOLOGICO)"},
+3:{IMT2220:"Cálculo para Ciencia de Datos",IMT2230:"Álgebra Lineal Avanzada y Modelamiento",ETI195:"Ética CD y Estadística",IIC1253:"Matemáticas Discretas","OFG3":"OFG"},
+4:{EYP1025:"Modelos Probabilísticos",IC2133:"Estructuras de Datos y Algoritmos",IC2413:"Bases de Datos",IMT2250:"Optimización CD","OFG4":"OFG"},
+5:{EYP2114:"Inferencia Estadística",IIC2613:"Inteligencia Artificial",LIC2440:"Procesamiento Datos Masivos","OTRO":"OPR/MINOR","OFG5":"OFG"},
+6:{EYP2101:"Procesos Estocásticos Aplicados",EYP2301:"Análisis de Regresión",C2026:"Visualización Información",IIC2433:"Minería de Datos","OFG6":"OFG"},
+7:{EYP2111:"Simulación",EYP2801:"Métodos Bayesianos",IMT2260:"Teoría Aprendizaje Automático","OPR_MINOR_7":"OPR/MINOR","OFG7":"OFG"},
+8:{IMT2270:"Proyecto de Graduación","OPR_MINOR_8":"OPR/MINOR","OPR_MINOR_9":"OPR/MINOR","OPR_MINOR_10":"OPR/MINOR","OFG8":"OFG"}
 };
 
+// Prerrequisitos
 const prereq = {
 IC1103:[], MAT1107:[], MAT1207:[], MAT0007:[],
 IIC2233:["IC1103"], MAT1610:["MAT1107"], IMT2210:["IC1103","MAT1107","MAT1207"], IMT2200:["IC1103","MAT1207"],
@@ -67,27 +66,27 @@ IMT2220:["MAT1610"], IMT2230:["MAT1610","IMT2210"], ETI195:["IIC2233","IMT2200"]
 EYP1025:["IMT2220","IMT2230"], IC2133:["IIC2233","IIC1253"], IC2413:["IIC2233","IIC1253"], IMT2250:["IMT2220","IMT2210"],
 EYP2114:["EYP1025"], IIC2613:["EYP1025","IIC2233"], LIC2440:["IC2413","IC2133"], OTRO:[],
 EYP2101:["EYP2114"], EYP2301:["EYP2114"], C2026:["IC1103"], IIC2433:["IC1103","EYP1025","IMT2210"],
-EYP2111:["EYP2101"], EYP2801:["EYP2114"], IMT2260:["IMT2250","EYP1025"], IMT2270:["EYP2801","IMT2260","IMT2250","ETI195"], OPR_MINOR_7:[], OPR_MINOR_8:[]
+EYP2111:["EYP2101"], EYP2801:["EYP2114"], IMT2260:["IMT2250","EYP1025"], IMT2270:["EYP2801","IMT2260","IMT2250","ETI195"],
+"OPR_MINOR_7":[], "OPR_MINOR_8":[], "OPR_MINOR_9":[], "OPR_MINOR_10":[],
+"OFG1":[], "OFG2":[], "OFG3":[], "OFG4":[], "OFG5":[], "OFG6":[], "OFG7":[], "OFG8":[]
 };
 
 const creditosPorRamo = 10;
-
 let aprobados=[];
 
 // Generar formulario
 function generarFormulario(){
-  const form = document.getElementById('formAprobados');
+  const form=document.getElementById('formAprobados');
   for(let s=1;s<=8;s++){
-    let fs = document.createElement('fieldset');
-    let legend = document.createElement('legend');
-    legend.textContent = `${s}° Semestre`;
+    let fs=document.createElement('fieldset');
+    let legend=document.createElement('legend');
+    legend.textContent=`${s}° Semestre`;
     fs.appendChild(legend);
     for(const cod in ramos[s]){
-      let label = document.createElement('label');
+      let label=document.createElement('label');
       label.style.display="block";
-      let input = document.createElement('input');
-      input.type="checkbox";
-      input.value=cod;
+      let input=document.createElement('input');
+      input.type="checkbox"; input.value=cod;
       label.appendChild(input);
       label.append(` ${ramos[s][cod]} (${cod})`);
       fs.appendChild(label);
@@ -100,46 +99,66 @@ function estanDesbloqueado(cod){
   return prereq[cod].every(p=>aprobados.includes(p));
 }
 
-function generarPlan(){
-  const form = document.getElementById('formAprobados');
+// Generar malla con colores por semestre
+function generarMalla(){
+  const planMalla=document.getElementById('planMalla');
   aprobados=[];
-  form.querySelectorAll('input[type=checkbox]').forEach(cb=>{
-    if(cb.checked) aprobados.push(cb.value);
-  });
+  document.querySelectorAll('#formAprobados input[type=checkbox]').forEach(cb=>{if(cb.checked) aprobados.push(cb.value);});
 
-  let plan = {};
+  let html='<h3>Plan de acción personalizado:</h3><table>';
+  html+='<tr class="sem1"><th>1° Sem</th><th class="sem2">2° Sem</th><th class="sem3">3° Sem</th><th class="sem4">4° Sem</th><th class="sem5">5° Sem</th><th class="sem6">6° Sem</th><th class="sem7">7° Sem</th><th class="sem8">8° Sem</th></tr>';
+
+  // máximo 60 créditos por semestre
   let pendientes = Object.keys(prereq).filter(c=>!aprobados.includes(c));
-  let semestre=1;
+  let semActual=1;
+  let sems=[];
+  for(let s=1;s<=8;s++) sems[s]=[];
 
-  while(pendientes.length>0 && semestre<=20){
-    plan[semestre]=[];
+  while(pendientes.length>0){
     let creditos=0;
-    pendientes.forEach(c=>{
-      if(creditos<60 && estanDesbloqueado(c)){
-        plan[semestre].push(c);
-        creditos+=creditosPorRamo;
+    for(let s=1;s<=8;s++){
+      if(pendientes.length==0) break;
+      for(let i=0;i<pendientes.length;i++){
+        let c=pendientes[i];
+        if(creditos>=60) break;
+        if(estanDesbloqueado(c)){
+          sems[s].push(c);
+          creditos+=creditosPorRamo;
+          pendientes.splice(i,1); i--;
+        }
       }
-    });
-    pendientes = pendientes.filter(c=>!plan[semestre].includes(c));
-    semestre++;
+    }
+    if(pendientes.length>0) semActual++;
+    if(semActual>8) break;
   }
 
-  let html="<h3>Plan de acción sugerido:</h3>";
-  Object.keys(plan).forEach(s=>{
-    html+=`<b>Semestre ${s}:</b> ${plan[s].map(c=>ramosPorCodigo(c)).join(", ")}<br>`;
-  });
+  // Encontrar max filas
+  let maxFilas=0;
+  for(let s=1;s<=8;s++) maxFilas=Math.max(maxFilas,sems[s].length);
 
-  document.getElementById('planAccion').innerHTML=html;
+  // generar tabla
+  for(let i=0;i<maxFilas;i++){
+    html+='<tr>';
+    for(let s=1;s<=8;s++){
+      let cod=sems[s][i];
+      if(cod){
+        let clase=aprobados.includes(cod)?'aprobado':estanDesbloqueado(cod)?'sugerido':'bloqueado';
+        html+=`<td class="${clase}"><div class="curso-nombre">${ramosPorCodigo(cod)}</div><div class="curso-sigla">${cod}</div></td>`;
+      }else html+='<td></td>';
+    }
+    html+='</tr>';
+  }
+
+  html+='</table>';
+  planMalla.innerHTML=html;
 }
 
 function ramosPorCodigo(cod){
-  for(let s in ramos){
-    if(ramos[s][cod]) return ramos[s][cod];
-  }
+  for(let s in ramos){ if(ramos[s][cod]) return ramos[s][cod]; }
   return cod;
 }
 
-document.getElementById('generarPlan').addEventListener('click', generarPlan);
+document.getElementById('generarPlan').addEventListener('click', generarMalla);
 
 generarFormulario();
 </script>
