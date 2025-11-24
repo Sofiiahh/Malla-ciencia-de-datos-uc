@@ -1,44 +1,49 @@
 """
-1er SEMESTRE
-Ningún ramo tiene prerrequisitos.
-IIC1100 – Introducción a la Programación → Sin prerrequisitos
-MAT1100 – Introducción al Cálculo → Sin prerrequisitos
-MAT1200 – Introducción a Álgebra y Geometría → Sin prerrequisitos
+1er SEMESTRE *Ningún ramo tiene prerrequisitos.
+IC1103 – Introducción a la Programación
+MAT1107 – Introducción al Cálculo 
+MAT1207 – Introducción al Álgebra y Geometría 
+MAT0007 – Taller de Matemáticas para Estadística 
 
 2do SEMESTRE
-IIC2133 – Programación Avanzada → Requiere IIC1100
-MAT1201 – Cálculo 1 → Requiere MAT1100
-MAT1302 – Álgebra Lineal para Ciencia de Datos → Requiere IIC1100, MAT1100, MAT1200
-IIC2433 – Introducción a la Ciencia de Datos → Requiere IIC1100, MAT1200
+IIC2233 – Programación Avanzada → Requiere IC1103
+MAT1610 – Cálculo I → Requiere MAT1107
+IMT2210 – Álgebra Lineal para Ciencia de Datos → Requiere IC1103, MAT1107, MAT1207
+IMT2200 – Introducción a Ciencia de Datos → Requiere IC1103, MAT1207
 
 3er SEMESTRE
-MAT2203 – Cálculo para la Ciencia de Datos → Requiere MAT1201
-MAT2301 – Álgebra Lineal Avanzada y Modelamiento → Requiere MAT1201, MAT1302
-EYP280C – Ética para Ciencia de Datos y Estadística → Requiere IIC2133, IIC2433
-MAT2400 – Matemáticas Discretas → Requiere MAT1302
+IMT2220 – Cálculo para Ciencia de Datos → Requiere MAT1610
+IMT2230 – Álgebra Lineal Avanzada y Modelamiento → Requiere MAT1610, IMT2210
+ETI195 – Ética para Ciencia de Datos y Estadística → Requiere IIC2233, IMT2200
+IIC1253 – Matemáticas Discretas → Requiere IMT2210
 
 4to SEMESTRE
-MAT2500 – Modelos Probabilísticos → Requiere MAT2203, MAT2301
-IIC2513 – Estructuras de Datos y Algoritmos → Requiere IIC2133, MAT2400
-IIC2413 – Bases de Datos → Requiere MAT2400
-MAT2600 – Optimización para la Ciencia de Datos → Requiere MAT2203, MAT1302
+EYP1025 – Modelos Probabilísticos → Requiere IMT2220, IMT2230
+IC2133 – Estructuras de Datos y Algoritmos → Requiere IIC2233, IIC1253
+IC2413 – Bases de Datos → Requiere IIC2233, IIC1253
+IMT2250 – Optimización para Ciencia de Datos → Requiere IMT2220, IMT2210
 
 5to SEMESTRE
-MAT2700 – Inferencia Estadística → Requiere MAT2500
-IIC2613 – Inteligencia Artificial → Requiere MAT2500, IIC2133
-IIC2333 – Procesamiento de Datos Masivos → Requiere IIC2413, IIC2513
+EYP2114 – Inferencia Estadística → Requiere EYP1025
+IIC2613 – Inteligencia Artificial → Requiere EYP1025, IIC2233
+LIC2440 – Procesamiento de Datos Masivos → Requiere IC2413, IC2133
+OPR o Minor → Sin prerrequisitos
 
 6to SEMESTRE
-MAT2800 – Procesos Estocásticos Aplicados → Requiere MAT2700
-MAT2810 – Análisis de Regresión → Requiere MAT2700
-IIC2001 – Visualización de la Información → Requiere IIC1100
-IIC2463 – Minería de Datos → Requiere IIC1100, MAT2500, MAT1302
+EYP2101 – Procesos Estocásticos Aplicados → Requiere EYP2114
+EYP2301 – Análisis de Regresión → Requiere EYP2114
+C2026 – Visualización de la Información → Requiere IC1103
+IIC2433 – Minería de Datos → Requiere IC1103, EYP1025, IMT2210
 
 7mo SEMESTRE
-MAT2900 – Simulación → Requiere MAT2800
-MAT2950 – Métodos Bayesianos → Requiere MAT2700
-IIC3253 – Teoría de Aprendizaje Automático → Requiere MAT2600, MAT2500
+EYP2111 – Simulación → Requiere EYP2101
+EYP2801 – Métodos Bayesianos → Requiere EYP2114
+IMT2260 – Teoría de Aprendizaje Automático → Requiere IMT2250, EYP1025
+OPR o Minor → Sin prerrequisitos
 
 8vo SEMESTRE
-IIC3900 – Proyecto de Graduación → Requiere MAT2950, IIC3253, MAT2600, EYP280C
+IMT2270 – Proyecto de Graduación → Requiere EYP2801, IMT2260, IMT2250, ETI195
+OPR o Minor → Sin prerrequisitos
+OPR o Minor → Sin prerrequisitos
+OPR o Minor → Sin prerrequisitos
 """
