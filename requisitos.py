@@ -1,4 +1,20 @@
 """
+RAMOS ANUALES:
+
+1er semestre:
+IIC2440 – Procesamiento de Datos Masivos
+EYP280I – Métodos Bayesianos
+IMT2260 – Teoría de Aprendizaje Automático
+FIS154D – Física (probablemente Física General I o similar)
+
+2do semestre:
+IMT2200 – Introducción a la Ciencia de Datos
+INT2250 – Optimización para la Ciencia de Datos
+
+
+
+MALLA Y REQUSITOS
+
 1er SEMESTRE *Ningún ramo tiene prerrequisitos.
 IC1103 – Introducción a la Programación
 MAT1107 – Introducción al Cálculo 
