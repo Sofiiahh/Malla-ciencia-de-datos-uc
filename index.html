@@ -1,179 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Malla Estratégica Interactiva – Ciencia de Datos UC</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #f9f9f9;
-  overflow-x: hidden;
-}
-
-/* Fondo motivador pastel */
-body::before {
-  content:'';
-  position: fixed;
-  top:-100px; left:-100px;
-  width:1200px; height:1200px;
-  background: radial-gradient(circle at 20% 30%, #FFD6F7 0%, transparent 50%),
-              radial-gradient(circle at 80% 70%, #D6FFFF 0%, transparent 50%);
-  z-index:-1;
-  opacity:0.25;
-  transform: rotate(20deg);
-}
-
-h1,h2 {
-  text-align:center;
-  margin:10px 0;
-}
-
-/* Tabla base */
-table {
-  width:95%;
-  max-width:1300px;
-  margin: 20px auto;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-th, td {
-  border:1px solid #666;
-  padding:10px;
-  text-align:center;
-  vertical-align:middle;
-  min-height:80px;
-  font-size:13px;
-  word-wrap:break-word;
-  cursor:pointer;
-}
-th { color:white; font-size:14px; }
-
-/* Estados */
-td.aprobado { background:#2EC4B6; color:white; text-decoration:line-through; font-weight:bold; }
-td.bloqueado { background:#FF6A00; color:white; opacity:0.8; cursor:not-allowed; }
-td.desbloqueado { background:#FF9EBB; font-weight:bold; }
-td.sugerido { background:#4CAF50; color:white; font-weight:bold; }
-td.futuro { background:#FFD700; color:#000; font-weight:bold; }
-
-/* Nuevas etiquetas estratégicas */
-td.planA { background:#A6E1FA !important; }
-td.planB { background:#D9A7FF !important; }
-td.planC { background:#FFA6A6 !important; }
-
-/* Inputs OFG */
-td input {
-  width:90%; height:35px; border:none; background:#fff7f7;
-  text-align:center; font-size:13px; border-radius:4px;
-}
-
-/* Colores por semestre */
-.sem1 th{background:#FFC3A0;} .sem2 th{background:#FFB3C1;} .sem3 th{background:#C1FFC3;}
-.sem4 th{background:#A0D2FF;} .sem5 th{background:#D9A0FF;} .sem6 th{background:#FFF5A0;}
-.sem7 th{background:#FFBFA0;} .sem8 th{background:#BFFFC1;}
-
-.legend {
-  max-width:900px; margin:20px auto;
-  background:#fff; border:1px solid #666;
-  border-radius:5px; padding:15px; font-size:14px;
-}
-.color-box {
-  display:inline-block; width:20px; height:20px;
-  margin-right:8px; vertical-align:middle;
-}
-
-/* Subtítulos de alternativas */
-.altTitulo {
-  text-align:center;
-  margin-top:40px;
-  font-size:22px;
-  font-weight:bold;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malla Estratégica Interactiva — Ciencia de Datos</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <header class="hero">
+    <h1>Malla Estratégica Interactiva — Ciencia de Datos</h1>
+    <p>
+      Marca tus ramos aprobados, selecciona tu máximo de cursos por semestre y obtén
+      automáticamente una ruta estratégica para no atrasarte.
+    </p>
+  </header>
 
-<h1>Malla Estratégica Interactiva – Ciencia de Datos UC</h1>
-<h2>Plan de Acción Inteligente</h2>
+  <section class="controls">
+    <label>
+      Máximo ramos por semestre:
+      <select id="maxPerSem">
+        <option value="4">4</option>
+        <option value="5" selected>5</option>
+        <option value="6">6</option>
+      </select>
+    </label>
 
-<label style="text-align:center; display:block; margin-bottom:15px;">
-Selecciona tu semestre actual:
-<select id="semestreActual">
-  <option value="1">1°</option><option value="2">2°</option><option value="3">3°</option>
-  <option value="4">4°</option><option value="5">5°</option><option value="6">6°</option>
-  <option value="7">7°</option><option value="8">8°</option>
-</select>
-</label>
+    <label>
+      Semestre actual:
+      <select id="semQuery"></select>
+    </label>
+  </section>
 
-<label style="text-align:center; display:block; margin-bottom:20px;">
-Máximo de ramos por semestre:
-<select id="maxCursos">
-  <option value="4">4</option>
-  <option value="5" selected>5</option>
-  <option value="6">6</option>
-</select>
-</label>
+  <section id="grid" class="grid"></section>
 
-<!-- TABLA PRINCIPAL -->
-<table>
-<tr class="sem1"><th>1°</th><th class="sem2">2°</th><th class="sem3">3°</th><th class="sem4">4°</th><th class="sem5">5°</th><th class="sem6">6°</th><th class="sem7">7°</th><th class="sem8">8°</th></tr>
-<tr>
-<td id="IC1103"></td><td id="IIC2233"></td><td id="IMT2220"></td><td id="EYP1025"></td>
-<td id="EYP2114"></td><td id="EYP2101"></td><td id="EYP2111"></td><td id="IMT2270"></td>
-</tr>
-<tr>
-<td id="MAT1107"></td><td id="MAT1610"></td><td id="IMT2230"></td><td id="IC2133"></td>
-<td id="IIC2613"></td><td id="EYP2301"></td><td id="EYP2801"></td><td></td>
-</tr>
-<tr>
-<td id="MAT1207"></td><td id="IMT2210"></td><td id="ETI195"></td><td id="IC2413"></td>
-<td id="LIC2440"></td><td id="C2026"></td><td id="IMT2260"></td><td></td>
-</tr>
-<tr>
-<td id="MAT0007"></td><td id="IMT2200"></td><td id="IIC1253"></td><td id="IMT2250"></td>
-<td id="OTRO"></td><td id="IIC2433"></td><td id="OPR_MINOR_7"></td><td id="OPR_MINOR_8"></td>
-</tr>
-</table>
+  <section class="plans" id="plans"></section>
 
-<div class="legend">
-<p><span class="color-box" style="background:#2EC4B6;"></span> Aprobado</p>
-<p><span class="color-box" style="background:#FF9EBB;"></span> Desbloqueado</p>
-<p><span class="color-box" style="background:#4CAF50;"></span> Sugerido</p>
-<p><span class="color-box" style="background:#FFD700;"></span> Futuro</p>
-<p><span class="color-box" style="background:#FF6A00;"></span> Bloqueado</p>
-<p><span class="color-box" style="background:#A6E1FA;"></span> Alternativa Plan A</p>
-<p><span class="color-box" style="background:#D9A7FF;"></span> Alternativa Plan B</p>
-<p><span class="color-box" style="background:#FFA6A6;"></span> Alternativa Plan C</p>
-</div>
+  <footer class="footer">Diseñado para ayudarte a avanzar sin atrasos ✨</footer>
 
-<h2>Recomendación del Semestre</h2>
-<div id="sugeridos"></div>
-
-<div id="alternativas"></div>
-
-<script>
-/* --- Datos de ramos --- */
-const ramos = {
-IC1103:{nombre:"Introducción a la Programación", prereq:[]},
-MAT1107:{nombre:"Introducción al Cálculo", prereq:[]},
-MAT1207:{nombre:"Álgebra y Geometría", prereq:[]},
-MAT0007:{nombre:"Taller Matemáticas", prereq:[]},
-IIC2233:{nombre:"Programación Avanzada", prereq:["IC1103"]},
-MAT1610:{nombre:"Cálculo I", prereq:["MAT1107"]},
-IMT2210:{nombre:"Álgebra Lineal CD", prereq:["IC1103","MAT1107","MAT1207"]},
-IMT2200:{nombre:"Introducción CD", prereq:["IC1103","MAT1207"]},
-IMT2220:{nombre:"Cálculo CD", prereq:["MAT1610"]},
-IMT2230:{nombre:"Álgebra Lineal Avanzada", prereq:["MAT1610","IMT2210"]},
-ETI195:{nombre:"Ética CD", prereq:["IIC2233","IMT2200"]},
-IIC1253:{nombre:"Matemáticas Discretas", prereq:["IMT2210"]},
-EYP1025:{nombre:"Modelos Probabilísticos", prereq:["IMT2220","IMT2230"]},
-IC2133:{nombre:"EDA", prereq:["IIC2233","IIC1253"]},
-IC2413:{nombre:"Bases de Datos", prereq:["IIC2233","IIC1253"]},
-IMT2250:{nombre:"Optimización CD", prereq:["IMT2220","IMT2210"]},
-EYP2114:{nombre:"Inferencia", prereq:["EYP1025"]},
-IIC2613:{nombre:"Inteligencia Artificial", prereq:["EYP1025","IIC2233"]},
-LIC2440:{nombre:"Procesamiento Datos Masivos", prereq:["IC2413","IC2133"]},
-EYP2101:{nombre:"Procesos Estocásticos", prereq:["EYP2114"]},
-EYP2301:{
+  <script src="app.js"></script>
+</body>
+</html>
