@@ -1,472 +1,255 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
 <title>Malla Interactiva — Ciencia de Datos</title>
 <style>
-  :root{
-    --bg: #fbfbfd;
-    --card: #ffffff;
-    --muted: #444;
-    --accent: #2EC4B6;
-    --radius: 12px;
-    --text: #111;
-  }
-  *{box-sizing:border-box}
-  body{
-    font-family: Inter, Arial, sans-serif;
-    margin:0;
-    padding:18px;
-    background:var(--bg);
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
-  }
-
-  /* Header */
-  .hero{ text-align:center; margin-bottom:14px }
-  .hero h1{ font-size:28px; margin:4px 0 6px 0 }
-  .hero p{ color:var(--muted); margin:0; font-size:15px }
-
-  /* Controls & legend */
-  .controls{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center; margin-bottom:14px }
-  .controls label{ font-size:14px; color:var(--muted) }
-  select{ padding:8px 10px; border-radius:8px; border:1px solid #e6e6e9; background:#fff; font-size:14px }
-
-  .legend{ display:flex; gap:10px; align-items:center; justify-content:center; margin-top:8px }
-  .legend .item{ padding:6px 10px; border-radius:8px; font-weight:700; font-size:13px }
-  .legend .approved{ background:var(--accent); color:#fff }
-  .legend .unlocked{ background:#FF9EBB; color:#000 }
-  .legend .locked{ background:#ddd; color:#333 }
-
-  /* Grid / semesters */
-  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin-top:12px }
-  .semester{ background:var(--card); border-radius:var(--radius); padding:12px; box-shadow:0 6px 18px rgba(0,0,0,0.06) }
-  .semester h3{ margin:0 0 8px 0; font-size:16px }
-  .courses{ display:flex; flex-direction:column; gap:8px }
-
-  .course{
-    display:flex; flex-direction:column; gap:4px; padding:10px; border-radius:10px;
-    border:1px solid #eee; background:#fff; cursor:pointer; font-size:15px; text-align:left;
-  }
-  .course .code{ font-weight:800; font-size:13px }
-  .course .name{ font-size:14px; color:#222 }
-
-  .course.approved{
-    background: linear-gradient(90deg,#2EC4B6,#27b39f);
-    color:#fff; text-decoration:line-through; border-color:rgba(0,0,0,0.06)
-  }
-  .course.unlocked{ background:#FFDDEB }
-  .course.locked{ background:#f6f6f6; color:#666; cursor:not-allowed }
-
-  /* Plan cards */
-  .plans{ margin-top:18px }
-  .plan-card{ background:var(--card); padding:12px; border-radius:10px; margin-bottom:12px; box-shadow:0 6px 18px rgba(0,0,0,0.04) }
-  .plan-title{ display:flex; justify-content:space-between; align-items:center; gap:8px }
-  .plan-grid{ display:grid; grid-template-columns:repeat(8,1fr); gap:6px; margin-top:10px }
-  .plan-cell{ padding:8px; border-radius:8px; background:#fff; border:1px dashed #eee; min-height:48px; font-size:13px; text-align:center }
-  .pill{ display:inline-block; background:#eee; padding:6px 8px; border-radius:999px; margin:4px; font-size:13px; }
-
-  .action{ background:linear-gradient(90deg,#fffdf2,#f7fff6); padding:12px; border-radius:10px; margin-top:10px }
-  .hint{ color:var(--muted); font-size:13px; margin-top:8px }
-
-  footer.footer{ text-align:center; color:var(--muted); margin-top:18px; font-size:13px }
-
-  @media(max-width:720px){
-    .plan-grid{ grid-template-columns:repeat(4,1fr) }
-    .course{ font-size:14px }
-    .hero h1{ font-size:22px }
-  }
+body{
+  font-family: Arial, sans-serif;
+  margin:0;
+  padding:20px;
+  background:#fafafa;
+  color:#222;
+}
+h1,h2,h3{
+  text-align:center;
+  font-weight:800;
+}
+.controls{
+  text-align:center;
+  margin:20px 0;
+}
+.sem-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:14px;
+}
+.sem-box{
+  padding:10px;
+  border-radius:12px;
+  color:#000;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+.course{
+  background:white;
+  padding:8px;
+  margin:5px 0;
+  border-radius:8px;
+  cursor:pointer;
+  border:2px solid transparent;
+}
+.course.aprobado{
+  background:#2ECC71;
+  color:white;
+  text-decoration:line-through;
+}
+.course.desbloqueado{
+  background:#FFB6C1;
+}
+.course.bloqueado{
+  background:#ddd;
+}
+.plan-box{
+  margin-top:25px;
+  padding:15px;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
 </style>
 </head>
+
 <body>
 
-  <header class="hero">
-    <h1>Malla Interactiva</h1>
-    <p class="subtitle">Marca tus ramos aprobados, elige tu carga máxima por semestre y obtén rutas estratégicas para no atrasarte.</p>
-  </header>
+<h1>Malla Interactiva — Ciencia de Datos</h1>
 
-  <section class="controls" aria-label="Controles">
-    <label>Máx. ramos por semestre:
-      <select id="maxPerSem">
-        <option value="4">4</option>
-        <option value="5" selected>5</option>
-        <option value="6">6</option>
-      </select>
-    </label>
+<div class="controls">
+  <label>Máximo de ramos por semestre:
+    <select id="maxSem">
+      <option value="4">4</option>
+      <option value="5" selected>5</option>
+      <option value="6">6</option>
+    </select>
+  </label>
+  &nbsp;&nbsp;&nbsp;
+  <label>Tu semestre actual:
+    <select id="semNow">
+      <script>
+        for(let i=1;i<=8;i++) document.write(`<option value="${i}">${i}</option>`);
+      </script>
+    </select>
+  </label>
+</div>
 
-    <label>Semestre actual:
-      <select id="semActual"></select>
-    </label>
+<div id="malla" class="sem-grid"></div>
 
-    <div class="legend" aria-hidden="true">
-      <span class="item approved">Aprobado</span>
-      <span class="item unlocked">Desbloqueado</span>
-      <span class="item locked">Bloqueado</span>
-    </div>
-  </section>
+<h2>Plan recomendado</h2>
+<div id="plan" class="plan-box"></div>
 
-  <main id="mallaGrid" class="grid" aria-live="polite"></main>
-
-  <section id="plansArea" class="plans" aria-live="polite">
-    <h2 style="text-align:center;margin-top:0">Plan(es) recomendado(s)</h2>
-    <div id="plansContainer"></div>
-
-    <div class="action" id="actionCard" role="region" aria-label="Plan de acción">
-      <h3 id="actionTitle">Plan de acción</h3>
-      <ol id="actionList"></ol>
-      <p class="hint">Haz clic en una casilla para marcar/desmarcar como aprobada. Pulsa la tecla <strong>R</strong> para reiniciar aprobados.</p>
-    </div>
-  </section>
-
-  <footer class="footer">Diseñado para guiar rutas reales — elige con cabeza y cuida tu energía.</footer>
+<h2>Plan de acción</h2>
+<div id="accion" class="plan-box"></div>
 
 <script>
-/* -------------------------
-   Datos de la malla (R)
-   ------------------------- */
+// ---------------------- DATOS DE RAMOS ----------------------
+
 const R = {
-  IC1103:{nombre:'Introducción a la Programación',sem:1,pr:[]},
-  MAT1107:{nombre:'Introducción al Cálculo',sem:1,pr:[]},
-  MAT1207:{nombre:'Introducción al Álgebra y Geometría',sem:1,pr:[]},
-  MAT0007:{nombre:'Taller de Matemáticas para Estadística',sem:1,pr:[]},
+  IC1103:{n:'Introducción a la Programación',sem:1,pr:[]},
+  MAT1107:{n:'Introducción al Cálculo',sem:1,pr:[]},
+  MAT1207:{n:'Introducción al Álgebra y Geometría',sem:1,pr:[]},
+  MAT0007:{n:'Taller de Matemáticas',sem:1,pr:[]},
+  OFG1:{n:'OFG',sem:1,pr:[]},
 
-  IIC2233:{nombre:'Programación Avanzada',sem:2,pr:['IC1103']},
-  MAT1610:{nombre:'Cálculo I',sem:2,pr:['MAT1107']},
-  IMT2210:{nombre:'Álgebra Lineal para Ciencia de Datos',sem:2,pr:['IC1103','MAT1107','MAT1207']},
-  IMT2200:{nombre:'Introducción a Ciencia de Datos',sem:2,pr:['IC1103','MAT1207']},
+  IIC2233:{n:'Programación Avanzada',sem:2,pr:['IC1103']},
+  MAT1610:{n:'Cálculo I',sem:2,pr:['MAT1107']},
+  IMT2210:{n:'Álgebra Lineal para Ciencia de Datos',sem:2,pr:['IC1103','MAT1107','MAT1207']},
+  IMT2200:{n:'Introducción a Ciencia de Datos',sem:2,pr:['IC1103','MAT1207']},
+  OFG2:{n:'OFG',sem:2,pr:[]},
 
-  IMT2220:{nombre:'Cálculo para Ciencia de Datos',sem:3,pr:['MAT1610']},
-  IMT2230:{nombre:'Álgebra Lineal Avanzada y Modelamiento',sem:3,pr:['MAT1610','IMT2210']},
-  ETI195:{nombre:'Ética para Ciencia de Datos y Estadística',sem:3,pr:['IIC2233','IMT2200']},
-  IIC1253:{nombre:'Matemáticas Discretas',sem:3,pr:['IMT2210']},
+  IMT2220:{n:'Cálculo para Ciencia de Datos',sem:3,pr:['MAT1610']},
+  IMT2230:{n:'Álgebra Lineal Avanzada y Modelamiento',sem:3,pr:['MAT1610','IMT2210']},
+  ETI195:{n:'Ética para Ciencia de Datos y Estadística',sem:3,pr:['IIC2233','IMT2200']},
+  IIC1253:{n:'Matemáticas Discretas',sem:3,pr:['IMT2210']},
+  OFG3:{n:'OFG',sem:3,pr:[]},
 
-  EYP1025:{nombre:'Modelos Probabilísticos',sem:4,pr:['IMT2220','IMT2230']},
-  IC2133:{nombre:'Estructuras de Datos y Algoritmos',sem:4,pr:['IIC2233','IIC1253']},
-  IC2413:{nombre:'Bases de Datos',sem:4,pr:['IIC2233','IIC1253']},
-  IMT2250:{nombre:'Optimización para Ciencia de Datos',sem:4,pr:['IMT2220','IMT2210']},
+  EYP1025:{n:'Modelos Probabilísticos',sem:4,pr:['IMT2220','IMT2230']},
+  IC2133:{n:'Estructuras de Datos y Algoritmos',sem:4,pr:['IIC2233','IIC1253']},
+  IC2413:{n:'Bases de Datos',sem:4,pr:['IIC2233','IIC1253']}, // ← CORREGIDO
+  IMT2250:{n:'Optimización para Ciencia de Datos',sem:4,pr:['IMT2220','IMT2210']},
+  OFG4:{n:'OFG',sem:4,pr:[]},
 
-  EYP2114:{nombre:'Inferencia Estadística',sem:5,pr:['EYP1025']},
-  IIC2613:{nombre:'Inteligencia Artificial',sem:5,pr:['EYP1025','IIC2233']},
-  LIC2440:{nombre:'Procesamiento de Datos Masivos',sem:5,pr:['IC2413','IC2133']},
+  EYP2114:{n:'Inferencia Estadística',sem:5,pr:['EYP1025']},
+  IIC2613:{n:'Inteligencia Artificial',sem:5,pr:['EYP1025','IIC2233']},
+  LIC2440:{n:'Procesamiento de Datos Masivos',sem:5,pr:['IC2413','IC2133']},
+  OPR5:{n:'OPR o Minor',sem:5,pr:[]},
+  OFG5:{n:'OFG',sem:5,pr:[]},
 
-  EYP2101:{nombre:'Procesos Estocásticos Aplicados',sem:6,pr:['EYP2114']},
-  EYP2301:{nombre:'Análisis de Regresión',sem:6,pr:['EYP2114']},
-  C2026:{nombre:'Visualización de la Información',sem:6,pr:['IC1103']},
-  IIC2433:{nombre:'Minería de Datos',sem:6,pr:['IC1103','EYP1025','IMT2210']},
+  EYP2101:{n:'Procesos Estocásticos Aplicados',sem:6,pr:['EYP2114']},
+  EYP2301:{n:'Análisis de Regresión',sem:6,pr:['EYP2114']},
+  C2026:{n:'Visualización de la Información',sem:6,pr:['IC1103']},
+  IIC2433:{n:'Minería de Datos',sem:6,pr:['IC1103','EYP1025','IMT2210']},
+  OFG6:{n:'OFG',sem:6,pr:[]},
 
-  EYP2111:{nombre:'Simulación',sem:7,pr:['EYP2101']},
-  EYP2801:{nombre:'Métodos Bayesianos',sem:7,pr:['EYP2114']},
-  IMT2260:{nombre:'Teoría de Aprendizaje Automático',sem:7,pr:['IMT2250','EYP1025']},
+  EYP2111:{n:'Simulación',sem:7,pr:['EYP2101']},
+  EYP2801:{n:'Métodos Bayesianos',sem:7,pr:['EYP2114']},
+  IMT2260:{n:'Teoría de Aprendizaje Automático',sem:7,pr:['IMT2250','EYP1025']}, // ← CORREGIDO
+  OPR7:{n:'OPR o Minor',sem:7,pr:[]},
+  OFG7:{n:'OFG',sem:7,pr:[]},
 
-  IMT2270:{nombre:'Proyecto de Graduación',sem:8,pr:['EYP2801','IMT2260','IMT2250','ETI195']},
-
-  /* OFG / Optativos (varios por semestre) */
-  OFG1:{nombre:'OFG',sem:1,pr:[]},
-  OFG2:{nombre:'OFG',sem:2,pr:[]},
-  OFG3:{nombre:'OFG',sem:3,pr:[]},
-  OFG4:{nombre:'OFG',sem:4,pr:[]},
-  OFG5:{nombre:'OFG',sem:5,pr:[]},
-  OFG6:{nombre:'OFG',sem:6,pr:[]},
-  OFG7:{nombre:'OFG',sem:7,pr:[]},
-  OFG8A:{nombre:'OFG',sem:8,pr:[]},
-  OFG8B:{nombre:'OFG',sem:8,pr:[]}
+  IMT2270:{n:'Proyecto de Graduación',sem:8,pr:['EYP2801','IMT2260','IMT2250','ETI195']},
+  OPR81:{n:'OPR o Minor',sem:8,pr:[]},
+  OPR82:{n:'OPR o Minor',sem:8,pr:[]},
+  OPR83:{n:'OPR o Minor',sem:8,pr:[]},
+  OFG8:{n:'OFG',sem:8,pr:[]},
 };
 
-/* ---------- Estado ---------- */
-let approved = []; // cursos marcados como aprobados por el usuario
-let maxPerSem = Number(document.getElementById('maxPerSem').value);
-let semActual = 1;
+const semColors = [
+  '#FDE2E4','#FAD2E1','#E2ECE9','#D6E5FA',
+  '#FFF1C9','#FFE6A7','#E2F0CB','#F6EEC7'
+];
 
-/* ---------- Construcción de listas por semestre ---------- */
-const semCourses = {};
-for(let s=1;s<=8;s++){
-  semCourses[s] = Object.keys(R).filter(k => R[k].sem === s);
+let aprobados = [];
+
+// ---------------------- FUNCIONES ----------------------
+
+function canTake(code){
+  return R[code].pr.every(p=>aprobados.includes(p));
 }
 
-/* ---------- Helpers ---------- */
-function canTake(code, approvedList){
-  const prereqs = R[code].pr || [];
-  return prereqs.every(p => approvedList.includes(p));
-}
-function dependentsCount(code){
-  return Object.values(R).reduce((acc,r)=> acc + ((r.pr||[]).includes(code)?1:0),0);
+function buildPlan(){
+  const max = Number(document.getElementById("maxSem").value);
+  const plan = {};
+  let taken = [...aprobados];
+
+  for(let s=1; s<=8; s++){
+    plan[s] = [];
+    let candidates = Object.keys(R).filter(c => 
+      R[c].sem===s && !taken.includes(c) && canTake(c)
+    );
+    for(let c of candidates){
+      if(plan[s].length < max){
+        plan[s].push(c);
+        taken.push(c);
+      }
+    }
+  }
+  return plan;
 }
 
-/* ---------- Render malla ---------- */
 function renderMalla(){
-  const grid = document.getElementById('mallaGrid');
-  grid.innerHTML = '';
-  for(let s=1;s<=8;s++){
-    const box = document.createElement('section');
-    box.className = 'semester';
-    const h = document.createElement('h3'); h.textContent = 'Semestre ' + s;
-    box.appendChild(h);
-    const list = document.createElement('div'); list.className = 'courses';
+  const box = document.getElementById("malla");
+  box.innerHTML = "";
 
-    // Add each course element in the semester
-    semCourses[s].forEach(code=>{
-      const btn = document.createElement('button');
-      btn.className = 'course';
-      btn.type = 'button';
-      btn.dataset.code = code;
-      const isApproved = approved.includes(code);
-      const unlocked = canTake(code, approved);
+  for(let s=1; s<=8; s++){
+    const semBox = document.createElement("div");
+    semBox.className = "sem-box";
+    semBox.style.background = semColors[(s-1)%8];
+    semBox.innerHTML = `<h3>Semestre ${s}</h3>`;
 
-      if(isApproved) btn.classList.add('approved');
-      else if(unlocked) btn.classList.add('unlocked');
-      else btn.classList.add('locked');
+    Object.keys(R).filter(c=>R[c].sem===s).forEach(code=>{
+      const btn = document.createElement("div");
+      const status = aprobados.includes(code)
+        ? 'aprobado'
+        : canTake(code) ? 'desbloqueado' : 'bloqueado';
 
-      btn.innerHTML = `<div class="code">${code}</div><div class="name">${R[code].nombre}</div>`;
-
-      // toggle only if unlocked or already approved (allow unchecking)
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        toggleApproved(code);
-      });
-
-      list.appendChild(btn);
+      btn.className = `course ${status}`;
+      btn.textContent = `[${code}] ${R[code].n}`;
+      btn.onclick = ()=>{ 
+        if(aprobados.includes(code)){
+          aprobados = aprobados.filter(x=>x!==code);
+        } else {
+          aprobados.push(code);
+        }
+        refresh();
+      };
+      semBox.appendChild(btn);
     });
 
-    // show empty semester row if no courses
-    if(semCourses[s].length === 0){
-      const empty = document.createElement('div');
-      empty.className = 'course locked';
-      empty.textContent = 'Sin ramos en la malla para este semestre.';
-      list.appendChild(empty);
-    }
-
-    box.appendChild(list);
-    grid.appendChild(box);
+    box.appendChild(semBox);
   }
 }
 
-/* ---------- Toggle approved ---------- */
-function toggleApproved(code){
-  if(approved.includes(code)){
-    approved = approved.filter(x=>x!==code);
-  } else {
-    if(canTake(code, approved)) approved.push(code);
-    else {
-      // blocked - do nothing
-      return;
-    }
+function renderPlan(){
+  const plan = buildPlan();
+  const div = document.getElementById("plan");
+  div.innerHTML = "";
+
+  for(let s=1; s<=8; s++){
+    const list = plan[s];
+    const box = document.createElement("div");
+    box.innerHTML = `<h4>Semestre ${s}</h4>` +
+      (list.length ? list.map(c=>`<div>[${c}] ${R[c].n}</div>`).join("")
+                   : `<div>—</div>`);
+    div.appendChild(box);
   }
-  updateAll();
 }
 
-/* ---------- Generate plans (with de-duplication) ---------- */
-function generatePlans(initialApproved, maxPerSem, limit=4){
-  const plans = [];
-  const seen = new Set();
+function renderAccion(){
+  const sem = Number(document.getElementById("semNow").value);
+  const plan = buildPlan();
+  const list = plan[sem];
+  const div = document.getElementById("accion");
 
-  function dfs(sem, approvedSoFar, planSoFar){
-    if(plans.length >= limit) return;
-    if(sem > 8){
-      const key = Object.keys(planSoFar).map(k => (planSoFar[k]||[]).join(',')).join('|');
-      if(!seen.has(key)){
-        seen.add(key);
-        plans.push(JSON.parse(JSON.stringify(planSoFar)));
-      }
-      return;
-    }
-
-    // candidates scheduled this semester, unlocked given approvedSoFar
-    const candidates = semCourses[sem].filter(c => !approvedSoFar.includes(c) && canTake(c, approvedSoFar));
-
-    if(candidates.length === 0){
-      planSoFar[sem] = [];
-      dfs(sem+1, approvedSoFar.slice(), planSoFar);
-      return;
-    }
-
-    const sorted = candidates.sort((a,b) => dependentsCount(b) - dependentsCount(a));
-
-    // greedy selection
-    const greedy = sorted.slice(0, maxPerSem);
-    const subsets = [greedy];
-
-    // create a few small variant subsets to explore alternatives without blowup
-    for(let i=0; i<Math.min(sorted.length, maxPerSem+2); i++){
-      for(let j=i+1; j<Math.min(sorted.length, maxPerSem+4); j++){
-        const base = sorted.slice(0, Math.min(maxPerSem, sorted.length));
-        if(!base.includes(sorted[j])){
-          const alt = base.slice();
-          if(i < alt.length) alt[i] = sorted[j];
-          else alt.push(sorted[j]);
-          const uniq = Array.from(new Set(alt));
-          subsets.push(uniq);
-        }
-      }
-    }
-
-    // dedupe subset list, cap it
-    const unique = [];
-    for(const sset of subsets){
-      const key = sset.join(',');
-      if(!unique.some(x=>x.join(',')===key)) unique.push(sset);
-      if(unique.length >= 6) break;
-    }
-
-    for(const sel of unique){
-      const newPlan = Object.assign({}, planSoFar);
-      newPlan[sem] = sel.slice();
-      const newApproved = approvedSoFar.slice();
-      sel.forEach(c=>{ if(!newApproved.includes(c)) newApproved.push(c); });
-      dfs(sem+1, newApproved, newPlan);
-      if(plans.length >= limit) return;
-    }
-
-    // also consider taking none this semester (to allow optativos later)
-    dfs(sem+1, approvedSoFar.slice(), Object.assign({}, planSoFar));
-  }
-
-  dfs(1, initialApproved.slice(), {});
-  return plans;
-}
-
-/* ---------- Ranking plans (heuristic) ---------- */
-function rankPlans(plans){
-  const scorePlan = (plan) => {
-    let score = 0;
-    for(let s=1; s<=8; s++){
-      const arr = plan[s] || [];
-      score += arr.length * 10;
-      arr.forEach(c => score += dependentsCount(c) * (9 - s));
-    }
-    return score;
-  };
-  return plans.sort((A,B) => scorePlan(B) - scorePlan(A));
-}
-
-/* ---------- Render plans (no duplicates shown) ---------- */
-function renderPlans(){
-  const max = Number(document.getElementById('maxPerSem').value);
-  const semSel = Number(document.getElementById('semActual').value || 1);
-  const raw = generatePlans(approved, max, 6);
-  const ranked = rankPlans(raw);
-
-  const container = document.getElementById('plansContainer');
-  container.innerHTML = '';
-
-  if(ranked.length === 0){
-    container.innerHTML = '<p style="color:var(--muted)">No se generaron alternativas. Marca ramos aprobados y vuelve a intentar.</p>';
-    updateAction(null);
+  if(!list.length){
+    div.innerHTML = `<b>Semestre ${sem}:</b> No hay ramos sugeridos.`;
     return;
   }
 
-  // render up to 4 distinct plans (ranked)
-  ranked.slice(0,4).forEach((plan, idx) => {
-    const card = document.createElement('div');
-    card.className = 'plan-card';
-
-    const title = document.createElement('div');
-    title.className = 'plan-title';
-    const h = document.createElement('strong');
-    h.textContent = (idx===0? 'Opción recomendada' : 'Alternativa ' + idx);
-    title.appendChild(h);
-    card.appendChild(title);
-
-    const pgrid = document.createElement('div');
-    pgrid.className = 'plan-grid';
-    for(let s=1;s<=8;s++){
-      const cell = document.createElement('div');
-      cell.className = 'plan-cell';
-      const semTitle = document.createElement('div');
-      semTitle.style.fontWeight = '700';
-      semTitle.style.marginBottom = '6px';
-      semTitle.textContent = 'Sem ' + s;
-      cell.appendChild(semTitle);
-
-      const arr = plan[s] || [];
-      arr.forEach(c => {
-        const pill = document.createElement('div');
-        pill.className = 'pill';
-        pill.textContent = c;
-        pill.title = R[c].nombre;
-        cell.appendChild(pill);
-      });
-
-      pgrid.appendChild(cell);
-    }
-    card.appendChild(pgrid);
-
-    // next actions for semSel
-    const upNext = plan[semSel] || [];
-    const subtitle = document.createElement('div');
-    subtitle.style.marginTop = '8px';
-    subtitle.style.fontWeight = '700';
-    subtitle.textContent = 'Sugeridos para sem ' + semSel + ' (' + upNext.length + ' ramos)';
-    card.appendChild(subtitle);
-
-    const ol = document.createElement('ol');
-    if(upNext.length === 0){
-      const li = document.createElement('li');
-      li.textContent = 'No hay ramos sugeridos para este semestre en esta alternativa.';
-      ol.appendChild(li);
-    } else {
-      upNext.forEach(c => {
-        const li = document.createElement('li');
-        li.textContent = c + ' — ' + R[c].nombre;
-        ol.appendChild(li);
-      });
-    }
-    card.appendChild(ol);
-
-    container.appendChild(card);
-  });
-
-  // update action area with best plan
-  updateAction(ranked[0]);
+  div.innerHTML = `<b>Semestre ${sem}:</b><br>` + 
+    list.map(c=>`<div>• [${c}] ${R[c].n}</div>`).join("");
 }
 
-/* ---------- Update action area ---------- */
-function updateAction(plan){
-  const semSel = Number(document.getElementById('semActual').value || 1);
-  const title = document.getElementById('actionTitle');
-  const list = document.getElementById('actionList');
-  title.textContent = 'Plan de acción — Semestre ' + semSel;
-  list.innerHTML = '';
-  if(!plan || !plan[semSel] || plan[semSel].length===0){
-    const li = document.createElement('li');
-    li.textContent = 'No hay ramos sugeridos para este semestre. Considera optativos o recuperar prerrequisitos críticos.';
-    list.appendChild(li);
-    return;
-  }
-  plan[semSel].forEach(c => {
-    const li = document.createElement('li');
-    li.textContent = c + ' — ' + R[c].nombre;
-    list.appendChild(li);
-  });
-}
-
-/* ---------- Update all UI ---------- */
-function updateAll(){
-  maxPerSem = Number(document.getElementById('maxPerSem').value);
-  semActual = Number(document.getElementById('semActual').value || 1);
+function refresh(){
   renderMalla();
-  renderPlans();
+  renderPlan();
+  renderAccion();
 }
 
-/* ---------- Setup ---------- */
-function setup(){
-  // fill semActual select
-  const sel = document.getElementById('semActual');
-  for(let i=1;i<=8;i++){ const o=document.createElement('option'); o.value=i; o.textContent=i; sel.appendChild(o); }
-  sel.value = 1;
+// ---------------------- START ----------------------
 
-  // keyboard reset
-  document.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='r'){ approved=[]; updateAll(); }});
-  updateAll();
-}
+refresh();
+document.getElementById("maxSem").onchange = refresh;
+document.getElementById("semNow").onchange = refresh;
 
-/* expose toggleApproved for older references */
-window.toggleApproved = toggleApproved;
-
-/* event listeners */
-document.getElementById('maxPerSem').addEventListener('change', updateAll);
-document.getElementById('semActual').addEventListener('change', updateAll);
-window.addEventListener('load', setup);
 </script>
 
 </body>
