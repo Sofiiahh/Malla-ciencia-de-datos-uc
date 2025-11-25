@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Malla Interactiva Licenciatura en Ciencia de Datos UC</title>
+<title>Malla Estratégica Interactiva – Ciencia de Datos UC</title>
 <style>
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   background: #f9f9f9;
-  position: relative;
   overflow-x: hidden;
 }
+
+/* Fondo motivador pastel */
 body::before {
   content:'';
   position: fixed;
@@ -21,16 +22,19 @@ body::before {
   background: radial-gradient(circle at 20% 30%, #FFD6F7 0%, transparent 50%),
               radial-gradient(circle at 80% 70%, #D6FFFF 0%, transparent 50%);
   z-index:-1;
-  opacity:0.2;
+  opacity:0.25;
   transform: rotate(20deg);
 }
+
 h1,h2 {
   text-align:center;
   margin:10px 0;
 }
+
+/* Tabla base */
 table {
-  width:90%;
-  max-width:1200px;
+  width:95%;
+  max-width:1300px;
   margin: 20px auto;
   border-collapse: collapse;
   table-layout: fixed;
@@ -42,56 +46,79 @@ th, td {
   vertical-align:middle;
   min-height:80px;
   font-size:13px;
-  cursor:pointer;
   word-wrap:break-word;
+  cursor:pointer;
 }
 th { color:white; font-size:14px; }
+
+/* Estados */
 td.aprobado { background:#2EC4B6; color:white; text-decoration:line-through; font-weight:bold; }
 td.bloqueado { background:#FF6A00; color:white; opacity:0.8; cursor:not-allowed; }
 td.desbloqueado { background:#FF9EBB; font-weight:bold; }
 td.sugerido { background:#4CAF50; color:white; font-weight:bold; }
 td.futuro { background:#FFD700; color:#000; font-weight:bold; }
-td input { width:90%; height:35px; border:none; background:#fff7f7; text-align:center; font-size:13px; border-radius:4px; }
-td input:focus { outline:2px solid #2EC4B6; }
-td.aprobado input { width:100%; height:100%; background:transparent; color:white; text-decoration:line-through; font-weight:bold; cursor:default; }
-.curso-nombre { font-size:13px; }
-.curso-sigla { font-size:11px; font-style:italic; opacity:0.85; }
 
-.sem1 th{background:#FFC3A0;}
-.sem2 th{background:#FFB3C1;}
-.sem3 th{background:#C1FFC3;}
-.sem4 th{background:#A0D2FF;}
-.sem5 th{background:#D9A0FF;}
-.sem6 th{background:#FFF5A0;}
-.sem7 th{background:#FFBFA0;}
-.sem8 th{background:#BFFFC1;}
+/* Nuevas etiquetas estratégicas */
+td.planA { background:#A6E1FA !important; }
+td.planB { background:#D9A7FF !important; }
+td.planC { background:#FFA6A6 !important; }
 
-.legend {max-width:800px; margin:20px auto; background:#fff; border:1px solid #666; border-radius:5px; padding:15px; font-size:14px;}
-.color-box {display:inline-block; width:20px; height:20px; margin-right:8px; vertical-align:middle;}
+/* Inputs OFG */
+td input {
+  width:90%; height:35px; border:none; background:#fff7f7;
+  text-align:center; font-size:13px; border-radius:4px;
+}
+
+/* Colores por semestre */
+.sem1 th{background:#FFC3A0;} .sem2 th{background:#FFB3C1;} .sem3 th{background:#C1FFC3;}
+.sem4 th{background:#A0D2FF;} .sem5 th{background:#D9A0FF;} .sem6 th{background:#FFF5A0;}
+.sem7 th{background:#FFBFA0;} .sem8 th{background:#BFFFC1;}
+
+.legend {
+  max-width:900px; margin:20px auto;
+  background:#fff; border:1px solid #666;
+  border-radius:5px; padding:15px; font-size:14px;
+}
+.color-box {
+  display:inline-block; width:20px; height:20px;
+  margin-right:8px; vertical-align:middle;
+}
+
+/* Subtítulos de alternativas */
+.altTitulo {
+  text-align:center;
+  margin-top:40px;
+  font-size:22px;
+  font-weight:bold;
+}
 </style>
 </head>
 <body>
 
-<h1>Malla Interactiva Licenciatura en Ciencia de Datos UC</h1>
-<h2>Plan de Acción: Indica los ramos que ya aprobaste</h2>
+<h1>Malla Estratégica Interactiva – Ciencia de Datos UC</h1>
+<h2>Plan de Acción Inteligente</h2>
 
-<label style="text-align:center; display:block; margin-bottom:15px;">Selecciona tu semestre actual:
+<label style="text-align:center; display:block; margin-bottom:15px;">
+Selecciona tu semestre actual:
 <select id="semestreActual">
-  <option value="1">1° Semestre</option>
-  <option value="2">2° Semestre</option>
-  <option value="3">3° Semestre</option>
-  <option value="4">4° Semestre</option>
-  <option value="5">5° Semestre</option>
-  <option value="6">6° Semestre</option>
-  <option value="7">7° Semestre</option>
-  <option value="8">8° Semestre</option>
+  <option value="1">1°</option><option value="2">2°</option><option value="3">3°</option>
+  <option value="4">4°</option><option value="5">5°</option><option value="6">6°</option>
+  <option value="7">7°</option><option value="8">8°</option>
 </select>
 </label>
 
-<table>
-<tr class="sem1"><th>1° Semestre</th><th class="sem2">2° Semestre</th><th class="sem3">3° Semestre</th><th class="sem4">4° Semestre</th>
-<th class="sem5">5° Semestre</th><th class="sem6">6° Semestre</th><th class="sem7">7° Semestre</th><th class="sem8">8° Semestre</th></tr>
+<label style="text-align:center; display:block; margin-bottom:20px;">
+Máximo de ramos por semestre:
+<select id="maxCursos">
+  <option value="4">4</option>
+  <option value="5" selected>5</option>
+  <option value="6">6</option>
+</select>
+</label>
 
+<!-- TABLA PRINCIPAL -->
+<table>
+<tr class="sem1"><th>1°</th><th class="sem2">2°</th><th class="sem3">3°</th><th class="sem4">4°</th><th class="sem5">5°</th><th class="sem6">6°</th><th class="sem7">7°</th><th class="sem8">8°</th></tr>
 <tr>
 <td id="IC1103"></td><td id="IIC2233"></td><td id="IMT2220"></td><td id="EYP1025"></td>
 <td id="EYP2114"></td><td id="EYP2101"></td><td id="EYP2111"></td><td id="IMT2270"></td>
@@ -108,115 +135,45 @@ td.aprobado input { width:100%; height:100%; background:transparent; color:white
 <td id="MAT0007"></td><td id="IMT2200"></td><td id="IIC1253"></td><td id="IMT2250"></td>
 <td id="OTRO"></td><td id="IIC2433"></td><td id="OPR_MINOR_7"></td><td id="OPR_MINOR_8"></td>
 </tr>
-<tr>
-<td id="OFG1"><input type="text" placeholder="OFG"/></td>
-<td id="OFG2"><input type="text" placeholder="OFG"/></td>
-<td id="OFG3"><input type="text" placeholder="OFG"/></td>
-<td id="OFG4"><input type="text" placeholder="OFG"/></td>
-<td id="OFG5"><input type="text" placeholder="OFG"/></td>
-<td id="OFG6"><input type="text" placeholder="OFG"/></td>
-<td id="OFG7"><input type="text" placeholder="OFG"/></td>
-<td id="OFG8"><input type="text" placeholder="OFG"/></td>
-</tr>
 </table>
 
 <div class="legend">
 <p><span class="color-box" style="background:#2EC4B6;"></span> Aprobado</p>
 <p><span class="color-box" style="background:#FF9EBB;"></span> Desbloqueado</p>
-<p><span class="color-box" style="background:#4CAF50;"></span> Sugerido este semestre</p>
-<p><span class="color-box" style="background:#FFD700;"></span> Futuro (prerrequisitos cumplidos)</p>
+<p><span class="color-box" style="background:#4CAF50;"></span> Sugerido</p>
+<p><span class="color-box" style="background:#FFD700;"></span> Futuro</p>
 <p><span class="color-box" style="background:#FF6A00;"></span> Bloqueado</p>
+<p><span class="color-box" style="background:#A6E1FA;"></span> Alternativa Plan A</p>
+<p><span class="color-box" style="background:#D9A7FF;"></span> Alternativa Plan B</p>
+<p><span class="color-box" style="background:#FFA6A6;"></span> Alternativa Plan C</p>
 </div>
 
-<h2>Plan de Acción</h2>
+<h2>Recomendación del Semestre</h2>
 <div id="sugeridos"></div>
 
+<div id="alternativas"></div>
+
 <script>
+/* --- Datos de ramos --- */
 const ramos = {
-IC1103:{nombre:"Introducción a la Programación", creditos:10, prereq:[]},
-MAT1107:{nombre:"Introducción al Cálculo", creditos:10, prereq:[]},
-MAT1207:{nombre:"Introducción al Álgebra y Geometría", creditos:10, prereq:[]},
-MAT0007:{nombre:"Taller Matemáticas p/ Estadística", creditos:10, prereq:[]},
-IIC2233:{nombre:"Programación Avanzada", creditos:10, prereq:["IC1103"]},
-MAT1610:{nombre:"Cálculo I", creditos:10, prereq:["MAT1107"]},
-IMT2210:{nombre:"Álgebra Lineal CD", creditos:10, prereq:["IC1103","MAT1107","MAT1207"]},
-IMT2200:{nombre:"Introducción a Ciencia de Datos", creditos:10, prereq:["IC1103","MAT1207"]},
-IMT2220:{nombre:"Cálculo para Ciencia de Datos", creditos:10, prereq:["MAT1610"]},
-IMT2230:{nombre:"Álgebra Lineal Avanzada y Modelamiento", creditos:10, prereq:["MAT1610","IMT2210"]},
-ETI195:{nombre:"Ética CD y Estadística", creditos:10, prereq:["IIC2233","IMT2200"]},
-IIC1253:{nombre:"Matemáticas Discretas", creditos:10, prereq:["IMT2210"]},
-EYP1025:{nombre:"Modelos Probabilísticos", creditos:10, prereq:["IMT2220","IMT2230"]},
-IC2133:{nombre:"Estructuras de Datos y Algoritmos", creditos:10, prereq:["IIC2233","IIC1253"]},
-IC2413:{nombre:"Bases de Datos", creditos:10, prereq:["IIC2233","IIC1253"]},
-IMT2250:{nombre:"Optimización CD", creditos:10, prereq:["IMT2220","IMT2210"]},
-EYP2114:{nombre:"Inferencia Estadística", creditos:10, prereq:["EYP1025"]},
-IIC2613:{nombre:"Inteligencia Artificial", creditos:10, prereq:["EYP1025","IIC2233"]},
-LIC2440:{nombre:"Procesamiento Datos Masivos", creditos:10, prereq:["IC2413","IC2133"]},
-EYP2101:{nombre:"Procesos Estocásticos Aplicados", creditos:10, prereq:["EYP2114"]},
-EYP2301:{nombre:"Análisis de Regresión", creditos:10, prereq:["EYP2114"]},
-C2026:{nombre:"Visualización Información", creditos:10, prereq:["IC1103"]},
-IIC2433:{nombre:"Minería de Datos", creditos:10, prereq:["IC1103","EYP1025","IMT2210"]},
-EYP2111:{nombre:"Simulación", creditos:10, prereq:["EYP2101"]},
-EYP2801:{nombre:"Métodos Bayesianos", creditos:10, prereq:["EYP2114"]},
-IMT2260:{nombre:"Teoría Aprendizaje Automático", creditos:10, prereq:["IMT2250","EYP1025"]},
-IMT2270:{nombre:"Proyecto de Graduación", creditos:10, prereq:["EYP2801","IMT2260","IMT2250","ETI195"]},
-OTRO:{nombre:"Optativo/MINOR", creditos:10, prereq:[]},
-OPR_MINOR_7:{nombre:"Optativo/MINOR", creditos:10, prereq:[]},
-OPR_MINOR_8:{nombre:"Optativo/MINOR", creditos:10, prereq:[]},
-};
-
-let aprobados = [];
-
-function estanDesbloqueado(curso){return ramos[curso].prereq.every(pr => aprobados.includes(pr));}
-
-function actualizarMalla(){
-  Object.keys(ramos).forEach(cod=>{
-    const td = document.getElementById(cod);
-    if(!td) return;
-    td.innerHTML = `<div class="curso-nombre">${ramos[cod].nombre}</div><div class="curso-sigla">${cod}</div>`;
-    td.className="";
-    if(aprobados.includes(cod)) td.classList.add("aprobado");
-    else if(estanDesbloqueado(cod)) td.classList.add("desbloqueado");
-    else td.classList.add("bloqueado");
-    td.onclick = ()=>{
-      if(!aprobados.includes(cod) && estanDesbloqueado(cod)){
-        aprobados.push(cod);
-        actualizarMalla();
-        calcularSugeridos();
-      }
-    };
-  });
-}
-
-function calcularSugeridos(){
-  const semActual = parseInt(document.getElementById('semestreActual').value);
-  let total = 0;
-  let sugeridos = [];
-  const tds = Array.from(document.querySelectorAll('table td'));
-  tds.forEach((td,i)=>{
-    const cod = td.id;
-    if(!ramos[cod] || aprobados.includes(cod)) return;
-    const sem = Math.floor(i/4)+1;
-    td.classList.remove('sugerido','futuro');
-    if(sem === semActual){
-      if(estanDesbloqueado(cod) && total + ramos[cod].creditos <=60){
-        sugeridos.push(cod);
-        total += ramos[cod].creditos;
-        td.classList.add('sugerido');
-      }
-    } else if(estanDesbloqueado(cod)){
-      td.classList.add('futuro');
-    }
-  });
-  document.getElementById('sugeridos').innerHTML = sugeridos.map(c=>`${c} – ${ramos[c].nombre} (${ramos[c].creditos}cr)`).join('<br>');
-}
-
-document.getElementById('semestreActual').addEventListener('change', calcularSugeridos);
-
-document.addEventListener("DOMContentLoaded",()=>{
-  actualizarMalla();
-  calcularSugeridos();
-});
-</script>
-</body>
-</html>
+IC1103:{nombre:"Introducción a la Programación", prereq:[]},
+MAT1107:{nombre:"Introducción al Cálculo", prereq:[]},
+MAT1207:{nombre:"Álgebra y Geometría", prereq:[]},
+MAT0007:{nombre:"Taller Matemáticas", prereq:[]},
+IIC2233:{nombre:"Programación Avanzada", prereq:["IC1103"]},
+MAT1610:{nombre:"Cálculo I", prereq:["MAT1107"]},
+IMT2210:{nombre:"Álgebra Lineal CD", prereq:["IC1103","MAT1107","MAT1207"]},
+IMT2200:{nombre:"Introducción CD", prereq:["IC1103","MAT1207"]},
+IMT2220:{nombre:"Cálculo CD", prereq:["MAT1610"]},
+IMT2230:{nombre:"Álgebra Lineal Avanzada", prereq:["MAT1610","IMT2210"]},
+ETI195:{nombre:"Ética CD", prereq:["IIC2233","IMT2200"]},
+IIC1253:{nombre:"Matemáticas Discretas", prereq:["IMT2210"]},
+EYP1025:{nombre:"Modelos Probabilísticos", prereq:["IMT2220","IMT2230"]},
+IC2133:{nombre:"EDA", prereq:["IIC2233","IIC1253"]},
+IC2413:{nombre:"Bases de Datos", prereq:["IIC2233","IIC1253"]},
+IMT2250:{nombre:"Optimización CD", prereq:["IMT2220","IMT2210"]},
+EYP2114:{nombre:"Inferencia", prereq:["EYP1025"]},
+IIC2613:{nombre:"Inteligencia Artificial", prereq:["EYP1025","IIC2233"]},
+LIC2440:{nombre:"Procesamiento Datos Masivos", prereq:["IC2413","IC2133"]},
+EYP2101:{nombre:"Procesos Estocásticos", prereq:["EYP2114"]},
+EYP2301:{
