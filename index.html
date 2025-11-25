@@ -171,7 +171,7 @@ const R = {
 
   EYP2111:{nombre:'Simulación',sem:7,pr:['EYP2101']},
   EYP2801:{nombre:'Métodos Bayesianos',sem:7,pr:['EYP2114']},
-  IMT2260:{nombre:'Teoría de Aprendizaje Automático',sem:7,pr:['IMT2250','EYP1025']}, // <- actualizado: sólo IMT2250 y EYP1025
+  IMT2260:{nombre:'Teoría de Aprendizaje Automático',sem:7,pr:['IMT2250','EYP1025']}, // <- actualizado
   OFG7:{nombre:'OFG',sem:7,pr:[]},
   OPR7:{nombre:'OPR o Minor',sem:7,pr:[]},
 
@@ -263,14 +263,28 @@ function renderMalla(){
   }
 }
 
-/* Generate plans (DFS with dedupe) using MAX_PER_SEM */
+/* ========= FIXED: generatePlans starting from semester after semActual,
+   never place a course earlier than its original semester,
+   allow extending beyond 8 sems if needed, and only place courses
+   when their prereqs are satisfied by approvedSoFar + already assigned in earlier targetSem.
+*/
 function generatePlans(initialApproved, limit = 4){
   const plans = [];
   const seen = new Set();
+  const startSem = Number(semActualSel.value) + 1; // distribute from next semester
+  const maxSpan = 12; // allow up to 12 semesters in distribution (covers repeats/failures)
 
-  function dfs(s, approvedSoFar, planSoFar){
+  // All courses that are not approved and not OPR/OPG? we consider all codes in R
+  const allToPlace = Object.keys(R).filter(c => !initialApproved.includes(c));
+
+  function dfs(semIndex, approvedSoFar, planSoFar){
     if(plans.length >= limit) return;
-    if(s > 8){
+    // termination: if semIndex passed startSem+maxSpan-1 OR all courses that can be placed have been considered
+    const semestersTried = semIndex - startSem;
+    const placedCount = Object.keys(planSoFar).reduce((acc,k)=> acc + (planSoFar[k] ? planSoFar[k].length : 0), 0);
+    const totalToPlace = allToPlace.length;
+
+    if(semIndex > startSem + maxSpan - 1 || placedCount >= totalToPlace){
       const key = Object.keys(planSoFar).map(k => (planSoFar[k]||[]).join(',')).join('|');
       if(!seen.has(key)){
         seen.add(key);
@@ -279,21 +293,33 @@ function generatePlans(initialApproved, limit = 4){
       return;
     }
 
-    const candidates = semCourses[s].filter(c => !approvedSoFar.includes(c) && canTake(c, approvedSoFar));
+    // Determine which courses are eligible to place AT this semester semIndex
+    // Eligible if:
+    // - not already approvedSoFar
+    // - original semester <= semIndex (we don't place earlier than original)
+    // - prereqs satisfied by approvedSoFar (which includes assigned of previous target semesters)
+    const candidates = Object.keys(R).filter(code =>
+      !approvedSoFar.includes(code) &&
+      R[code].sem <= semIndex &&
+      canTake(code, approvedSoFar)
+    );
 
+    // Also we don't try to assign courses that the user already has approved
+    // If no candidates, record empty and move on
     if(candidates.length === 0){
-      planSoFar[s] = [];
-      dfs(s+1, approvedSoFar.slice(), planSoFar);
+      planSoFar[semIndex] = [];
+      dfs(semIndex + 1, approvedSoFar.slice(), planSoFar);
       return;
     }
 
-    const sorted = candidates.sort((a,b)=>dependentsCount(b)-dependentsCount(a));
-    const subsets = [];
+    // sort by dependents
+    const sorted = candidates.sort((a,b)=> dependentsCount(b) - dependentsCount(a));
 
-    // greedy principal
+    // generate limited subsets to try
+    const subsets = [];
     subsets.push(sorted.slice(0, MAX_PER_SEM));
 
-    // small alternatives by swapping items
+    // small variations
     for(let i=0;i<Math.min(sorted.length, MAX_PER_SEM+2);i++){
       for(let j=i+1;j<Math.min(sorted.length, MAX_PER_SEM+4);j++){
         const base = sorted.slice(0, Math.min(MAX_PER_SEM, sorted.length));
@@ -301,34 +327,35 @@ function generatePlans(initialApproved, limit = 4){
           const alt = base.slice();
           if(i < alt.length) alt[i] = sorted[j];
           else alt.push(sorted[j]);
-          const uniq = Array.from(new Set(alt));
-          subsets.push(uniq);
+          subsets.push(Array.from(new Set(alt)));
         }
       }
     }
 
-    // dedupe subsets & limit
+    // dedupe subsets, limit count
     const uniqueSubs = [];
     for(const sset of subsets){
       const key = sset.join(',');
       if(!uniqueSubs.some(x=>x.join(',')===key)) uniqueSubs.push(sset);
-      if(uniqueSubs.length >= 6) break;
+      if(uniqueSubs.length >= 8) break;
     }
 
     for(const sel of uniqueSubs){
       const newPlan = Object.assign({}, planSoFar);
-      newPlan[s] = sel.slice();
+      newPlan[semIndex] = sel.slice();
       const newApproved = approvedSoFar.slice();
-      sel.forEach(c=> { if(!newApproved.includes(c)) newApproved.push(c); });
-      dfs(s+1, newApproved, newPlan);
+      // push selected into approved list for subsequent semesters
+      sel.forEach(c => { if(!newApproved.includes(c)) newApproved.push(c); });
+      dfs(semIndex + 1, newApproved, newPlan);
       if(plans.length >= limit) return;
     }
 
-    // allow none this sem
-    dfs(s+1, approvedSoFar.slice(), Object.assign({}, planSoFar));
+    // also consider leaving semester empty
+    dfs(semIndex + 1, approvedSoFar.slice(), Object.assign({}, planSoFar));
   }
 
-  dfs(1, initialApproved.slice(), {});
+  // start DFS from startSem
+  dfs(startSem, initialApproved.slice(), {});
   return plans;
 }
 
@@ -336,17 +363,18 @@ function generatePlans(initialApproved, limit = 4){
 function rankPlans(plans){
   const scorePlan = (plan) => {
     let score = 0;
-    for(let s=1;s<=8;s++){
+    const planSemesters = Object.keys(plan).map(n=>Number(n)).sort((a,b)=>a-b);
+    planSemesters.forEach(s => {
       const arr = plan[s] || [];
-      score += arr.length * 10;
-      arr.forEach(c => score += dependentsCount(c) * (9 - s));
-    }
+      score += (arr.length) * 10;
+      arr.forEach(c => score += dependentsCount(c) * (100 - s));
+    });
     return score;
   };
   return plans.sort((A,B) => scorePlan(B) - scorePlan(A));
 }
 
-/* Render plans and action (no duplicates) */
+/* Render plans and action (no duplicates). Pills now show "CODE — Name" */
 function renderPlans(){
   plansContainer.innerHTML = '';
   const rawPlans = generatePlans(approved, 6);
@@ -364,17 +392,22 @@ function renderPlans(){
     const h = document.createElement('strong'); h.textContent = (idx===0? 'Opción recomendada' : 'Alternativa ' + idx);
     title.appendChild(h); card.appendChild(title);
 
+    // determine plan semesters to display (sorted keys)
+    const planSemKeys = Object.keys(plan).map(k=>Number(k)).sort((a,b)=>a-b);
+    // show grid for these semesters (if some beyond 8, show them)
     const pgrid = document.createElement('div'); pgrid.className = 'plan-grid';
-    for(let s=1;s<=8;s++){
+    // choose columns: show from min to max but cap width: we'll show up to 12 columns visually (grid CSS will wrap)
+    for(const s of planSemKeys){
       const cell = document.createElement('div'); cell.className = 'plan-cell';
-      cell.style.background = semColors[s-1];
+      const semIndex = Number(s);
+      cell.style.background = semColors[(semIndex-1) % semColors.length];
       const semTitle = document.createElement('div'); semTitle.style.fontWeight='700'; semTitle.style.marginBottom='6px';
-      semTitle.textContent = 'Sem ' + s;
+      semTitle.textContent = 'Sem ' + semIndex;
       cell.appendChild(semTitle);
       const arr = plan[s]||[];
       arr.forEach(c => {
         const pill = document.createElement('div'); pill.className='pill';
-        pill.textContent = c;
+        pill.textContent = c + ' — ' + R[c].nombre;
         pill.title = R[c].nombre;
         cell.appendChild(pill);
       });
@@ -383,9 +416,10 @@ function renderPlans(){
     card.appendChild(pgrid);
 
     // actionable list for semester selected
-    const upNext = plan[Number(semActualSel.value)] || [];
+    const semSel = Number(semActualSel.value);
+    const upNext = plan[semSel] || [];
     const subtitle = document.createElement('div'); subtitle.style.marginTop='8px'; subtitle.style.fontWeight='700';
-    subtitle.textContent = 'Sugeridos para sem ' + semActualSel.value + ' (' + upNext.length + ' ramos)';
+    subtitle.textContent = 'Sugeridos para sem ' + semSel + ' (' + upNext.length + ' ramos)';
     card.appendChild(subtitle);
     const ol = document.createElement('ol');
     if(upNext.length === 0){
