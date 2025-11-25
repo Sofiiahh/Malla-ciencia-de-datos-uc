@@ -99,12 +99,12 @@
 
 <header class="hero">
   <h1>Malla Estratégica Interactiva — Licenciatura en Ciencia de Datos</h1>
-  <p>Selecciona tu siguiente semestre y compara las alternativas óptimas generadas.</p>
+  <p>Generador de rutas: compara hasta 3 planes óptimos basados en tu malla real.</p>
 </header>
 
 <section class="controls" aria-label="Controles">
   <label>
-    Semestre:
+    Semestre actual:
     <select id="semActual"></select>
   </label>
 
@@ -125,37 +125,35 @@
   </div>
 </section>
 
-<!-- Main malla official interactive -->
 <main id="mallaGrid" class="grid" aria-live="polite"></main>
 
-<!-- Plans and action -->
 <section class="plans" id="plansArea">
-  <h2>Plan(es) recomendado(s) <span class="variant-label">hasta 3 alternativas</span></h2>
+  <h2>Planes recomendados <span class="variant-label">máx. 3 alternativas</span></h2>
   <div id="plansContainer"></div>
 
   <div class="plan-card action" style="margin-top:10px;">
     <h3 style="margin:0 0 8px 0">Plan de acción para el semestre <span id="semLabel">1</span></h3>
     <ol id="planAction"></ol>
-    <p style="margin-top:10px; color:var(--muted)">Consejo: marca los ramos aprobados para que la malla se actualice correctamente.</p>
+    <p style="margin-top:10px; color:var(--muted)">Marca los ramos aprobados (clic) para que la malla y las rutas se actualicen.</p>
   </div>
 </section>
 
-<footer class="footer">Diseñado para generar rutas reales — elige con estrategia y cuida tu energía.</footer>
+<footer class="footer">Diseñado para generar rutas reales — fuerza y enfoque para tus evaluaciones.</footer>
 
 <script>
-/* ========== Datos de la malla (ramos y prerrequisitos) ========== */
+/* ===== Datos de la malla (tu malla + prerequisitos) ===== */
 const R = {
   IC1103:{nombre:'Introducción a la Programación',sem:1,pr:[]},
   MAT1107:{nombre:'Introducción al Cálculo',sem:1,pr:[]},
   MAT1207:{nombre:'Introducción al Álgebra y Geometría',sem:1,pr:[]},
   MAT0007:{nombre:'Taller de Matemáticas para Estadística',sem:1,pr:[]},
-  OFG1:{nombre:'OFG',sem:1,pr:[]},
+  OFG1:{nombre:'OFG (FIL2001)',sem:1,pr:[]},
 
   IIC2233:{nombre:'Programación Avanzada',sem:2,pr:['IC1103']},
   MAT1610:{nombre:'Cálculo I',sem:2,pr:['MAT1107']},
   IMT2210:{nombre:'Álgebra Lineal para Ciencia de Datos',sem:2,pr:['IC1103','MAT1107','MAT1207']},
   IMT2200:{nombre:'Introducción a Ciencia de Datos',sem:2,pr:['IC1103','MAT1207']},
-  OFG2:{nombre:'OFG',sem:2,pr:[]},
+  OFG2:{nombre:'OFG (Teológico)',sem:2,pr:[]},
 
   IMT2220:{nombre:'Cálculo para Ciencia de Datos',sem:3,pr:['MAT1610']},
   IMT2230:{nombre:'Álgebra Lineal Avanzada y Modelamiento',sem:3,pr:['MAT1610','IMT2210']},
@@ -206,12 +204,12 @@ const semLabel = document.getElementById('semLabel');
 const startSemesterSel = document.getElementById('startSemester');
 
 /* state */
-let approved = []; // aprobados por el usuario
+let approved = []; // aprobados por el usuario (se marcan con clic)
 const MAX_PER_SEM = 6; // absoluto: máximo 6 ramos por semestre
 const SEM_OBJETIVO = 8; // intentar siempre 8 semestres
 const PLAN_LIMIT = 3; // cuántos planes distintos queremos retornar (hasta 3)
 
-/* Build sem lists */
+/* Build sem lists for UI display */
 const semCourses = {};
 for(let s=1;s<=8;s++) semCourses[s] = Object.keys(R).filter(k => R[k].sem === s);
 
@@ -238,7 +236,7 @@ function dependentsCount(code){
   return Object.values(R).reduce((acc,r)=> acc + ((r.pr||[]).includes(code)?1:0),0);
 }
 
-/* Render malla */
+/* Render malla (UI) */
 function renderMalla(){
   mallaGrid.innerHTML = '';
   for(let s=1;s<=8;s++){
@@ -265,14 +263,12 @@ function renderMalla(){
       btn.onclick = () => {
         if(approved.includes(code)) approved = approved.filter(x => x !== code);
         else if(canTake(code, approved)) approved.push(code);
-        // else blocked -> do nothing
         updateAll();
       };
 
       list.appendChild(btn);
     });
 
-    // show empty semester placeholder if no courses
     if(semCourses[s].length === 0){
       const empty = document.createElement('div');
       empty.className = 'course bloqueado';
@@ -286,29 +282,38 @@ function renderMalla(){
 }
 
 /* -----------------------
-   Manejo de RAMOS ANUALES
+   Ramos anuales: normalizaciones y set
+   (correcciones por typos que mencionaste)
 */
 const annualCorrections = {
   'EYP280I':'EYP2801',
+  'IIC2440':'LIC2440', // usuario puso IIC2440 en vez de LIC2440
   'INT2250':'IMT2250'
 };
-const userAnnuals = [
+const userAnnualsRaw = [
   'IIC2440','EYP280I','IMT2260','FIS154D',
   'IMT2200','INT2250'
 ];
-const annualCourses = new Set(userAnnuals.map(c=>{
+// Normalize and keep only those present in R
+const annualCourses = new Set(userAnnualsRaw.map(c=>{
   const corrected = annualCorrections[c] || c;
   return corrected;
-}));
+}).filter(c => R[c]));
 function isAnnual(code){
   return annualCourses.has(code);
 }
 
+/* Helper: is free-movable (OFG / OPR / OPR-like) */
+function isFreeMovable(code){
+  if(!code) return false;
+  return code.startsWith('OFG') || code.startsWith('OPR') || code.includes('OPR') || code.includes('MINOR') || code.includes('Minor');
+}
+
 /* -----------------------
-   GENERACIÓN: DFS + heurística -> múltiples planes óptimos distintos
+   GENERACIÓN: Backtracking + heurística -> múltiples planes óptimos distintos
    - Intenta encajar todo en SEM_OBJETIVO semestres
    - Respeta MAX_PER_SEM
-   - Solo 1 semestre extra (el 9) si hace falta
+   - Solo 1 semestre extra (el 9º) si es necesario
    - Produce hasta PLAN_LIMIT planes distintos
    - Firma del estado incluye sem y lista para evitar colisiones
 */
@@ -316,47 +321,54 @@ function generatePlans(initialApproved, limit = PLAN_LIMIT, startSemester = ''){
   const uiStart = Number(semActualSel.value);
   const startSem = startSemester ? Number(startSemester) : (uiStart + 1);
   const span = SEM_OBJETIVO; // 8 sem target
-  const maxSpan = span + 1; // permitimos un sem extra (9) solo si es necesario
-
+  const maxAllowed = span + 1; // allow one extra (9th)
   const allCourses = Object.keys(R).filter(c => !initialApproved.includes(c));
   const results = [];
   const seen = new Set();
 
-  // helper: signature
-  function planKey(planObj){
-    return Object.keys(planObj).sort((a,b)=>a-b)
-      .map(s => `${s}:${(planObj[s]||[]).join(',')}`)
+  function planKey(plan){
+    return Object.keys(plan).sort((a,b)=>a-b)
+      .map(s => `${s}:${(plan[s]||[]).join(',')}`)
       .join('|');
   }
 
-  // helper: check if a course can be placed at sem considering prereqs and R[c].sem <= sem
-  function availableToPlace(code, approvedSet, sem){
-    if(approvedSet.has(code)) return false;
-    if(R[code] && R[code].sem > sem) return false;
-    return canTake(code, Array.from(approvedSet));
+  function assignedSetFromPlan(plan){
+    const s = new Set();
+    Object.values(plan).flat().forEach(x => {
+      const code = String(x).replace(/\s*\(anual\)$/,'');
+      s.add(code);
+    });
+    return s;
   }
 
-  // place function for annuals: need sem and sem+1 to be within allowed range (startSem .. startSem+maxSpan-1)
-  function canPlaceAnnualAt(plan, course, sem, allowedEnd){
-    const s1 = sem;
-    const s2 = sem + 1;
+  // Check restrictions for placing course at sem
+  function canPlaceSingle(plan, course, sem){
+    // Respect capacity
+    if((plan[sem]||[]).length >= MAX_PER_SEM) return false;
+    // Respect natural semester suggestion except for free-movable
+    if(!isFreeMovable(course) && R[course] && R[course].sem > sem) return false;
+    return true;
+  }
+  function canPlaceAnnual(plan, course, sem, allowedEnd){
+    // annual needs sem and sem+1
+    const s1 = sem, s2 = sem+1;
     if(s2 > allowedEnd) return false;
-    const load1 = (plan[s1]||[]).length;
-    const load2 = (plan[s2]||[]).length;
-    if(load1 >= MAX_PER_SEM || load2 >= MAX_PER_SEM) return false;
+    if((plan[s1]||[]).length >= MAX_PER_SEM) return false;
+    if((plan[s2]||[]).length >= MAX_PER_SEM) return false;
+    if(!isFreeMovable(course) && R[course] && R[course].sem > sem) return false;
     return true;
   }
 
   // DFS
   function dfs(sem, approvedSet, planObj, allowedEnd){
     if(results.length >= limit) return;
-    // if we've passed allowedEnd
+    // Stop if sem > allowedEnd
     if(sem > allowedEnd){
-      // check if all courses assigned
-      const assignedCount = Object.keys(planObj).reduce((acc,k)=> acc + (planObj[k] ? planObj[k].length : 0), 0);
-      // count uniques (anual duplicate entries counted separately) -> normalize codes
-      const assignedCodes = new Set();
-      Object.values(planObj).flat().forEach(x => assignedCodes.add(String(x).replace(/\s*\(anual\)$/,'')));
+      // check complete
+      const assignedCodes = assignedSetFromPlan(planObj);
+      allCourses.forEach(c => {
+        // if a course is free-movable, it is still in allCourses list so must be included
+      });
       if(assignedCodes.size >= allCourses.length){
         const key = planKey(planObj);
         if(!seen.has(key)){
@@ -367,10 +379,10 @@ function generatePlans(initialApproved, limit = PLAN_LIMIT, startSemester = ''){
       return;
     }
 
-    // If we've already assigned all courses early, collect
-    const assignedCodesNow = new Set();
-    Object.values(planObj).flat().forEach(x => assignedCodesNow.add(String(x).replace(/\s*\(anual\)$/,'')));
-    if(assignedCodesNow.size >= allCourses.length){
+    // If already assigned all, collect
+    const currentAssigned = assignedSetFromPlan(planObj);
+    initialApproved.forEach(a => currentAssigned.add(a));
+    if(currentAssigned.size >= allCourses.length){
       const key = planKey(planObj);
       if(!seen.has(key)){
         seen.add(key);
@@ -379,160 +391,146 @@ function generatePlans(initialApproved, limit = PLAN_LIMIT, startSemester = ''){
       return;
     }
 
-    // compute candidates for this semester
-    const assignedNow = new Set(Array.from(approvedSet));
-    Object.keys(planObj).forEach(k => {
-      (planObj[k]||[]).forEach(item => assignedNow.add(String(item).replace(/\s*\(anual\)$/,'')));
-    });
+    // Build currentAssigned + approvedSet (for prereqs)
+    const approvedTotal = new Set(Array.from(approvedSet));
+    Array.from(currentAssigned).forEach(x=>approvedTotal.add(x));
 
-    // Candidates: not assigned, R[c].sem <= sem, prereqs met (with approvedSet)
-    let candidates = allCourses.filter(c => !assignedNow.has(c) && (R[c] ? R[c].sem <= sem : true) && canTake(c, Array.from(approvedSet)));
-    // sort by dependents (desc) to prioritize unlocking
+    // Candidates: not assigned, prereqs met with approvedTotal, and (R[c].sem <= sem OR free-movable)
+    let candidates = allCourses.filter(c => !approvedTotal.has(c) && canTake(c, Array.from(approvedTotal)) && (isFreeMovable(c) || !R[c] || R[c].sem <= sem));
+    // Sort by dependents to prefer unlocking
     candidates.sort((a,b)=> dependentsCount(b) - dependentsCount(a) || a.localeCompare(b));
 
-    // If no candidates, skip semester (leave empty)
+    // If no candidates, skip semester (empty) but still proceed — this allows prereqs to be satisfied by later sems
     if(candidates.length === 0){
-      // still need to add empty slot and continue
-      const planCopy = Object.assign({}, planObj);
-      planCopy[sem] = planCopy[sem] || [];
-      dfs(sem+1, new Set(approvedSet), planCopy, allowedEnd);
+      const copyPlan = Object.assign({}, planObj);
+      copyPlan[sem] = copyPlan[sem] || [];
+      dfs(sem+1, new Set(approvedSet), copyPlan, allowedEnd);
       return;
     }
 
-    // Generate a small set of different "assignments" for this semester to explore alternatives.
-    // Strategy: try greedy top-k sets and a few swaps to create diversity, but keep branching limited.
+    // Build variants: greedy and some alternatives
     const variants = [];
-
-    // 1) Greedy fill up to MAX_PER_SEM
-    const greedy = [];
-    {
-      const tempAssigned = new Set(approvedSet);
+    // Greedy fill up to capacity
+    (function(){
+      const tempAssigned = new Set(approvedTotal);
+      const pickList = [];
       for(const c of candidates){
-        if(greedy.length >= MAX_PER_SEM) break;
-        // if annual, need space at sem+1 within allowedEnd
+        if(pickList.length >= MAX_PER_SEM) break;
+        if(tempAssigned.has(c)) continue;
         if(isAnnual(c)){
-          if(!canPlaceAnnualAt(planObj, c, sem, allowedEnd)) continue;
-          // place annual tentatively (reserve)
-          greedy.push(c);
+          if(!canPlaceAnnual(planObj, c, sem, allowedEnd)) continue;
+          pickList.push(c);
           tempAssigned.add(c);
         } else {
-          greedy.push(c);
+          if(!canPlaceSingle(planObj, c, sem)) continue;
+          pickList.push(c);
           tempAssigned.add(c);
         }
       }
-      if(greedy.length > 0) variants.push(greedy);
+      if(pickList.length>0) variants.push(pickList);
+    })();
+
+    // Top-k slices to create alternatives
+    for(let t=1; t<=Math.min(candidates.length, MAX_PER_SEM) && variants.length < 10; t++){
+      variants.push(candidates.slice(0,t));
     }
 
-    // 2) try smaller sets (omit last items) to get different combos
-    for(let take = Math.min(candidates.length, MAX_PER_SEM); take >= 1 && variants.length < 8; take--){
-      variants.push(candidates.slice(0,take));
-      if(variants.length >= 8) break;
-    }
-
-    // 3) create swap variants: replace one of top picks with next candidates
-    for(let i=0;i<Math.min(candidates.length,3) && variants.length<12;i++){
-      for(let j=3;j<Math.min(candidates.length,8) && variants.length<12;j++){
+    // Swap-based alternatives
+    for(let i=0; i<Math.min(3,candidates.length) && variants.length<15; i++){
+      for(let j=3; j<Math.min(candidates.length, 9) && variants.length<15; j++){
         const base = candidates.slice(0, Math.min(MAX_PER_SEM, candidates.length));
         if(base.includes(candidates[j])) continue;
         const alt = base.slice();
         alt[i] = candidates[j];
-        // unique check
         const key = alt.join(',');
-        if(!variants.some(v => v.join(',')===key)) variants.push(alt);
+        if(!variants.some(v=>v.join(',')===key)) variants.push(alt);
       }
     }
 
-    // ensure uniqueness
-    const uniqVars = [];
+    // Deduplicate variants and cap
+    const uniq = [];
     for(const v of variants){
       const k = v.join(',');
-      if(!uniqVars.some(u=>u.join(',')===k)) uniqVars.push(v.slice(0,MAX_PER_SEM));
-      if(uniqVars.length>=12) break;
+      if(!uniq.some(x=>x.join(',')===k)) uniq.push(v.slice(0,MAX_PER_SEM));
+      if(uniq.length>=12) break;
     }
 
     // Explore each variant
-    for(const sel of uniqVars){
+    for(const sel of uniq){
       if(results.length >= limit) break;
-      // build new plan copy
       const newPlan = Object.assign({}, planObj);
       newPlan[sem] = newPlan[sem] || [];
-
       const newApproved = new Set(approvedSet);
-      let placedCount = 0;
-      let ok = true;
+      // Also add those already in plan to newApproved (so prereqs see them)
+      Object.keys(newPlan).forEach(k => (newPlan[k]||[]).forEach(it => newApproved.add(String(it).replace(/\s*\(anual\)$/,''))));
 
+      let placed = 0;
+      let ok = true;
       for(const code of sel){
-        if(placedCount >= MAX_PER_SEM) break;
+        if(placed >= MAX_PER_SEM) break;
         if(newApproved.has(code)) continue;
         if(isAnnual(code)){
-          // check if we can place annual at sem within allowedEnd and capacity
-          if(!canPlaceAnnualAt(newPlan, code, sem, allowedEnd)){
+          if(!canPlaceAnnual(newPlan, code, sem, allowedEnd)){
             ok = false; break;
           }
-          // ensure sem+1 exists
-          newPlan[sem] = newPlan[sem] || [];
-          newPlan[sem+1] = newPlan[sem+1] || [];
           newPlan[sem].push(code);
+          newPlan[sem+1] = newPlan[sem+1] || [];
           newPlan[sem+1].push(code + ' (anual)');
           newApproved.add(code);
-          placedCount++;
+          placed++;
         } else {
-          newPlan[sem] = newPlan[sem] || [];
-          if(newPlan[sem].length >= MAX_PER_SEM) break;
+          if(!canPlaceSingle(newPlan, code, sem)) continue;
           newPlan[sem].push(code);
           newApproved.add(code);
-          placedCount++;
+          placed++;
         }
       }
-
       if(!ok) continue;
 
-      // After placing, try to greedily add more (if room) from remaining candidates
-      let moreCandidates = allCourses.filter(c => !newApproved.has(c) && (R[c] ? R[c].sem <= sem : true) && canTake(c, Array.from(newApproved)));
-      moreCandidates.sort((a,b)=> dependentsCount(b) - dependentsCount(a) || a.localeCompare(b));
-      for(const mc of moreCandidates){
+      // Greedily fill remaining slots in this sem with other available courses
+      let more = allCourses.filter(c => !newApproved.has(c) && canTake(c, Array.from(newApproved)) && (isFreeMovable(c) || !R[c] || R[c].sem <= sem));
+      more.sort((a,b)=> dependentsCount(b) - dependentsCount(a) || a.localeCompare(b));
+      for(const m of more){
         if(newPlan[sem].length >= MAX_PER_SEM) break;
-        if(isAnnual(mc)){
-          if(!canPlaceAnnualAt(newPlan, mc, sem, allowedEnd)) continue;
-          newPlan[sem].push(mc);
+        if(newApproved.has(m)) continue;
+        if(isAnnual(m)){
+          if(!canPlaceAnnual(newPlan, m, sem, allowedEnd)) continue;
+          newPlan[sem].push(m);
           newPlan[sem+1] = newPlan[sem+1] || [];
-          newPlan[sem+1].push(mc + ' (anual)');
-          newApproved.add(mc);
+          newPlan[sem+1].push(m + ' (anual)');
+          newApproved.add(m);
         } else {
-          newPlan[sem].push(mc);
-          newApproved.add(mc);
+          newPlan[sem].push(m);
+          newApproved.add(m);
         }
       }
 
-      // Continue DFS to next semester
       dfs(sem+1, newApproved, newPlan, allowedEnd);
-
-      // if we've already enough results, break
       if(results.length >= limit) break;
     }
 
-    // also consider skipping placing anything this sem (to allow later placements)
+    // Also try skipping placing anything this sem (allow later placements)
     if(results.length < limit){
-      const planCopy = Object.assign({}, planObj);
-      planCopy[sem] = planCopy[sem] || [];
-      dfs(sem+1, new Set(approvedSet), planCopy, allowedEnd);
+      const copyPlan = Object.assign({}, planObj);
+      copyPlan[sem] = copyPlan[sem] || [];
+      dfs(sem+1, new Set(approvedSet), copyPlan, allowedEnd);
     }
   }
 
-  // First try filling within span (8 sem)
+  // Try strictly within 8 sem
   dfs(startSem, new Set(initialApproved), {}, startSem + span - 1);
+  // If not enough results, allow one extra semester (9th)
   if(results.length < limit){
-    // allow one extra semester (9th) and explore again (but avoid infinite)
     dfs(startSem, new Set(initialApproved), {}, startSem + span);
   }
 
-  // If still none found (rare), return a greedy fallback (deterministic)
+  // If still empty, produce a deterministic greedy fallback that will not exceed 9 sem
   if(results.length === 0){
     const fallback = {};
     const assigned = new Set(initialApproved);
     for(let sem = startSem; sem < startSem + span; sem++){
-      fallback[sem] = [];
-      let candidates = Object.keys(R).filter(c => !assigned.has(c) && (R[c] ? R[c].sem <= sem : true) && canTake(c, Array.from(assigned)));
+      fallback[sem] = fallback[sem] || [];
+      let candidates = Object.keys(R).filter(c => !assigned.has(c) && canTake(c, Array.from(assigned)) && (isFreeMovable(c) || !R[c] || R[c].sem <= sem));
       candidates.sort((a,b)=> dependentsCount(b) - dependentsCount(a));
       for(const c of candidates){
         if(fallback[sem].length >= MAX_PER_SEM) break;
@@ -551,7 +549,7 @@ function generatePlans(initialApproved, limit = PLAN_LIMIT, startSemester = ''){
     results.push(fallback);
   }
 
-  // Normalize results length up to requested limit
+  // Return up to limit distinct plans
   return results.slice(0, limit);
 }
 
@@ -568,20 +566,20 @@ function rankPlans(plans){
         score += dependentsCount(code) * (100 - s);
       });
     });
-    const maxSem = Math.max(...(planSemesters.length?planSemesters: [0]));
-    score -= maxSem * 2;
+    const maxSem = planSemesters.length ? Math.max(...planSemesters) : 0;
+    score -= maxSem * 2; // prefer shorter end index
     return score;
   };
   return plans.sort((A,B) => scorePlan(B) - scorePlan(A));
 }
 
-/* Render plans and action (no duplicates). Pills now show "CODE — Name" */
+/* Render plans and action */
 function renderPlans(){
   plansContainer.innerHTML = '';
   const startSemester = startSemesterSel.value || '';
   const rawPlans = generatePlans(approved, PLAN_LIMIT, startSemester);
-  if(rawPlans.length === 0){
-    plansContainer.innerHTML = '<p style="color:var(--muted)">No se pudo generar ninguna ruta. Marca ramos aprobados o revisa prerrequisitos.</p>';
+  if(!rawPlans || rawPlans.length === 0){
+    plansContainer.innerHTML = '<p style="color:var(--muted)">No se pudo generar rutas. Marca ramos aprobados o revisa prerrequisitos.</p>';
     updatePlanAction(null);
     return;
   }
@@ -598,7 +596,7 @@ function renderPlans(){
     for(const s of planSemKeys){
       const cell = document.createElement('div'); cell.className = 'plan-cell';
       const semIndex = Number(s);
-      cell.style.background = semColors[(semIndex-1) % semColors.length];
+      cell.style.background = semColors[((semIndex-1)%semColors.length + semColors.length) % semColors.length];
       const semTitle = document.createElement('div'); semTitle.style.fontWeight='700'; semTitle.style.marginBottom='6px';
       semTitle.textContent = 'Sem ' + semIndex;
       cell.appendChild(semTitle);
@@ -640,8 +638,7 @@ function renderPlans(){
     plansContainer.appendChild(card);
   });
 
-  const best = ranked[0];
-  updatePlanAction(best);
+  updatePlanAction(ranked[0]);
 }
 
 /* update Plan de Acción */
@@ -653,7 +650,6 @@ function updatePlanAction(plan){
     const li = document.createElement('li'); li.textContent = 'No hay ramos sugeridos para este semestre. Considera optativos o recuperar prerrequisitos.'; planAction.appendChild(li);
     return;
   }
-  // show cleaned items
   plan[sem].forEach(c => {
     const clean = String(c).replace(/\s*\(anual\)$/,'');
     const li = document.createElement('li'); li.textContent = clean + (R[clean] ? ' — ' + R[clean].nombre : (c.includes('(anual)') ? ' — (anual)' : ''));
