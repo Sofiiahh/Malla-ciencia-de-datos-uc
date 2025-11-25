@@ -282,103 +282,95 @@ function renderMalla(){
   }
 }
 
-/* GENERADOR: dos fases
-   - primero intenta encajar todo en SEM_OBJETIVO semestres
-   - si no encuentra planes, repite permitiendo 1 semestre adicional (semestre 9)
-   acepta parámetro startSemester para comenzar a rellenar desde ese número
+/* ---------- NUEVA LÓGICA DE GENERACIÓN DE PLANES ----------
+   - Intenta encajar TODO en SEM_OBJETIVO semestres (8).
+   - Respeta MAX_PER_SEM por semestre.
+   - Prioriza ramos con más dependientes.
+   - Solo crea semestres extra si tras llenar 8 aún quedan ramos.
+   - Devuelve un array con 1 plan (para mantener compatibilidad).
 */
 function generatePlans(initialApproved, limit = 4, startSemester = ''){
-  let plans = _generatePlansWithMaxSpan(initialApproved, limit, startSemester, SEM_OBJETIVO);
-  if(plans.length > 0) return plans;
-  return _generatePlansWithMaxSpan(initialApproved, limit, startSemester, SEM_OBJETIVO + 1);
-}
-
-function _generatePlansWithMaxSpan(initialApproved, limit, startSemester, semestresSpan){
-  const plans = [];
-  const seen = new Set();
   const uiStart = Number(semActualSel.value);
-  // si el usuario seleccionó un startSemester lo usamos; si no, empezamos desde el siguiente semestre por defecto
   const startSem = startSemester ? Number(startSemester) : (uiStart + 1);
-  const maxSpan = semestresSpan; // ej: 8 o 9
+  const allCourses = Object.keys(R).filter(c => !initialApproved.includes(c));
+  const assigned = new Set(initialApproved);
+  const plan = {}; // map semIndex -> [codes]
 
-  const allToPlace = Object.keys(R).filter(c => !initialApproved.includes(c));
+  // Fill target window: startSem .. startSem + SEM_OBJETIVO - 1
+  for(let sem = startSem; sem < startSem + SEM_OBJETIVO; sem++){
+    plan[sem] = [];
+    // candidates: not assigned, earliest semester requirement satisfied (R[c].sem <= sem), and prereqs met
+    let candidates = allCourses.filter(c => !assigned.has(c) && R[c].sem <= sem && canTake(c, Array.from(assigned)));
+    // prioritize by dependentsCount (desc)
+    candidates.sort((a,b) => dependentsCount(b) - dependentsCount(a));
 
-  function dfs(semIndex, approvedSoFar, planSoFar){
-    if(plans.length >= limit) return;
-
-    if(semIndex > startSem + maxSpan - 1){
-      const key = Object.keys(planSoFar).map(k => (planSoFar[k]||[]).join(',')).join('|');
-      if(!seen.has(key)){
-        seen.add(key);
-        plans.push(JSON.parse(JSON.stringify(planSoFar)));
-      }
-      return;
+    while(candidates.length > 0 && plan[sem].length < MAX_PER_SEM){
+      const pick = candidates.shift();
+      plan[sem].push(pick);
+      assigned.add(pick);
+      // recompute candidates (some courses may become available)
+      candidates = allCourses.filter(c => !assigned.has(c) && R[c].sem <= sem && canTake(c, Array.from(assigned)));
+      candidates.sort((a,b) => dependentsCount(b) - dependentsCount(a));
     }
-
-    const placedCount = Object.keys(planSoFar).reduce((acc,k)=> acc + (planSoFar[k] ? planSoFar[k].length : 0), 0);
-    if(placedCount >= allToPlace.length){
-      const key = Object.keys(planSoFar).map(k => (planSoFar[k]||[]).join(',')).join('|');
-      if(!seen.has(key)){
-        seen.add(key);
-        plans.push(JSON.parse(JSON.stringify(planSoFar)));
-      }
-      return;
-    }
-
-    const assigned = new Set(initialApproved.concat(...Object.values(planSoFar).flat()));
-
-    const candidates = Object.keys(R).filter(code =>
-      !assigned.has(code) &&
-      R[code].sem <= semIndex &&
-      canTake(code, approvedSoFar)
-    );
-
-    if(candidates.length === 0){
-      planSoFar[semIndex] = [];
-      dfs(semIndex + 1, approvedSoFar.slice(), planSoFar);
-      return;
-    }
-
-    let sorted = candidates.sort((a,b)=> dependentsCount(b) - dependentsCount(a));
-
-    // generar subconjuntos respetando MAX_PER_SEM
-    const subsets = [];
-    subsets.push(sorted.slice(0, MAX_PER_SEM));
-
-    for(let i=0;i<Math.min(sorted.length, MAX_PER_SEM+2);i++){
-      for(let j=i+1;j<Math.min(sorted.length, MAX_PER_SEM+4);j++){
-        const base = sorted.slice(0, Math.min(MAX_PER_SEM, sorted.length));
-        if(!base.includes(sorted[j])){
-          const alt = base.slice();
-          if(i < alt.length) alt[i] = sorted[j];
-          else alt.push(sorted[j]);
-          subsets.push(Array.from(new Set(alt)));
-        }
-      }
-    }
-
-    const uniqueSubs = [];
-    for(const sset of subsets){
-      const key = sset.join(',');
-      if(!uniqueSubs.some(x=>x.join(',')===key)) uniqueSubs.push(sset);
-      if(uniqueSubs.length >= 12) break;
-    }
-
-    for(const sel of uniqueSubs){
-      const chosen = sel.slice(0, MAX_PER_SEM);
-      const newPlan = Object.assign({}, planSoFar);
-      newPlan[semIndex] = chosen.slice();
-      const newApproved = approvedSoFar.slice();
-      chosen.forEach(c => { if(!newApproved.includes(c)) newApproved.push(c); });
-      dfs(semIndex + 1, newApproved, newPlan);
-      if(plans.length >= limit) return;
-    }
-
-    dfs(semIndex + 1, approvedSoFar.slice(), Object.assign({}, planSoFar));
   }
 
-  dfs(startSem, initialApproved.slice(), {});
-  return plans;
+  // Check remaining courses and try to place them if possible into earlier semesters that aren't full (greedy)
+  const remaining = allCourses.filter(c => !assigned.has(c));
+  if(remaining.length > 0){
+    // Try backfilling earlier semesters (startSem .. startSem+SEM_OBJETIVO-1) in case some semesters have room and prereqs are already met
+    for(let sem = startSem; sem < startSem + SEM_OBJETIVO && remaining.length > 0; sem++){
+      while(plan[sem].length < MAX_PER_SEM){
+        // find any remaining course that can be taken now (prereqs met considering assigned)
+        const candIdx = remaining.findIndex(c => R[c].sem <= sem && canTake(c, Array.from(assigned)));
+        if(candIdx === -1) break;
+        const pick = remaining.splice(candIdx,1)[0];
+        plan[sem].push(pick);
+        assigned.add(pick);
+      }
+    }
+  }
+
+  // After filling the 8 target semesters, if there are still courses left, create additional semesters (9, 10, ...) until none remain.
+  let sem = startSem + SEM_OBJETIVO;
+  let leftovers = Object.keys(R).filter(c => !assigned.has(c));
+  while(leftovers.length > 0){
+    plan[sem] = [];
+    // candidates now: allow R[c].sem <= sem and prereqs satisfied by assigned
+    let candidates = leftovers.filter(c => R[c].sem <= sem && canTake(c, Array.from(assigned)));
+    candidates.sort((a,b) => dependentsCount(b) - dependentsCount(a));
+    while(candidates.length > 0 && plan[sem].length < MAX_PER_SEM){
+      const pick = candidates.shift();
+      plan[sem].push(pick);
+      assigned.add(pick);
+      // update leftovers and candidates
+      leftovers = Object.keys(R).filter(c => !assigned.has(c));
+      candidates = leftovers.filter(c => R[c].sem <= sem && canTake(c, Array.from(assigned)));
+      candidates.sort((a,b) => dependentsCount(b) - dependentsCount(a));
+    }
+    // If no candidates could be placed this semester (ciclo imposible por prereqs), we still advance semester to allow R[c].sem condition to become true.
+    // But to avoid infinite loop, if no course was placed and there are leftovers, we force place any course that has prereqs already met ignoring R[c].sem,
+    // as a last resort (this should be rare with consistent data).
+    if(plan[sem].length === 0){
+      const forcedCandidates = leftovers.filter(c => canTake(c, Array.from(assigned)));
+      if(forcedCandidates.length > 0){
+        while(forcedCandidates.length > 0 && plan[sem].length < MAX_PER_SEM){
+          const pick = forcedCandidates.shift();
+          plan[sem].push(pick);
+          assigned.add(pick);
+          leftovers = Object.keys(R).filter(c => !assigned.has(c));
+        }
+      } else {
+        // If truly nothing can be placed because prereqs unmet, break to avoid infinite loop.
+        // This indicates cyclical or impossible prereqs in dataset.
+        break;
+      }
+    }
+    leftovers = Object.keys(R).filter(c => !assigned.has(c));
+    sem++;
+  }
+
+  // Return array of plans (we produce 1 deterministic plan). Keeping same API as before.
+  return [plan];
 }
 
 /* Rank plans heuristically */
