@@ -97,21 +97,21 @@
 
 <header class="hero">
   <h1>Malla Estratégica Interactiva — Licenciatura en Ciencia de Datos</h1>
-  <p>Marca tus ramos aprobados; la malla propondrá automáticamente rutas inteligentes (máx. 6 ramos/semestre en la generación).</p>
+  <p>Selecciona tu siguiente semestre de toma de ramos para planificar un plan de acción.</p>
 </header>
 
 <section class="controls" aria-label="Controles">
   <label>
-    Semestre actual:
+    Semestre:
     <select id="semActual"></select>
   </label>
 
   <label>
-    Comenzar a rellenar desde ramo:
-    <select id="startCourse">
-      <option value="">(Ninguno)</option>
+    Rellenar desde semestre:
+    <select id="startSemester">
+      <option value="">(usar semestre siguiente)</option>
     </select>
-    <span class="small">El generador intentará ubicar ese ramo lo antes posible (siempre que se respeten prerrequisitos).</span>
+    <span class="small">El generador intentará ubicar ramos comenzando desde este número de semestre si lo seleccionas.</span>
   </label>
 
   <div style="text-align:center; width:100%;">
@@ -163,7 +163,7 @@ const R = {
 
   EYP1025:{nombre:'Modelos Probabilísticos',sem:4,pr:['IMT2220','IMT2230']},
   IC2133:{nombre:'Estructuras de Datos y Algoritmos',sem:4,pr:['IIC2233','IIC1253']},
-  IC2413:{nombre:'Bases de Datos',sem:4,pr:['IIC2233','IIC1253']}, // <- actualizado: requiere IIC1253
+  IC2413:{nombre:'Bases de Datos',sem:4,pr:['IIC2233','IIC1253']},
   IMT2250:{nombre:'Optimización para Ciencia de Datos',sem:4,pr:['IMT2220','IMT2210']},
   OFG4:{nombre:'OFG',sem:4,pr:[]},
 
@@ -181,7 +181,7 @@ const R = {
 
   EYP2111:{nombre:'Simulación',sem:7,pr:['EYP2101']},
   EYP2801:{nombre:'Métodos Bayesianos',sem:7,pr:['EYP2114']},
-  IMT2260:{nombre:'Teoría de Aprendizaje Automático',sem:7,pr:['IMT2250','EYP1025']}, // <- actualizado
+  IMT2260:{nombre:'Teoría de Aprendizaje Automático',sem:7,pr:['IMT2250','EYP1025']},
   OFG7:{nombre:'OFG',sem:7,pr:[]},
   OPR7:{nombre:'OPR o Minor',sem:7,pr:[]},
 
@@ -201,7 +201,7 @@ const semActualSel = document.getElementById('semActual');
 const plansContainer = document.getElementById('plansContainer');
 const planAction = document.getElementById('planAction');
 const semLabel = document.getElementById('semLabel');
-const startCourseSel = document.getElementById('startCourse');
+const startSemesterSel = document.getElementById('startSemester');
 
 /* state */
 let approved = []; // aprobados por el usuario
@@ -219,14 +219,12 @@ for(let s=1;s<=8;s++){
 }
 semActualSel.value = '1';
 
-/* fill startCourse select */
-(function fillStartCourse(){
-  const codes = Object.keys(R).sort();
-  codes.forEach(code => {
-    const o = document.createElement('option'); o.value = code; o.textContent = code + ' — ' + R[code].nombre;
-    startCourseSel.appendChild(o);
-  });
-})();
+/* fill startSemester select */
+for(let s=1;s<=12;s++){
+  const o = document.createElement('option'); o.value = s; o.textContent = s;
+  startSemesterSel.appendChild(o);
+}
+startSemesterSel.value = '';
 
 /* Helpers */
 function canTake(code, approvedList){
@@ -287,20 +285,20 @@ function renderMalla(){
 /* GENERADOR: dos fases
    - primero intenta encajar todo en SEM_OBJETIVO semestres
    - si no encuentra planes, repite permitiendo 1 semestre adicional (semestre 9)
-   acepta parámetro startCourse para priorizar su colocación.
+   acepta parámetro startSemester para comenzar a rellenar desde ese número
 */
-function generatePlans(initialApproved, limit = 4, startCourse = ''){
-  // intenta dos fases: primero con span objetivo, si no hay planes, con +1
-  let plans = _generatePlansWithMaxSpan(initialApproved, limit, startCourse, SEM_OBJETIVO);
+function generatePlans(initialApproved, limit = 4, startSemester = ''){
+  let plans = _generatePlansWithMaxSpan(initialApproved, limit, startSemester, SEM_OBJETIVO);
   if(plans.length > 0) return plans;
-  // si no encontró nada, intenta permitiendo semestre 9
-  return _generatePlansWithMaxSpan(initialApproved, limit, startCourse, SEM_OBJETIVO + 1);
+  return _generatePlansWithMaxSpan(initialApproved, limit, startSemester, SEM_OBJETIVO + 1);
 }
 
-function _generatePlansWithMaxSpan(initialApproved, limit, startCourse, semestresSpan){
+function _generatePlansWithMaxSpan(initialApproved, limit, startSemester, semestresSpan){
   const plans = [];
   const seen = new Set();
-  const startSem = Number(semActualSel.value) + 1; // distribuir desde el siguiente semestre
+  const uiStart = Number(semActualSel.value);
+  // si el usuario seleccionó un startSemester lo usamos; si no, empezamos desde el siguiente semestre por defecto
+  const startSem = startSemester ? Number(startSemester) : (uiStart + 1);
   const maxSpan = semestresSpan; // ej: 8 o 9
 
   const allToPlace = Object.keys(R).filter(c => !initialApproved.includes(c));
@@ -308,7 +306,6 @@ function _generatePlansWithMaxSpan(initialApproved, limit, startCourse, semestre
   function dfs(semIndex, approvedSoFar, planSoFar){
     if(plans.length >= limit) return;
 
-    // si excede ventana (semIndex - startSem >= maxSpan) => terminar rama
     if(semIndex > startSem + maxSpan - 1){
       const key = Object.keys(planSoFar).map(k => (planSoFar[k]||[]).join(',')).join('|');
       if(!seen.has(key)){
@@ -318,7 +315,6 @@ function _generatePlansWithMaxSpan(initialApproved, limit, startCourse, semestre
       return;
     }
 
-    // placedCount para ver si ya ubicamos todo
     const placedCount = Object.keys(planSoFar).reduce((acc,k)=> acc + (planSoFar[k] ? planSoFar[k].length : 0), 0);
     if(placedCount >= allToPlace.length){
       const key = Object.keys(planSoFar).map(k => (planSoFar[k]||[]).join(',')).join('|');
@@ -329,7 +325,6 @@ function _generatePlansWithMaxSpan(initialApproved, limit, startCourse, semestre
       return;
     }
 
-    // candidates: no aprobados, no ya asignados en planSoFar, semestre original <= semIndex, prereqs ok
     const assigned = new Set(initialApproved.concat(...Object.values(planSoFar).flat()));
 
     const candidates = Object.keys(R).filter(code =>
@@ -344,17 +339,12 @@ function _generatePlansWithMaxSpan(initialApproved, limit, startCourse, semestre
       return;
     }
 
-    // Si startCourse está entre candidates y aún no está asignado, force it to the front
     let sorted = candidates.sort((a,b)=> dependentsCount(b) - dependentsCount(a));
-    if(startCourse && candidates.includes(startCourse) && !approvedSoFar.includes(startCourse)){
-      sorted = [startCourse].concat(sorted.filter(x=>x!==startCourse));
-    }
 
     // generar subconjuntos respetando MAX_PER_SEM
     const subsets = [];
     subsets.push(sorted.slice(0, MAX_PER_SEM));
 
-    // variaciones pequeñas para explorar alternativas
     for(let i=0;i<Math.min(sorted.length, MAX_PER_SEM+2);i++){
       for(let j=i+1;j<Math.min(sorted.length, MAX_PER_SEM+4);j++){
         const base = sorted.slice(0, Math.min(MAX_PER_SEM, sorted.length));
@@ -367,7 +357,6 @@ function _generatePlansWithMaxSpan(initialApproved, limit, startCourse, semestre
       }
     }
 
-    // dedupe y limitar
     const uniqueSubs = [];
     for(const sset of subsets){
       const key = sset.join(',');
@@ -376,7 +365,6 @@ function _generatePlansWithMaxSpan(initialApproved, limit, startCourse, semestre
     }
 
     for(const sel of uniqueSubs){
-      // respetar que no pongamos más que MAX_PER_SEM
       const chosen = sel.slice(0, MAX_PER_SEM);
       const newPlan = Object.assign({}, planSoFar);
       newPlan[semIndex] = chosen.slice();
@@ -386,7 +374,6 @@ function _generatePlansWithMaxSpan(initialApproved, limit, startCourse, semestre
       if(plans.length >= limit) return;
     }
 
-    // también considerar dejar semestre vacío
     dfs(semIndex + 1, approvedSoFar.slice(), Object.assign({}, planSoFar));
   }
 
@@ -404,7 +391,6 @@ function rankPlans(plans){
       score += (arr.length) * 10;
       arr.forEach(c => score += dependentsCount(c) * (100 - s));
     });
-    // penalizar planes que usen más semestres (que tengan mayor clave máxima)
     const maxSem = Math.max(...(planSemesters.length?planSemesters: [0]));
     score -= maxSem * 2;
     return score;
@@ -415,8 +401,8 @@ function rankPlans(plans){
 /* Render plans and action (no duplicates). Pills now show "CODE — Name" */
 function renderPlans(){
   plansContainer.innerHTML = '';
-  const startCourse = startCourseSel.value || '';
-  const rawPlans = generatePlans(approved, 8, startCourse);
+  const startSemester = startSemesterSel.value || '';
+  const rawPlans = generatePlans(approved, 8, startSemester);
   if(rawPlans.length === 0){
     plansContainer.innerHTML = '<p style="color:var(--muted)">No se pudo generar ninguna ruta. Marca ramos aprobados o revisa prerrequisitos.</p>';
     updatePlanAction(null);
@@ -424,16 +410,13 @@ function renderPlans(){
   }
   const ranked = rankPlans(rawPlans);
 
-  // show up to 4 distinct plans
   ranked.slice(0,4).forEach((plan, idx) => {
     const card = document.createElement('div'); card.className = 'plan-card';
     const title = document.createElement('div'); title.className = 'plan-title';
     const h = document.createElement('strong'); h.textContent = (idx===0? 'Opción recomendada' : 'Alternativa ' + idx);
     title.appendChild(h); card.appendChild(title);
 
-    // determine plan semesters to display (sorted keys)
     const planSemKeys = Object.keys(plan).map(k=>Number(k)).sort((a,b)=>a-b);
-    // show grid for these semesters (if some beyond 8, show them)
     const pgrid = document.createElement('div'); pgrid.className = 'plan-grid';
     for(const s of planSemKeys){
       const cell = document.createElement('div'); cell.className = 'plan-cell';
@@ -459,7 +442,6 @@ function renderPlans(){
     }
     card.appendChild(pgrid);
 
-    // actionable list for semester selected
     const semSel = Number(semActualSel.value);
     const upNext = plan[semSel] || [];
     const subtitle = document.createElement('div'); subtitle.style.marginTop='8px'; subtitle.style.fontWeight='700';
@@ -478,7 +460,6 @@ function renderPlans(){
     plansContainer.appendChild(card);
   });
 
-  // update main action area with best plan
   const best = ranked[0];
   updatePlanAction(best);
 }
@@ -509,7 +490,7 @@ renderPlans();
 
 /* listeners */
 semActualSel.addEventListener('change', () => { updateAll(); });
-startCourseSel.addEventListener('change', () => { updateAll(); });
+startSemesterSel.addEventListener('change', () => { updateAll(); });
 document.addEventListener('keydown', (e) => {
   if(e.key.toLowerCase()==='r'){ approved = []; updateAll(); }
 });
