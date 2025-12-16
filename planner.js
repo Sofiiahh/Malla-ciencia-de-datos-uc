@@ -21,27 +21,33 @@ function creditosRamo(ramo) {
 
 // genera el plan
 function generarPlan() {
-  estado.semestres = []; 
-  let pendientes = ramos.filter(r => !estado.aprobados.has(r.id)); 
+  estado.semestres = [];
 
-  for (let s = 1; s <= SEMESTRES_OBJETIVO; s++) { //semestres
+  let aprobadosTemp = new Set(estado.aprobados);
+  let pendientes = ramos.filter(r => !aprobadosTemp.has(r.id));
+
+  for (let s = 1; s <= SEMESTRES_OBJETIVO; s++) {
     let semestre = { numero: s, ramos: [], creditos: 0 };
+    let nuevosAprobados = [];
 
-    let elegibles = pendientes.filter(esElegible);
+    let elegibles = pendientes.filter(r =>
+      r.req.every(req => aprobadosTemp.has(req))
+    );
 
     for (let ramo of elegibles) {
-      if (semestre.creditos + creditosRamo(ramo) > MAX_CREDITOS_SEMESTRE) continue; //ya tiene 60 créditos
+      if (semestre.creditos + creditosRamo(ramo) > MAX_CREDITOS_SEMESTRE) continue;
 
-      semestre.ramos.push(ramo); 
-      semestre.creditos += creditosRamo(ramo); 
-      estado.aprobados.add(ramo.id); 
+      semestre.ramos.push(ramo);
+      semestre.creditos += creditosRamo(ramo);
+      nuevosAprobados.push(ramo.id);
     }
 
+    nuevosAprobados.forEach(id => aprobadosTemp.add(id));
+    pendientes = pendientes.filter(r => !aprobadosTemp.has(r.id));
+
     estado.semestres.push(semestre);
-    pendientes = pendientes.filter(r => !estado.aprobados.has(r.id));
   }
 
- //un semestre 9
   if (pendientes.length > 0) {
     estado.semestres.push({
       numero: SEMESTRES_OBJETIVO + 1,
@@ -51,6 +57,7 @@ function generarPlan() {
     });
   }
 }
+
 
 // mostrar el planner generado
 function renderPlanner() {
