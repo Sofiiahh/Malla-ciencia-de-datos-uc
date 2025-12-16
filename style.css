@@ -145,3 +145,22 @@ li[data-tooltip]:hover::after {
   margin-top: 2px;
   z-index: 10;
 }
+#planner {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth; /* esto permite el scroll suave */
+}
+
+.semestre {
+  flex: 0 0 300px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  scroll-snap-align: start;
+  position: relative;
+}
