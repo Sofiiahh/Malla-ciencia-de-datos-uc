@@ -19,6 +19,15 @@ function creditosRamo(ramo) {
   return ramo.tipo === "OFG" ? CREDITOS_RAMO : CREDITOS_RAMO; 
 }
 
+function puedeEntrarAnual(ramo, semestreActual) {
+  if (!ramo.anual) return true;
+
+  // necesita el siguiente semestre disponible
+  if (semestreActual === SEMESTRES_OBJETIVO) return false;
+
+  return true;
+}
+
 // genera el plan
 function generarPlan() {
   estado.semestres = [];
@@ -35,7 +44,7 @@ function generarPlan() {
     );
 
     for (let ramo of elegibles) {
-      if (semestre.creditos + creditosRamo(ramo) > MAX_CREDITOS_SEMESTRE) continue;
+      if (!puedeEntrarAnual(ramo, s)) continue;
 
       semestre.ramos.push(ramo);
       semestre.creditos += creditosRamo(ramo);
