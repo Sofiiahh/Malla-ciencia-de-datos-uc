@@ -1,0 +1,38 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+#malla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.ramo {
+  border: 1px solid #ccc;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.ramo.bloqueado {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ramo.disponible {
+  background: #e6f7f5;
+}
+
+.ramo.aprobado {
+  background: #c8f7c5;
+  text-decoration: line-through;
+}
+
+.semestre {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+}
