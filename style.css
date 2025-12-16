@@ -71,3 +71,30 @@ ul li {
   border-radius: 8px;
   background: #fffbea;
 }
+
+/* Colores por tipo de ramo */
+.ramo.regular {
+  background: #c8f7c5; /* verde suave */
+  border: 2px solid #2e8b57;
+}
+
+.ramo.ingles {
+  background: #cce7f0; /* celeste */
+  border: 2px solid #2EC4B6;
+}
+
+.ramo.ofg {
+  background: #fff3b0; /* amarillo suave */
+  border: 2px solid #f5d02f;
+}
+
+.ramo.opr {
+  background: #e0d4f7; /* morado suave */
+  border: 2px solid #a26cff;
+}
+
+.ramo.bloqueado {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
