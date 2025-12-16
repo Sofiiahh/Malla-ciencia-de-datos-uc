@@ -1,2 +1,4 @@
-generarPlan();
-renderPlanner();
+document.addEventListener("DOMContentLoaded", () => {
+  generarPlan();
+  renderPlanner();
+});
