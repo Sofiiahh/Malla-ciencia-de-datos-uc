@@ -1,6 +1,12 @@
 body {
   font-family: Arial, sans-serif;
   padding: 20px;
+  background: #f9f9fb;
+}
+
+header, footer {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 #malla {
@@ -14,25 +20,54 @@ body {
   border: 1px solid #ccc;
   padding: 10px;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 8px;
+  text-align: center;
+  transition: 0.2s;
 }
 
 .ramo.bloqueado {
   opacity: 0.4;
   cursor: not-allowed;
+  background: #f0f0f0;
 }
 
 .ramo.disponible {
-  background: #e6f7f5;
+  background: #d0f0ef;
+  border: 2px solid #2EC4B6;
 }
 
 .ramo.aprobado {
   background: #c8f7c5;
   text-decoration: line-through;
+  border: 2px solid #2e8b57;
 }
 
 .semestre {
   border: 1px solid #ddd;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.semestre h3 {
+  margin-top: 0;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul li {
+  margin: 5px 0;
+}
+
+#observaciones {
+  margin-top: 30px;
+  padding: 15px;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  background: #fffbea;
 }
