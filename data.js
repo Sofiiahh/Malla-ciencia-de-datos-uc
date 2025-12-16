@@ -5,6 +5,13 @@ const CREDITOS_INGLES = 5;
 const MAX_CREDITOS_SEMESTRE = 60;
 const SEMESTRES_OBJETIVO = 8;
 
+const INGLES = {
+  id: "INGLES",
+  nombre: "Inglés",
+  tipo: "INGLES",
+  creditos: CREDITOS_INGLES
+};
+
 const ramos = [
   // 1er semestre
   { id: "IC1103", nombre: "Introducción a la Programación", semestre: 1, req: [] },
