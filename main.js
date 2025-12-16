@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   actualizarTodo();
 });
 
-
+// MALLA INTERACTIVA
 function renderMalla() {
   const contenedor = document.getElementById("malla");
   contenedor.innerHTML = "<h2>Malla Interactiva</h2>";
@@ -31,7 +31,7 @@ function renderMalla() {
   });
 }
 
-
+// PLAN DE SEMESTRES VISUAL
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
@@ -39,9 +39,11 @@ function renderPlanner() {
   estado.semestres.forEach(s => {
     const divSem = document.createElement("div");
     divSem.className = "semestre";
+
     divSem.innerHTML = `<h3>Semestre ${s.numero} — Créditos: ${s.creditos}</h3>`;
 
     const ul = document.createElement("ul");
+
     s.ramos.forEach(ramo => {
       const li = document.createElement("li");
       li.textContent = `${ramo.id} — ${ramo.nombre}`;
@@ -53,15 +55,22 @@ function renderPlanner() {
     if (s.aviso) {
       const aviso = document.createElement("p");
       aviso.style.color = "red";
+      aviso.style.fontWeight = "bold";
       aviso.textContent = s.aviso;
       divSem.appendChild(aviso);
     }
 
     contenedor.appendChild(divSem);
   });
+
+  // Observaciones globales
+  const obs = document.getElementById("observaciones");
+  obs.innerHTML = "<h2>Observaciones</h2>";
+  const totalCreditos = estado.semestres.reduce((sum, s) => sum + s.creditos, 0);
+  obs.innerHTML += `<p>Total de créditos planificados: <strong>${totalCreditos}</strong></p>`;
 }
 
-
+// ACTUALIZAR TODO
 function actualizarTodo() {
   generarPlan();
   renderPlanner();
