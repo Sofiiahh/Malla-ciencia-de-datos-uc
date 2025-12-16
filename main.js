@@ -1,0 +1,2 @@
+generarPlan();
+renderPlanner();
