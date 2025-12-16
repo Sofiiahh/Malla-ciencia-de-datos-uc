@@ -38,7 +38,7 @@ function renderMalla() {
   });
 }
 
-// Planner con tooltip y colores
+// Planner con carrusel y tooltips
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
@@ -89,14 +89,13 @@ function renderPlanner() {
     obs.innerHTML += `<p>Inglés pendiente: ${inglesPendientes.map(r => r.id).join(", ")}</p>`;
 }
 
-// Función para hacer scroll al siguiente semestre desbloqueado
+// Scroll automático al siguiente semestre desbloqueado
 function scrollAlSiguienteSemestre() {
   const semestres = document.querySelectorAll(".semestre");
   for (let s of semestres) {
     const liBloqueados = s.querySelectorAll("li.bloqueado");
     const liTotales = s.querySelectorAll("li");
     if (liTotales.length > 0 && liBloqueados.length < liTotales.length) {
-      // scroll al semestre con al menos un ramo desbloqueado
       s.scrollIntoView({ behavior: "smooth", inline: "start" });
       break;
     }
