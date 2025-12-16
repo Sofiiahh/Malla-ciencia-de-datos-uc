@@ -43,16 +43,24 @@ header, footer {
 }
 
 .semestre {
+  flex: 0 0 300px;
   border: 1px solid #ddd;
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  scroll-snap-align: start;
+  position: relative;
 }
 
-.semestre h3 {
-  margin-top: 0;
+#planner {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
 }
 
 ul {
@@ -62,73 +70,7 @@ ul {
 
 ul li {
   margin: 5px 0;
-}
-
-#observaciones {
-  margin-top: 30px;
-  padding: 15px;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  background: #fffbea;
-}
-
-/* Colores por tipo de ramo */
-.ramo.regular {
-  background: #c8f7c5; /* verde suave */
-  border: 2px solid #2e8b57;
-}
-
-.ramo.ingles {
-  background: #cce7f0; /* celeste */
-  border: 2px solid #2EC4B6;
-}
-
-.ramo.ofg {
-  background: #fff3b0; /* amarillo suave */
-  border: 2px solid #f5d02f;
-}
-
-.ramo.opr {
-  background: #e0d4f7; /* morado suave */
-  border: 2px solid #a26cff;
-}
-
-.ramo.bloqueado {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Carrusel de semestres */
-#planner {
-  display: flex;
-  overflow-x: auto;
-  gap: 15px;
-  padding-bottom: 10px;
-}
-
-.semestre {
-  flex: 0 0 300px; /* ancho fijo de tarjeta */
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  scroll-snap-align: start;
   position: relative;
-}
-
-#planner::-webkit-scrollbar {
-  height: 8px;
-}
-
-#planner::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 4px;
-}
-
-li[data-tooltip] {
-  position: relative;
-  cursor: help;
 }
 
 li[data-tooltip]:hover::after {
@@ -145,22 +87,11 @@ li[data-tooltip]:hover::after {
   margin-top: 2px;
   z-index: 10;
 }
-#planner {
-  display: flex;
-  overflow-x: auto;
-  gap: 15px;
-  padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth; /* esto permite el scroll suave */
-}
 
-.semestre {
-  flex: 0 0 300px;
-  border: 1px solid #ddd;
+#observaciones {
+  margin-top: 30px;
   padding: 15px;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  scroll-snap-align: start;
-  position: relative;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  background: #fffbea;
 }
