@@ -39,7 +39,7 @@ OFG - Artes  → Sin prerrequisitos
 4to SEMESTRE
 EYP1025 – Modelos Probabilísticos → Requiere IMT2220, IMT2230 (Calculo para la ciencia de datos; Algebra lineal avanzada y modelamiento)
 IC2133 – Estructuras de Datos y Algoritmos → Requiere IIC2233, IIC1253 (Programacion avanzada; matematicas discretas)
-IC2413 – Bases de Datos → Requiere IIC2233, IIC1253 (Programacion avanzada)
+IC2413 – Bases de Datos → Requiere IIC2233, IIC1253 (Programacion avanzada; *puede que en un futuro pida Matematicas discretas, pon un aviso, no estoy segura)
 IMT2250 – Optimización para Ciencia de Datos → Requiere IMT2220, IMT2210 (Calculo para la ciencia de datos; Algebra lineal para la ciencia de datos)
 OFG - Ciencias sociales  → Sin prerrequisitos
 
