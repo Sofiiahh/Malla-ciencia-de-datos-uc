@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   actualizarTodo();
 });
 
-// Función para asignar clase según tipo de ramo
 function clasePorTipo(ramo) {
   if (ramo.tipo === "OFG") return "ofg";
   if (ramo.tipo === "INGLES") return "ingles";
@@ -10,7 +9,7 @@ function clasePorTipo(ramo) {
   return "regular";
 }
 
-// MALLA INTERACTIVA CON COLORES AUTOMÁTICOS
+// Malla interactiva
 function renderMalla() {
   const contenedor = document.getElementById("malla");
   contenedor.innerHTML = "<h2>Malla Interactiva</h2>";
@@ -38,7 +37,7 @@ function renderMalla() {
   });
 }
 
-// PLAN DE SEMESTRES CON COLORES DE RAMOS
+// Planner con carrusel y tooltip
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
@@ -46,15 +45,19 @@ function renderPlanner() {
   estado.semestres.forEach(s => {
     const divSem = document.createElement("div");
     divSem.className = "semestre";
-
     divSem.innerHTML = `<h3>Semestre ${s.numero} — Créditos: ${s.creditos}</h3>`;
 
     const ul = document.createElement("ul");
-
     s.ramos.forEach(ramo => {
       const li = document.createElement("li");
       li.textContent = `${ramo.id} — ${ramo.nombre}`;
       li.classList.add(clasePorTipo(ramo));
+
+      // tooltip con requisitos y créditos
+      const reqs = ramo.req.length ? ramo.req.join(", ") : "Ninguno";
+      const creditos = ramo.tipo === "INGLES" ? CREDITOS_INGLES : CREDITOS_RAMO;
+      li.setAttribute("data-tooltip", `Créditos: ${creditos} | Requisitos: ${reqs}`);
+
       ul.appendChild(li);
     });
 
@@ -77,7 +80,6 @@ function renderPlanner() {
   const totalCreditos = estado.semestres.reduce((sum, s) => sum + s.creditos, 0);
   obs.innerHTML += `<p>Total de créditos planificados: <strong>${totalCreditos}</strong></p>`;
 
-  // OFG y Inglés pendientes
   const ofgPendientes = ramos.filter(r => r.tipo === "OFG" && !estado.aprobados.has(r.id));
   const inglesPendientes = ramos.filter(r => r.tipo === "INGLES" && !estado.aprobados.has(r.id));
 
