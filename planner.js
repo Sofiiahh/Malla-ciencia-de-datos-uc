@@ -1,74 +1,85 @@
-// aprobados, semestres, inglés
+// planner.js
+
 const estado = {
-  aprobados: new Set(), 
-  inglesAprobado: false, 
-  semestres: [] 
+  aprobados: new Set(),
+  semestres: []
 };
 
-// si el ramo puede ser tomado
+function creditosRamo(ramo) {
+  if (ramo.tipo === "INGLES") return 5;
+  return 10;
+}
+
 function cumpleRequisitos(ramo) {
   return ramo.req.every(r => estado.aprobados.has(r));
 }
+
 function esElegible(ramo) {
-  if (estado.aprobados.has(ramo.id)) return false; 
-  return cumpleRequisitos(ramo); 
+  if (estado.aprobados.has(ramo.id)) return false;
+  return cumpleRequisitos(ramo);
 }
 
-//créditos de un ramo
-function creditosRamo(ramo) {
-  return ramo.tipo === "OFG" ? CREDITOS_RAMO : CREDITOS_RAMO; 
-}
-
-function puedeEntrarAnual(ramo, semestreActual) {
-  if (!ramo.anual) return true;
-
-  // necesita el siguiente semestre disponible
-  if (semestreActual === SEMESTRES_OBJETIVO) return false;
-
-  return true;
-}
-
-// genera el plan
 function generarPlan() {
   estado.semestres = [];
+  estado.aprobados = new Set();
 
-  let aprobadosTemp = new Set(estado.aprobados);
-  let pendientes = ramos.filter(r => !aprobadosTemp.has(r.id));
+  let pendientes = [...ramos];
 
   for (let s = 1; s <= SEMESTRES_OBJETIVO; s++) {
-    let semestre = { numero: s, ramos: [], creditos: 0 };
-    let nuevosAprobados = [];
+    let semestre = {
+      numero: s,
+      ramos: [],
+      creditos: 0,
+      reservas: 0
+    };
 
-    let elegibles = pendientes.filter(r =>
-      r.req.every(req => aprobadosTemp.has(req))
-    );
+    let elegibles = pendientes.filter(esElegible);
 
     for (let ramo of elegibles) {
-      if (!puedeEntrarAnual(ramo, s)) continue;
+      const c = creditosRamo(ramo);
 
-      semestre.ramos.push(ramo);
-      semestre.creditos += creditosRamo(ramo);
-      nuevosAprobados.push(ramo.id);
+      if (semestre.creditos + semestre.reservas + c > MAX_CREDITOS_SEMESTRE) {
+        continue;
+      }
+
+      if (ramo.anual) {
+        if (s === SEMESTRES_OBJETIVO) continue;
+
+        let siguiente = estado.semestres[s];
+
+        if (siguiente && siguiente.reservas + c > MAX_CREDITOS_SEMESTRE) {
+          continue;
+        }
+
+        semestre.ramos.push(ramo);
+        semestre.creditos += c;
+        estado.aprobados.add(ramo.id);
+
+        if (siguiente) {
+          siguiente.reservas += c;
+        }
+
+      } else {
+        semestre.ramos.push(ramo);
+        semestre.creditos += c;
+        estado.aprobados.add(ramo.id);
+      }
     }
 
-    nuevosAprobados.forEach(id => aprobadosTemp.add(id));
-    pendientes = pendientes.filter(r => !aprobadosTemp.has(r.id));
-
     estado.semestres.push(semestre);
+    pendientes = pendientes.filter(r => !estado.aprobados.has(r.id));
   }
 
   if (pendientes.length > 0) {
     estado.semestres.push({
       numero: SEMESTRES_OBJETIVO + 1,
       ramos: pendientes,
-      creditos: pendientes.length * CREDITOS_RAMO,
+      creditos: pendientes.reduce((s, r) => s + creditosRamo(r), 0),
       aviso: "Extensión a 9° semestre"
     });
   }
 }
 
-
-// mostrar el planner generado
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
@@ -77,9 +88,9 @@ function renderPlanner() {
     const div = document.createElement("div");
     div.className = "semestre";
 
-    const titulo = document.createElement("h3");
-    titulo.textContent = `Semestre ${sem.numero}`;
-    div.appendChild(titulo);
+    const h = document.createElement("h3");
+    h.textContent = `Semestre ${sem.numero}`;
+    div.appendChild(h);
 
     sem.ramos.forEach(r => {
       const p = document.createElement("p");
@@ -100,6 +111,3 @@ function renderPlanner() {
     contenedor.appendChild(div);
   });
 }
-
-generarPlan();
-renderPlanner();
