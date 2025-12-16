@@ -30,6 +30,7 @@ function renderMalla() {
       div.addEventListener("click", () => {
         estado.aprobados.add(ramo.id);
         actualizarTodo();
+        scrollAlSiguienteSemestre();
       });
     }
 
@@ -37,7 +38,7 @@ function renderMalla() {
   });
 }
 
-// Planner con carrusel y tooltip
+// Planner con tooltip y colores
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
@@ -53,7 +54,6 @@ function renderPlanner() {
       li.textContent = `${ramo.id} — ${ramo.nombre}`;
       li.classList.add(clasePorTipo(ramo));
 
-      // tooltip con requisitos y créditos
       const reqs = ramo.req.length ? ramo.req.join(", ") : "Ninguno";
       const creditos = ramo.tipo === "INGLES" ? CREDITOS_INGLES : CREDITOS_RAMO;
       li.setAttribute("data-tooltip", `Créditos: ${creditos} | Requisitos: ${reqs}`);
@@ -74,7 +74,7 @@ function renderPlanner() {
     contenedor.appendChild(divSem);
   });
 
-  // Observaciones globales
+  // Observaciones
   const obs = document.getElementById("observaciones");
   obs.innerHTML = "<h2>Observaciones</h2>";
   const totalCreditos = estado.semestres.reduce((sum, s) => sum + s.creditos, 0);
@@ -89,7 +89,21 @@ function renderPlanner() {
     obs.innerHTML += `<p>Inglés pendiente: ${inglesPendientes.map(r => r.id).join(", ")}</p>`;
 }
 
+// Función para hacer scroll al siguiente semestre desbloqueado
+function scrollAlSiguienteSemestre() {
+  const semestres = document.querySelectorAll(".semestre");
+  for (let s of semestres) {
+    const liBloqueados = s.querySelectorAll("li.bloqueado");
+    const liTotales = s.querySelectorAll("li");
+    if (liTotales.length > 0 && liBloqueados.length < liTotales.length) {
+      // scroll al semestre con al menos un ramo desbloqueado
+      s.scrollIntoView({ behavior: "smooth", inline: "start" });
+      break;
+    }
+  }
+}
 
+// Actualiza todo
 function actualizarTodo() {
   generarPlan();
   renderPlanner();
