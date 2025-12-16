@@ -2,20 +2,22 @@ document.addEventListener("DOMContentLoaded", () => {
   actualizarTodo();
 });
 
-// MALLA INTERACTIVA CON COLORES POR TIPO
+// Función para asignar clase según tipo de ramo
+function clasePorTipo(ramo) {
+  if (ramo.tipo === "OFG") return "ofg";
+  if (ramo.tipo === "INGLES") return "ingles";
+  if (ramo.id.startsWith("OPR")) return "opr";
+  return "regular";
+}
+
+// MALLA INTERACTIVA CON COLORES AUTOMÁTICOS
 function renderMalla() {
   const contenedor = document.getElementById("malla");
   contenedor.innerHTML = "<h2>Malla Interactiva</h2>";
 
   ramos.forEach(ramo => {
     const div = document.createElement("div");
-    div.classList.add("ramo");
-
-    // Definir color según tipo
-    if (ramo.tipo === "OFG") div.classList.add("ofg");
-    else if (ramo.tipo === "INGLES") div.classList.add("ingles");
-    else if (ramo.id.startsWith("OPR")) div.classList.add("opr");
-    else div.classList.add("regular");
+    div.classList.add("ramo", clasePorTipo(ramo));
 
     const aprobado = estado.aprobados.has(ramo.id);
     const disponible = cumpleRequisitos(ramo, estado.aprobados);
@@ -36,7 +38,7 @@ function renderMalla() {
   });
 }
 
-// PLAN DE SEMESTRES VISUAL
+// PLAN DE SEMESTRES CON COLORES DE RAMOS
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
@@ -52,13 +54,7 @@ function renderPlanner() {
     s.ramos.forEach(ramo => {
       const li = document.createElement("li");
       li.textContent = `${ramo.id} — ${ramo.nombre}`;
-
-      // color según tipo
-      if (ramo.tipo === "OFG") li.style.color = "#f5d02f";
-      else if (ramo.tipo === "INGLES") li.style.color = "#2EC4B6";
-      else if (ramo.id.startsWith("OPR")) li.style.color = "#a26cff";
-      else li.style.color = "#2e8b57";
-
+      li.classList.add(clasePorTipo(ramo));
       ul.appendChild(li);
     });
 
@@ -80,9 +76,18 @@ function renderPlanner() {
   obs.innerHTML = "<h2>Observaciones</h2>";
   const totalCreditos = estado.semestres.reduce((sum, s) => sum + s.creditos, 0);
   obs.innerHTML += `<p>Total de créditos planificados: <strong>${totalCreditos}</strong></p>`;
+
+  // OFG y Inglés pendientes
+  const ofgPendientes = ramos.filter(r => r.tipo === "OFG" && !estado.aprobados.has(r.id));
+  const inglesPendientes = ramos.filter(r => r.tipo === "INGLES" && !estado.aprobados.has(r.id));
+
+  if (ofgPendientes.length > 0)
+    obs.innerHTML += `<p>OFG pendientes: ${ofgPendientes.map(r => r.id).join(", ")}</p>`;
+  if (inglesPendientes.length > 0)
+    obs.innerHTML += `<p>Inglés pendiente: ${inglesPendientes.map(r => r.id).join(", ")}</p>`;
 }
-  
-// ACTUALIZAR TODO
+
+
 function actualizarTodo() {
   generarPlan();
   renderPlanner();
