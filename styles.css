@@ -41,12 +41,23 @@ ul li {
   border-radius: 6px;
   cursor: pointer;
   transition: 0.2s;
+  background: #fefefe;
 }
 
 ul li.aprobado {
   background: #c8f7c5;
   text-decoration: line-through;
   border-color: #2e8b57;
+}
+
+ul li.ofg {
+  background: #fff3cd;
+  border-color: #ffecb5;
+}
+
+ul li.opr {
+  background: #d0e0ff;
+  border-color: #a0bfff;
 }
 
 ul li:hover {
@@ -92,6 +103,7 @@ button#actualizarBtn {
   cursor: pointer;
   font-weight: bold;
   transition: 0.2s;
+  margin-bottom: 20px;
 }
 
 button#actualizarBtn:hover {
