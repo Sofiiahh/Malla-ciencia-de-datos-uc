@@ -1,57 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planner Académico — Ciencia de Datos</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <header>
     <h1>Planner Académico — Ciencia de Datos</h1>
-    <p>Planifica tus semestres con foco en terminar en 8.</p>
   </header>
 
-  <!-- Selector de semestre actual -->
-  <section id="selector-semestre">
-    <label for="semestreActual">¿En qué semestre vas?</label>
-    <select id="semestreActual">
-      <option value="1">Semestre 1</option>
-      <option value="2">Semestre 2</option>
-      <option value="3">Semestre 3</option>
-      <option value="4">Semestre 4</option>
-      <option value="5">Semestre 5</option>
-      <option value="6">Semestre 6</option>
-      <option value="7">Semestre 7</option>
-      <option value="8">Semestre 8</option>
-    </select>
-  </section>
+  <main>
+    <section id="malla">
+      <h2>Malla Interactiva</h2>
+      <div id="semestres"></div>
+    </section>
 
-  <!-- Malla interactiva vertical -->
-  <section id="malla"></section>
-
-  <!-- Botón Enviar para generar planner y recomendaciones -->
-  <div style="text-align:center; margin:20px 0;">
-    <button id="actualizarBtn">Enviar</button>
-  </div>
-
-  <!-- Observaciones y sugerencias -->
-  <section id="observaciones">
-    <h2>Observaciones</h2>
-  </section>
-
-  <section id="sugerencias">
-    <h2>Ideas de planificación semestral</h2>
-  </section>
-
-  <footer>
-    <p>Planner académico — proyecto personal</p>
-  </footer>
+    <section id="observaciones">
+      <!-- Aquí se muestran los ramos anuales -->
+    </section>
+  </main>
 
   <script src="data.js"></script>
   <script src="planner.js"></script>
   <script src="main.js"></script>
-
 </body>
 </html>
