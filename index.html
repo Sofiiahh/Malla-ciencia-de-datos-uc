@@ -10,16 +10,31 @@
 
   <header>
     <h1>Planner Académico — Ciencia de Datos</h1>
-    <p>Planifica tus semestres con foco en no atrasarte.</p>
+    <p>Marca los ramos que ya aprobaste y tu semestre actual, luego presiona "Enviar" para obtener tu planificación.</p>
   </header>
 
-  <section id="malla">
-    <h2>Malla Interactiva</h2> 
+  <section id="formulario">
+    <h2>Ramos aprobados</h2>
+    <div id="checkboxes"></div>
+
+    <h2>Semestre actual</h2>
+    <select id="semestreActual">
+      <option value="1">1° Semestre</option>
+      <option value="2">2° Semestre</option>
+      <option value="3">3° Semestre</option>
+      <option value="4">4° Semestre</option>
+      <option value="5">5° Semestre</option>
+      <option value="6">6° Semestre</option>
+      <option value="7">7° Semestre</option>
+      <option value="8">8° Semestre</option>
+    </select>
+
+    <button id="enviarBtn">Enviar</button>
   </section>
 
   <section id="planner">
     <h2>Planner de Semestres</h2>
-    <button id="actualizarBtn">Enviar</button>
+    <div id="plannerGrid"></div>
   </section>
 
   <aside id="observaciones">
