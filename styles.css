@@ -9,9 +9,17 @@ header, footer {
   margin-bottom: 20px;
 }
 
-#malla {
+#formulario {
+  margin-bottom: 30px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fffbea;
+}
+
+#plannerGrid {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   margin-bottom: 30px;
 }
 
@@ -39,30 +47,13 @@ ul li {
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
+  cursor: default;
   background: #fefefe;
 }
 
-ul li.aprobado {
-  background: #c8f7c5;
-  text-decoration: line-through;
-  border-color: #2e8b57;
-}
-
-ul li.ofg {
-  background: #fff3cd;
-  border-color: #ffecb5;
-}
-
-ul li.opr {
-  background: #d0e0ff;
-  border-color: #a0bfff;
-}
-
-ul li:hover {
-  background: #e0f0f8;
-}
+ul li.ofg { background: #fff3cd; border-color: #ffecb5; }
+ul li.opr { background: #d0e0ff; border-color: #a0bfff; }
+ul li.regular { background: #fefefe; border-color: #ccc; }
 
 #observaciones {
   margin-top: 20px;
@@ -72,7 +63,7 @@ ul li:hover {
   background: #fffbea;
 }
 
-button#actualizarBtn {
+button {
   padding: 10px 20px;
   background: #2EC4B6;
   color: #fff;
@@ -81,9 +72,7 @@ button#actualizarBtn {
   cursor: pointer;
   font-weight: bold;
   transition: 0.2s;
-  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
-button#actualizarBtn:hover {
-  background: #27b3a2;
-}
+button:hover { background: #27b3a2; }
