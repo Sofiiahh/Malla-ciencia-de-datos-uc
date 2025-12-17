@@ -47,6 +47,7 @@ function generarPlan() {
     pendientes = pendientes.filter(r => !aprobadosSimulados.has(r.id));
   }
 
+  // Semestres extra si quedan pendientes
   let numExtra = SEMESTRES_OBJETIVO + 1;
   while (pendientes.length > 0) {
     let semestre = { numero: numExtra, ramos: [], creditos: 0, aviso: "Semestre extra por ramos pendientes" };
@@ -64,54 +65,88 @@ function generarPlan() {
   }
 }
 
-// Render del planner en columnas
+// Render de la malla interactiva
+function renderMalla() {
+  const contenedor = document.getElementById("malla");
+  contenedor.innerHTML = "<h2>Malla Interactiva</h2>";
+
+  ramos.forEach(ramo => {
+    const div = document.createElement("div");
+    div.classList.add("ramo", clasePorTipo(ramo));
+
+    const aprobado = estado.aprobados.has(ramo.id);
+    const disponible = cumpleRequisitos(ramo, estado.aprobados);
+
+    if (aprobado) div.classList.add("aprobado");
+    else if (!disponible) div.classList.add("bloqueado");
+
+    div.innerHTML = `<strong>${ramo.id}</strong><br>${ramo.nombre}`;
+
+    if (disponible && !aprobado) {
+      div.addEventListener("click", () => {
+        estado.aprobados.add(ramo.id);
+        actualizarTodo();
+        scrollAlSiguienteSemestre();
+      });
+    }
+
+    contenedor.appendChild(div);
+  });
+}
+
+// Render del planner con columna de Inglés al final
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
-  contenedor.innerHTML = "";
+  contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
 
-  // Columnas por semestre
-  for (let s = 1; s <= SEMESTRES_OBJETIVO; s++) {
-    const col = document.createElement("div");
-    col.className = "columna";
-    col.innerHTML = `<h3>Semestre ${s}</h3>`;
+  // Semestres
+  estado.semestres.forEach(s => {
+    const divSem = document.createElement("div");
+    divSem.className = "semestre";
+    divSem.innerHTML = `<h3>Semestre ${s.numero} — Créditos: ${s.creditos}</h3>`;
 
-    ramos.filter(r => r.semestre === s).forEach(r => {
-      const divRamo = document.createElement("div");
-      divRamo.className = "ramo " + clasePorTipo(r);
-      divRamo.textContent = `${r.id} — ${r.nombre}`;
+    const ul = document.createElement("ul");
+    s.ramos.forEach(ramo => {
+      const li = document.createElement("li");
+      li.textContent = `${ramo.id} — ${ramo.nombre}`;
+      li.classList.add(clasePorTipo(ramo));
 
-      const aprobado = estado.aprobados.has(r.id);
-      const disponible = cumpleRequisitos(r, estado.aprobados);
+      const reqs = ramo.req.length ? ramo.req.join(", ") : "Ninguno";
+      const creditos = ramo.tipo === "INGLES" ? CREDITOS_INGLES : CREDITOS_RAMO;
+      li.setAttribute("data-tooltip", `Créditos: ${creditos} | Requisitos: ${reqs}`);
 
-      if (aprobado) divRamo.classList.add("aprobado");
-      else if (!disponible) divRamo.classList.add("bloqueado");
-      else divRamo.addEventListener("click", () => {
-        estado.aprobados.add(r.id);
-        actualizarTodo();
-      });
-
-      col.appendChild(divRamo);
+      ul.appendChild(li);
     });
 
-    contenedor.appendChild(col);
-  }
+    divSem.appendChild(ul);
+
+    if (s.aviso) {
+      const aviso = document.createElement("p");
+      aviso.style.color = "red";
+      aviso.style.fontWeight = "bold";
+      aviso.textContent = s.aviso;
+      divSem.appendChild(aviso);
+    }
+
+    contenedor.appendChild(divSem);
+  });
 
   // Columna de Inglés
   const colIngles = document.createElement("div");
-  colIngles.className = "columna";
+  colIngles.className = "semestre";
   colIngles.innerHTML = "<h3>Inglés</h3>";
-
+  const ulIngles = document.createElement("ul");
   ingles.forEach(r => {
-    const divRamo = document.createElement("div");
-    divRamo.className = "ramo ingres";
-    divRamo.textContent = r.nombre;
-    colIngles.appendChild(divRamo);
+    const li = document.createElement("li");
+    li.textContent = r.nombre;
+    li.classList.add("ingres");
+    ulIngles.appendChild(li);
   });
-
+  colIngles.appendChild(ulIngles);
   contenedor.appendChild(colIngles);
 }
 
-// Observaciones: ramos anuales y total de créditos
+// Observaciones
 function renderObservaciones() {
   const obs = document.getElementById("observaciones");
   obs.innerHTML = "<h2>Observaciones</h2>";
@@ -124,7 +159,7 @@ function renderObservaciones() {
   obs.innerHTML += `<p>Total de créditos planificados: ${totalCreditos}</p>`;
 }
 
-// Sugerencias de planificación semestral según el semestre actual
+// Sugerencias según semestre actual
 function renderSugerencias() {
   const sugerencias = document.getElementById("sugerencias");
   sugerencias.innerHTML = "<h2>Ideas de planificación semestral</h2>";
@@ -143,10 +178,23 @@ function renderSugerencias() {
   sugerencias.innerHTML += `<ul>${ideas.map(i => `<li>${i}</li>`).join("")}</ul>`;
 }
 
-// Actualiza todo el planner
+// Scroll al siguiente semestre con ramos desbloqueados
+function scrollAlSiguienteSemestre() {
+  const semestres = document.querySelectorAll(".semestre");
+  for (let s of semestres) {
+    const liBloqueados = s.querySelectorAll("li.bloqueado");
+    const liTotales = s.querySelectorAll("li");
+    if (liTotales.length > 0 && liBloqueados.length < liTotales.length) {
+      s.scrollIntoView({ behavior: "smooth", block: "start" });
+      break;
+    }
+  }
+}
+
 function actualizarTodo() {
   generarPlan();
   renderPlanner();
+  renderMalla();
   renderObservaciones();
   renderSugerencias();
 }
