@@ -1,68 +1,99 @@
-:root {
-  --bg: #fbfbfd;
-  --card: #ffffff;
-  --aprobado: #a8e6cf;
-  --sugerido: #d0e1ff;
-  --bloqueado: #f0f0f0;
-  --accent: #2EC4B6;
-  --radius: 12px;
-}
-
 body {
   font-family: Arial, sans-serif;
-  background: var(--bg);
-  margin: 0;
-  padding: 0;
+  padding: 20px;
+  background: #f9f9fb;
 }
 
-header {
-  background: var(--accent);
-  color: white;
-  padding: 1rem;
+header, footer {
   text-align: center;
+  margin-bottom: 20px;
 }
 
-main {
-  padding: 1rem;
-}
-
-#semestres {
+#malla {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  gap: 15px;
+  margin-bottom: 30px;
 }
 
 .semestre {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 1rem;
-  flex: 1 1 300px;
-  min-width: 300px;
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .semestre h3 {
-  margin-top: 0;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 0.5rem;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-.ramo {
-  margin: 0.5rem 0;
-  padding: 0.5rem;
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul li {
+  margin: 5px 0;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+ul li.aprobado {
+  background: #c8f7c5;
+  text-decoration: line-through;
+  border-color: #2e8b57;
+}
+
+ul li:hover {
+  background: #e0f0f8;
+}
+
+#observaciones {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  background: #fffbea;
+}
+
+#planner {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+li[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  white-space: nowrap;
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  margin-top: 2px;
+  z-index: 10;
+}
+
+button#actualizarBtn {
+  padding: 10px 20px;
+  background: #2EC4B6;
+  color: #fff;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
 }
 
-.ramo.aprobado {
-  background-color: var(--aprobado);
-}
-
-.ramo.sugerido {
-  background-color: var(--sugerido);
-}
-
-.ramo.bloqueado {
-  background-color: var(--bloqueado);
-  color: #999;
-  cursor: not-allowed;
+button#actualizarBtn:hover {
+  background: #27b3a2;
 }
