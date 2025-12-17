@@ -5,6 +5,7 @@ const CREDITOS_INGLES = 5;
 const MAX_CREDITOS_SEMESTRE = 60;
 const SEMESTRES_OBJETIVO = 8;
 
+// Inglés (para columna especial)
 const INGLES = {
   id: "INGLES",
   nombre: "Inglés",
@@ -70,7 +71,7 @@ const ramos = [
   { id: "OFG8", nombre: "OFG Libre", semestre: 8, req: [], tipo: "OFG" }
 ];
 
-// Inglés según diagnóstico
+// Inglés según nivel
 const ingles = [
   { id: "ING1", nombre: "Inglés I", creditos: CREDITOS_INGLES },
   { id: "ING2", nombre: "Inglés II", creditos: CREDITOS_INGLES },
