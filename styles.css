@@ -1,8 +1,10 @@
 :root {
   --bg: #fbfbfd;
   --card: #ffffff;
+  --aprobado: #a8e6cf;
+  --sugerido: #d0e1ff;
+  --bloqueado: #f0f0f0;
   --accent: #2EC4B6;
-  --muted: #666;
   --radius: 12px;
 }
 
@@ -45,20 +47,22 @@ main {
 }
 
 .ramo {
-  background: #f0f0f0;
   margin: 0.5rem 0;
   padding: 0.5rem;
   border-radius: 8px;
-  cursor: grab;
+  cursor: pointer;
 }
 
-.ramo.dragging {
-  opacity: 0.5;
+.ramo.aprobado {
+  background-color: var(--aprobado);
 }
 
-#observaciones {
-  margin-top: 2rem;
-  background: var(--card);
-  padding: 1rem;
-  border-radius: var(--radius);
+.ramo.sugerido {
+  background-color: var(--sugerido);
+}
+
+.ramo.bloqueado {
+  background-color: var(--bloqueado);
+  color: #999;
+  cursor: not-allowed;
 }
