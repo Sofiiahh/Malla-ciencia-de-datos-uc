@@ -10,75 +10,51 @@ header, footer {
   margin-bottom: 20px;
 }
 
-#malla {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
-  margin-bottom: 40px;
-}
-
-.ramo {
-  border: 1px solid #ccc;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 8px;
+#control {
+  margin-bottom: 20px;
   text-align: center;
-  transition: 0.2s;
 }
 
-.ramo.bloqueado {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background: #f0f0f0;
-}
-
-.ramo.disponible {
-  background: #d0f0ef;
-  border: 2px solid #2EC4B6;
-}
-
-.ramo.aprobado {
-  background: #c8f7c5;
-  text-decoration: line-through;
-  border: 2px solid #2e8b57;
-}
-
-.semestre {
-  flex: 0 0 250px;
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  scroll-snap-align: start;
-  position: relative;
+#control select, #control button {
+  font-size: 16px;
+  padding: 5px 10px;
+  margin-left: 5px;
 }
 
 #planner {
   display: flex;
-  overflow-x: auto;
   gap: 15px;
-  padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
+  overflow-x: auto;
+  padding-bottom: 15px;
+}
+
+.semestre {
+  min-width: 220px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.semestre h3 {
+  text-align: center;
 }
 
 ul {
-  list-style-type: none;
+  list-style: none;
   padding-left: 0;
   margin: 0;
 }
 
-ul li {
+li {
   margin: 5px 0;
-  position: relative;
   padding: 4px 6px;
   border-radius: 6px;
+  cursor: pointer;
   transition: 0.2s;
 }
 
-/* Colores por tipo de ramo */
 li.regular {
   background-color: #e3f2fd;
 }
@@ -95,7 +71,11 @@ li.ingres {
   background-color: #f3e5f5;
 }
 
-/* Tooltip */
+li.aprobado {
+  border: 2px solid #2e8b57;
+  text-decoration: line-through;
+}
+
 li[data-tooltip]:hover::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -119,12 +99,9 @@ li[data-tooltip]:hover::after {
   background: #fffbea;
 }
 
-#observaciones h2, #sugerencias h2 {
-  margin-top: 0;
-}
-
 footer {
   margin-top: 30px;
   padding-top: 10px;
   border-top: 1px solid #ddd;
+  text-align: center;
 }
