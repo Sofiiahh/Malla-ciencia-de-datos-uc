@@ -9,51 +9,48 @@ header, footer {
   margin-bottom: 20px;
 }
 
-#formulario {
-  margin-bottom: 30px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
-  background: #fffbea;
+#planner-controls {
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-#plannerGrid {
+.grid-malla {
   display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
+  gap: 15px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
-.semestre {
-  flex: 1;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+.columna {
+  flex: 0 0 220px;
   background: #fff;
   padding: 10px;
+  border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.semestre h3 {
+.columna h3 {
   text-align: center;
   margin-bottom: 10px;
 }
 
-ul {
-  list-style: none;
-  padding-left: 0;
-}
-
-ul li {
-  margin: 5px 0;
-  padding: 5px;
-  border: 1px solid #ccc;
+.ramo {
+  padding: 8px;
+  margin: 4px 0;
   border-radius: 6px;
-  cursor: default;
-  background: #fefefe;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  text-align: center;
+  background: #e0f7fa;
 }
 
-ul li.ofg { background: #fff3cd; border-color: #ffecb5; }
-ul li.opr { background: #d0e0ff; border-color: #a0bfff; }
-ul li.regular { background: #fefefe; border-color: #ccc; }
+.ramo.ofg {
+  background: #f0f0f0;
+}
+
+.ramo:hover {
+  background: #b2ebf2;
+}
 
 #observaciones {
   margin-top: 20px;
@@ -62,17 +59,3 @@ ul li.regular { background: #fefefe; border-color: #ccc; }
   border-radius: 8px;
   background: #fffbea;
 }
-
-button {
-  padding: 10px 20px;
-  background: #2EC4B6;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
-  margin-top: 10px;
-}
-
-button:hover { background: #27b3a2; }
