@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Al hacer click en el botón, se actualiza todo
   document.getElementById("actualizarBtn").addEventListener("click", actualizarTodo);
   renderMalla();
 });
@@ -10,12 +11,12 @@ function clasePorTipo(ramo) {
   return "regular";
 }
 
-// Renderiza la Malla Interactiva con 8 columnas y columna de Inglés
+// Renderiza la Malla Interactiva con 8 columnas + columna de Inglés
 function renderMalla() {
   const contenedor = document.getElementById("malla");
   contenedor.innerHTML = "";
 
-  // Columnas de semestre 1 al 8
+  // Columnas semestre 1 al 8
   for (let s = 1; s <= 8; s++) {
     const divSem = document.createElement("div");
     divSem.className = "semestre";
@@ -28,16 +29,8 @@ function renderMalla() {
       li.textContent = `${ramo.id} — ${ramo.nombre}`;
       li.classList.add(clasePorTipo(ramo));
 
-      // Marca/desmarca en estado.aprobados al hacer click
-      li.addEventListener("click", () => {
-        if (estado.aprobados.has(ramo.id)) {
-          estado.aprobados.delete(ramo.id);
-          li.classList.remove("aprobado");
-        } else {
-          estado.aprobados.add(ramo.id);
-          li.classList.add("aprobado");
-        }
-      });
+      // Click para marcar/desmarcar
+      li.addEventListener("click", () => toggleRamo(ramo.id, li));
 
       ul.appendChild(li);
     });
@@ -55,10 +48,22 @@ function renderMalla() {
     const li = document.createElement("li");
     li.textContent = r.nombre;
     li.classList.add("ingres");
+    li.addEventListener("click", () => toggleRamo(r.id, li));
     ulIngles.appendChild(li);
   });
   colIngles.appendChild(ulIngles);
   contenedor.appendChild(colIngles);
+}
+
+// Marca/desmarca un ramo
+function toggleRamo(id, li) {
+  if (estado.aprobados.has(id)) {
+    estado.aprobados.delete(id);
+    li.classList.remove("aprobado");
+  } else {
+    estado.aprobados.add(id);
+    li.classList.add("aprobado");
+  }
 }
 
 // Observaciones con ramos anuales por semestre
@@ -88,7 +93,7 @@ function renderSugerencias() {
   sugerencias.innerHTML += `<p>Distribuye OFG y ramos optativos de forma equilibrada para no sobrecargar un semestre.</p>`;
 }
 
-// Renderiza el planner semestral desde el siguiente semestre
+// Planner desde el siguiente semestre
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "";
@@ -115,7 +120,7 @@ function renderPlanner() {
   }
 }
 
-// Botón Actualizar Planner
+// Actualiza todo al presionar el botón
 function actualizarTodo() {
   generarPlan();
   renderPlanner();
