@@ -1,4 +1,4 @@
 window.onload = function() {
-  crearPlanner();
   mostrarObservaciones();
+  crearPlanner(); // sin aprobados al inicio
 };
