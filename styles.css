@@ -1,59 +1,24 @@
+/* Estilos generales */
 body {
   font-family: Arial, sans-serif;
   padding: 20px;
   background: #f9f9fb;
+  margin: 0;
 }
 
 header, footer {
   text-align: center;
+  background: #2EC4B6;
+  color: #fff;
+  padding: 1em;
   margin-bottom: 20px;
 }
 
-#malla {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
-  margin-bottom: 40px;
+h1, h2, h3 {
+  margin: 0.5em 0;
 }
 
-.ramo {
-  border: 1px solid #ccc;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 8px;
-  text-align: center;
-  transition: 0.2s;
-}
-
-.ramo.bloqueado {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background: #f0f0f0;
-}
-
-.ramo.disponible {
-  background: #d0f0ef;
-  border: 2px solid #2EC4B6;
-}
-
-.ramo.aprobado {
-  background: #c8f7c5;
-  text-decoration: line-through;
-  border: 2px solid #2e8b57;
-}
-
-.semestre {
-  flex: 0 0 300px;
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  scroll-snap-align: start;
-  position: relative;
-}
-
+/* Contenedor del planner */
 #planner {
   display: flex;
   overflow-x: auto;
@@ -63,16 +28,61 @@ header, footer {
   scroll-behavior: smooth;
 }
 
-ul {
-  list-style-type: none;
-  padding-left: 0;
+/* Columnas de semestres e Inglés */
+.columna {
+  min-width: 200px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 0.5em;
+  scroll-snap-align: start;
 }
 
-ul li {
-  margin: 5px 0;
-  position: relative;
+.columna h3 {
+  text-align: center;
+  background: #2EC4B6;
+  color: #fff;
+  padding: 0.5em;
+  border-radius: 12px 12px 0 0;
+  margin: 0 -0.5em 0.5em -0.5em;
 }
 
+/* Ramos */
+.ramo {
+  padding: 0.3em;
+  margin: 0.2em 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: 0.2s;
+}
+
+/* Tipos de ramo */
+.ramo.regular { background: #ADE8F4; }
+.ramo.ofg { background: #FFB703; }
+.ramo.ingres { background: #FF006E; color: #fff; }
+.ramo.opr { background: #8AC926; }
+
+/* Estados */
+.ramo.aprobado {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+.ramo.bloqueado {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Observaciones y sugerencias */
+#observaciones, #sugerencias {
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 12px;
+  background: #fffbea;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Tooltips */
 li[data-tooltip]:hover::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -88,43 +98,7 @@ li[data-tooltip]:hover::after {
   z-index: 10;
 }
 
-#observaciones {
-  margin-top: 30px;
-  padding: 15px;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  background: #fffbea;
-}
-
-.columna {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 0.5em;
-}
-
-.columna h3 {
-  text-align: center;
-  background: #2EC4B6;
-  color: #fff;
-  padding: 0.5em;
-  border-radius: 12px 12px 0 0;
-  margin: 0 -0.5em 0.5em -0.5em;
-}
-
-.ramo.regular { background: #ADE8F4; }
-.ramo.ofg { background: #FFB703; }
-.ramo.ingres { background: #FF006E; color: #fff; }
-.ramo.opr { background: #8AC926; }
-
-.ramo.aprobado { opacity: 0.5; text-decoration: line-through; }
-.ramo.bloqueado { opacity: 0.3; cursor: not-allowed; }
-
-#planner {
-  display: flex;
-  overflow-x: auto;
-  gap: 15px;
-  padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
+/* Scroll suave y responsive */
+@media (max-width: 768px) {
+  .columna { min-width: 150px; }
 }
