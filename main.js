@@ -5,12 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function clasePorTipo(ramo) {
   if (ramo.tipo === "OFG") return "ofg";
-  if (ramo.tipo === "INGLES") return "ingres";
   if (ramo.id.startsWith("OPR")) return "opr";
   return "regular";
 }
 
-// Función para marcar o desmarcar un ramo
+// Marca/desmarca un ramo
 function toggleRamo(id, li) {
   if (estado.aprobados.has(id)) {
     estado.aprobados.delete(id);
@@ -21,12 +20,11 @@ function toggleRamo(id, li) {
   }
 }
 
-// Renderiza la malla interactiva (8 semestres + columna de inglés)
+// Renderiza la malla interactiva (8 columnas por semestre)
 function renderMalla() {
   const contenedor = document.getElementById("malla");
   contenedor.innerHTML = "";
 
-  // Columnas semestre 1 a 8
   for (let s = 1; s <= 8; s++) {
     const divSem = document.createElement("div");
     divSem.className = "semestre";
@@ -38,39 +36,20 @@ function renderMalla() {
       const li = document.createElement("li");
       li.textContent = `${ramo.id} — ${ramo.nombre}`;
       li.classList.add(clasePorTipo(ramo));
-
-      // Marcar/desmarcar al click
       li.addEventListener("click", () => toggleRamo(ramo.id, li));
-
       ul.appendChild(li);
     });
 
     divSem.appendChild(ul);
     contenedor.appendChild(divSem);
   }
-
-  // Columna final de inglés
-  const colIngles = document.createElement("div");
-  colIngles.className = "semestre";
-  colIngles.innerHTML = "<h3>Inglés</h3>";
-  const ulIngles = document.createElement("ul");
-  ingles.forEach(r => {
-    const li = document.createElement("li");
-    li.textContent = r.nombre;
-    li.classList.add("ingres");
-    li.addEventListener("click", () => toggleRamo(r.id, li));
-    ulIngles.appendChild(li);
-  });
-  colIngles.appendChild(ulIngles);
-  contenedor.appendChild(colIngles);
 }
 
-// Observaciones con ramos anuales por semestre
+// Observaciones: solo ramos anuales
 function renderObservaciones() {
   const obs = document.getElementById("observaciones");
   obs.innerHTML = "<h2>Observaciones</h2>";
 
-  // Ramos anuales
   const anuales = ramos.filter(r => r.anual);
   const primero = anuales.filter(r => r.semestre % 2 !== 0);
   const segundo = anuales.filter(r => r.semestre % 2 === 0);
@@ -83,24 +62,12 @@ function renderObservaciones() {
   }
 }
 
-// Sugerencias semestrales según semestre actual
-function renderSugerencias() {
-  const sugerencias = document.getElementById("sugerencias");
-  const semestreActual = parseInt(document.getElementById("semestreActual").value);
-
-  sugerencias.innerHTML = "<h2>Ideas de planificación semestral</h2>";
-  sugerencias.innerHTML += `<p>Planifica desde el semestre ${semestreActual + 1} priorizando los ramos que tienen menos requisitos.</p>`;
-  sugerencias.innerHTML += `<p>Distribuye OFG y ramos optativos de forma equilibrada para no sobrecargar un semestre.</p>`;
-}
-
-// Renderiza el planner semestral desde el siguiente semestre
+// Planner semestral: muestra todos los semestres planificados
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "";
 
-  const semestreActual = parseInt(document.getElementById("semestreActual").value);
-
-  for (let s = semestreActual + 1; s <= 8; s++) {
+  for (let s = 1; s <= 8; s++) {
     const divSem = document.createElement("div");
     divSem.className = "semestre";
     divSem.innerHTML = `<h3>Semestre ${s}</h3>`;
@@ -120,10 +87,10 @@ function renderPlanner() {
   }
 }
 
+// Función principal: genera plan y actualiza todo
 function actualizarTodo() {
   generarPlan();
-  renderPlanner(); 
-  renderMalla(); 
-  renderObservaciones(); 
-  renderSugerencias(); 
+  renderPlanner();
+  renderMalla();
+  renderObservaciones();
 }
