@@ -8,17 +8,53 @@ body {
 
 header, footer {
   text-align: center;
+  margin-bottom: 20px;
   background: #2EC4B6;
   color: #fff;
-  padding: 1em;
-  margin-bottom: 20px;
+  padding: 10px 0;
+  border-radius: 8px;
 }
 
 h1, h2, h3 {
   margin: 0.5em 0;
 }
 
-/* Contenedor del planner */
+/* Malla interactiva */
+#malla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.ramo {
+  border: 1px solid #ccc;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.ramo.bloqueado {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f0f0f0;
+}
+
+.ramo.aprobado {
+  background: #c8f7c5;
+  text-decoration: line-through;
+  border: 2px solid #2e8b57;
+}
+
+/* Tipos de ramo */
+.ramo.regular { background: #ADE8F4; }
+.ramo.ofg { background: #FFB703; }
+.ramo.ingres { background: #FF006E; color: #fff; }
+.ramo.opr { background: #8AC926; }
+
+/* Planner de semestres */
 #planner {
   display: flex;
   overflow-x: auto;
@@ -28,58 +64,37 @@ h1, h2, h3 {
   scroll-behavior: smooth;
 }
 
-/* Columnas de semestres e Inglés */
-.columna {
-  min-width: 200px;
+.semestre {
+  flex: 0 0 280px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 0.5em;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   scroll-snap-align: start;
 }
 
-.columna h3 {
+.semestre h3 {
   text-align: center;
   background: #2EC4B6;
   color: #fff;
   padding: 0.5em;
   border-radius: 12px 12px 0 0;
-  margin: 0 -0.5em 0.5em -0.5em;
+  margin: -15px -15px 10px -15px;
 }
 
-/* Ramos */
-.ramo {
-  padding: 0.3em;
-  margin: 0.2em 0;
+/* Listas dentro de semestres */
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul li {
+  margin: 5px 0;
+  position: relative;
+  padding: 3px 6px;
   border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: 0.2s;
-}
-
-/* Tipos de ramo */
-.ramo.regular { background: #ADE8F4; }
-.ramo.ofg { background: #FFB703; }
-.ramo.ingres { background: #FF006E; color: #fff; }
-.ramo.opr { background: #8AC926; }
-
-/* Estados */
-.ramo.aprobado {
-  opacity: 0.5;
-  text-decoration: line-through;
-}
-.ramo.bloqueado {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-/* Observaciones y sugerencias */
-#observaciones, #sugerencias {
-  margin-top: 30px;
-  padding: 15px;
-  border-radius: 12px;
-  background: #fffbea;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* Tooltips */
@@ -98,7 +113,16 @@ li[data-tooltip]:hover::after {
   z-index: 10;
 }
 
-/* Scroll suave y responsive */
+/* Observaciones y sugerencias */
+#observaciones, #sugerencias {
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 12px;
+  background: #fffbea;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Scroll responsive */
 @media (max-width: 768px) {
-  .columna { min-width: 150px; }
+  .semestre { flex: 0 0 220px; }
 }
