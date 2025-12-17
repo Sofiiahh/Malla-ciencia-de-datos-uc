@@ -35,6 +35,7 @@ function generarPlan() {
     pendientes = pendientes.filter(r => !aprobadosSimulados.has(r.id));
   }
 
+  // Si quedan ramos pendientes, generar semestres extra
   let numExtra = SEMESTRES_OBJETIVO + 1;
   while (pendientes.length > 0) {
     let semestre = { numero: numExtra, ramos: [], creditos: 0, aviso: "Semestre extra por ramos pendientes" };
