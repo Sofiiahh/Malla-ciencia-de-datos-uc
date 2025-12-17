@@ -1,11 +1,10 @@
-function crearPlanner() {
+function crearPlanner(aprobados = []) {
   const contenedor = document.getElementById("semestres");
   contenedor.innerHTML = "";
 
   semestres.forEach(semestre => {
     const div = document.createElement("div");
     div.className = "semestre";
-    div.id = semestre.nombre.replace(/\s+/g, "_");
 
     const h3 = document.createElement("h3");
     h3.textContent = semestre.nombre;
@@ -14,32 +13,29 @@ function crearPlanner() {
     semestre.ramos.forEach(ramo => {
       const ramoDiv = document.createElement("div");
       ramoDiv.className = "ramo";
-      ramoDiv.draggable = true;
-      ramoDiv.id = ramo.codigo;
+      ramoDiv.dataset.codigo = ramo.codigo;
       ramoDiv.textContent = `${ramo.codigo} - ${ramo.nombre}`;
-      if(ramo.nota) {
-        const aviso = document.createElement("small");
-        aviso.textContent = " (" + ramo.nota + ")";
-        ramoDiv.appendChild(aviso);
+
+      // Determinar estado
+      if(aprobados.includes(ramo.codigo)) {
+        ramoDiv.classList.add("aprobado");
+      } else if(ramo.prereq.every(p => aprobados.includes(p))) {
+        ramoDiv.classList.add("sugerido");
+      } else {
+        ramoDiv.classList.add("bloqueado");
       }
 
-      ramoDiv.addEventListener("dragstart", e => {
-        e.dataTransfer.setData("text/plain", e.target.id);
-        e.target.classList.add("dragging");
-      });
-      ramoDiv.addEventListener("dragend", e => {
-        e.target.classList.remove("dragging");
+      // Permitir marcar/desmarcar aprobado
+      ramoDiv.addEventListener("click", () => {
+        if(ramoDiv.classList.contains("aprobado")) {
+          aprobados = aprobados.filter(c => c !== ramo.codigo);
+        } else {
+          aprobados.push(ramo.codigo);
+        }
+        crearPlanner(aprobados);
       });
 
       div.appendChild(ramoDiv);
-    });
-
-    div.addEventListener("dragover", e => e.preventDefault());
-    div.addEventListener("drop", e => {
-      e.preventDefault();
-      const id = e.dataTransfer.getData("text/plain");
-      const ramo = document.getElementById(id);
-      div.appendChild(ramo);
     });
 
     contenedor.appendChild(div);
@@ -47,8 +43,8 @@ function crearPlanner() {
 }
 
 function mostrarObservaciones() {
-  const contenedor = document.getElementById("observaciones");
-  contenedor.innerHTML = "<h3>Ramos Anuales:</h3>";
+  const contenedor = document.getElementById("ramosAnuales");
+  contenedor.innerHTML = "";
   ramosAnuales.forEach(ramo => {
     const p = document.createElement("p");
     p.textContent = ramo;
