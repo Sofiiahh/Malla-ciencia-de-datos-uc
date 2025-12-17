@@ -5,6 +5,7 @@ function crearPlanner() {
   semestres.forEach(semestre => {
     const div = document.createElement("div");
     div.className = "semestre";
+    div.id = semestre.nombre.replace(/\s+/g, "_");
 
     const h3 = document.createElement("h3");
     h3.textContent = semestre.nombre;
@@ -21,7 +22,24 @@ function crearPlanner() {
         aviso.textContent = " (" + ramo.nota + ")";
         ramoDiv.appendChild(aviso);
       }
+
+      ramoDiv.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("text/plain", e.target.id);
+        e.target.classList.add("dragging");
+      });
+      ramoDiv.addEventListener("dragend", e => {
+        e.target.classList.remove("dragging");
+      });
+
       div.appendChild(ramoDiv);
+    });
+
+    div.addEventListener("dragover", e => e.preventDefault());
+    div.addEventListener("drop", e => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData("text/plain");
+      const ramo = document.getElementById(id);
+      div.appendChild(ramo);
     });
 
     contenedor.appendChild(div);
