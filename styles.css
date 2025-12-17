@@ -72,28 +72,6 @@ ul li:hover {
   background: #fffbea;
 }
 
-#planner {
-  display: flex;
-  gap: 15px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-}
-
-li[data-tooltip]:hover::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 0;
-  top: 100%;
-  white-space: nowrap;
-  background: #333;
-  color: #fff;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  margin-top: 2px;
-  z-index: 10;
-}
-
 button#actualizarBtn {
   padding: 10px 20px;
   background: #2EC4B6;
