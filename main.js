@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("actualizarBtn").addEventListener("click", actualizarTodo);
-  renderMalla();
+  actualizarTodo();
 });
 
 function clasePorTipo(ramo) {
@@ -9,34 +8,36 @@ function clasePorTipo(ramo) {
   return "regular";
 }
 
-// Marca/desmarca un ramo
-function toggleRamo(id, li) {
-  if (estado.aprobados.has(id)) {
-    estado.aprobados.delete(id);
-    li.classList.remove("aprobado");
-  } else {
-    estado.aprobados.add(id);
-    li.classList.add("aprobado");
-  }
-}
-
-// Renderiza la malla interactiva (8 columnas por semestre)
 function renderMalla() {
   const contenedor = document.getElementById("malla");
-  contenedor.innerHTML = "";
+  contenedor.innerHTML = "<h2>Malla Interactiva</h2>";
 
+  // Crear columnas por semestre
   for (let s = 1; s <= 8; s++) {
     const divSem = document.createElement("div");
     divSem.className = "semestre";
-    divSem.innerHTML = `<h3>Semestre ${s}</h3>`;
-
+    divSem.innerHTML = `<h3>${s}° SEMESTRE</h3>`;
     const ul = document.createElement("ul");
-    const semRamos = ramos.filter(r => r.semestre === s);
-    semRamos.forEach(ramo => {
+
+    const ramosDelSem = ramos.filter(r => r.semestre === s);
+    ramosDelSem.forEach(ramo => {
       const li = document.createElement("li");
-      li.textContent = `${ramo.id} — ${ramo.nombre}`;
+      li.textContent = `${ramo.id} – ${ramo.nombre}`;
       li.classList.add(clasePorTipo(ramo));
-      li.addEventListener("click", () => toggleRamo(ramo.id, li));
+
+      const reqs = ramo.req.length ? ramo.req.join("; ") : "Sin prerrequisitos";
+      li.setAttribute("data-tooltip", `Requisitos: ${reqs}`);
+
+      li.addEventListener("click", () => {
+        if (estado.aprobados.has(ramo.id)) {
+          estado.aprobados.delete(ramo.id);
+          li.classList.remove("aprobado");
+        } else {
+          estado.aprobados.add(ramo.id);
+          li.classList.add("aprobado");
+        }
+      });
+
       ul.appendChild(li);
     });
 
@@ -45,52 +46,49 @@ function renderMalla() {
   }
 }
 
-// Observaciones: solo ramos anuales
 function renderObservaciones() {
   const obs = document.getElementById("observaciones");
   obs.innerHTML = "<h2>Observaciones</h2>";
 
+  // Ramos anuales
   const anuales = ramos.filter(r => r.anual);
-  const primero = anuales.filter(r => r.semestre % 2 !== 0);
-  const segundo = anuales.filter(r => r.semestre % 2 === 0);
+  if (anuales.length > 0) {
+    let html = "<strong>RAMOS ANUALES:</strong><hr>";
+    const sem1 = anuales.filter(r => r.semestre === 1);
+    const sem2 = anuales.filter(r => r.semestre === 2);
 
-  if (primero.length) {
-    obs.innerHTML += `<p><strong>Ramos anuales — Primer semestre:</strong> ${primero.map(r => `${r.id} (${r.nombre})`).join(", ")}</p>`;
+    if (sem1.length > 0) {
+      html += "<p>1er semestre:</p><ul>";
+      sem1.forEach(r => html += `<li>${r.id} – ${r.nombre}</li>`);
+      html += "</ul>";
+    }
+    if (sem2.length > 0) {
+      html += "<p>2do semestre:</p><ul>";
+      sem2.forEach(r => html += `<li>${r.id} – ${r.nombre}</li>`);
+      html += "</ul>";
+    }
+    html += "<hr>";
+    obs.innerHTML += html;
   }
-  if (segundo.length) {
-    obs.innerHTML += `<p><strong>Ramos anuales — Segundo semestre:</strong> ${segundo.map(r => `${r.id} (${r.nombre})`).join(", ")}</p>`;
-  }
-}
 
-// Planner semestral: muestra todos los semestres planificados
-function renderPlanner() {
-  const contenedor = document.getElementById("planner");
-  contenedor.innerHTML = "";
-
+  // Malla completa con prerrequisitos
+  let htmlMalla = "<strong>MALLA Y REQUISITOS</strong><hr>";
   for (let s = 1; s <= 8; s++) {
-    const divSem = document.createElement("div");
-    divSem.className = "semestre";
-    divSem.innerHTML = `<h3>Semestre ${s}</h3>`;
-
-    const ul = document.createElement("ul");
-    const semRamos = estado.semestres.find(se => se.numero === s)?.ramos || [];
-    semRamos.forEach(ramo => {
-      const li = document.createElement("li");
-      li.textContent = `${ramo.id} — ${ramo.nombre}`;
-      li.classList.add(clasePorTipo(ramo));
-      li.setAttribute("data-tooltip", `Requisitos: ${ramo.req.length ? ramo.req.join(", ") : "Ninguno"}`);
-      ul.appendChild(li);
+    htmlMalla += `<p><strong>${s}° SEMESTRE</strong></p><ul>`;
+    const ramosDelSem = ramos.filter(r => r.semestre === s);
+    ramosDelSem.forEach(r => {
+      const prereqs = r.req.length ? r.req.map(id => {
+        const rj = ramos.find(x => x.id === id);
+        return rj ? `${rj.id} (${rj.nombre})` : id;
+      }).join("; ") : "Sin prerrequisitos";
+      htmlMalla += `<li>${r.id} – ${r.nombre} → Requiere: ${prereqs}</li>`;
     });
-
-    divSem.appendChild(ul);
-    contenedor.appendChild(divSem);
+    htmlMalla += "</ul>";
   }
+  obs.innerHTML += htmlMalla;
 }
 
-// Función principal: genera plan y actualiza todo
 function actualizarTodo() {
-  generarPlan();
-  renderPlanner();
   renderMalla();
   renderObservaciones();
 }
