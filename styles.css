@@ -87,21 +87,3 @@ li[data-tooltip]:hover::after {
   padding: 4px 8px;
   font-size: 12px;
   border-radius: 4px;
-  margin-top: 2px;
-  z-index: 10;
-}
-
-#observaciones, #sugerencias {
-  margin-top: 30px;
-  padding: 15px;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  background: #fffbea;
-}
-
-footer {
-  margin-top: 30px;
-  padding-top: 10px;
-  border-top: 1px solid #ddd;
-  text-align: center;
-}
