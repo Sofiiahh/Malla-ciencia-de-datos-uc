@@ -2,12 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   actualizarTodo();
 });
 
-const estado = {
-  aprobados: new Set(),
-  semestres: []
-};
-
-// Funciones auxiliares
 function clasePorTipo(ramo) {
   if (ramo.tipo === "OFG") return "ofg";
   if (ramo.tipo === "INGLES") return "ingres";
@@ -15,57 +9,7 @@ function clasePorTipo(ramo) {
   return "regular";
 }
 
-function cumpleRequisitos(ramo, aprobadosSimulados = estado.aprobados) {
-  return ramo.req.every(r => aprobadosSimulados.has(r));
-}
-
-function creditosRamo(ramo) {
-  if (ramo.tipo === "INGLES") return CREDITOS_INGLES;
-  return CREDITOS_RAMO;
-}
-
-// Genera el plan de semestres
-function generarPlan() {
-  estado.semestres = [];
-  let pendientes = ramos.filter(r => !estado.aprobados.has(r.id));
-  let aprobadosSimulados = new Set(estado.aprobados);
-
-  for (let s = 1; s <= SEMESTRES_OBJETIVO; s++) {
-    let semestre = { numero: s, ramos: [], creditos: 0 };
-    let elegibles = pendientes.filter(r => cumpleRequisitos(r, aprobadosSimulados));
-
-    for (let ramo of elegibles) {
-      let c = creditosRamo(ramo);
-      if (semestre.creditos + c > MAX_CREDITOS_SEMESTRE) continue;
-
-      semestre.ramos.push(ramo);
-      semestre.creditos += c;
-      aprobadosSimulados.add(ramo.id);
-    }
-
-    estado.semestres.push(semestre);
-    pendientes = pendientes.filter(r => !aprobadosSimulados.has(r.id));
-  }
-
-  // Semestres extra si quedan pendientes
-  let numExtra = SEMESTRES_OBJETIVO + 1;
-  while (pendientes.length > 0) {
-    let semestre = { numero: numExtra, ramos: [], creditos: 0, aviso: "Semestre extra por ramos pendientes" };
-    for (let ramo of pendientes) {
-      let c = creditosRamo(ramo);
-      if (semestre.creditos + c > MAX_CREDITOS_SEMESTRE) continue;
-
-      semestre.ramos.push(ramo);
-      semestre.creditos += c;
-      aprobadosSimulados.add(ramo.id);
-    }
-    estado.semestres.push(semestre);
-    pendientes = pendientes.filter(r => !aprobadosSimulados.has(r.id));
-    numExtra++;
-  }
-}
-
-// Render de la malla interactiva
+// Renderiza la malla interactiva
 function renderMalla() {
   const contenedor = document.getElementById("malla");
   contenedor.innerHTML = "<h2>Malla Interactiva</h2>";
@@ -94,16 +38,16 @@ function renderMalla() {
   });
 }
 
-// Render del planner con columna de Inglés al final
+// Renderiza los semestres y la columna de Inglés
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
   contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
 
-  // Semestres
+  // Render semestres
   estado.semestres.forEach(s => {
     const divSem = document.createElement("div");
     divSem.className = "semestre";
-    divSem.innerHTML = `<h3>Semestre ${s.numero} — Créditos: ${s.creditos}</h3>`;
+    divSem.innerHTML = `<h3>Semestre ${s.numero}</h3>`;
 
     const ul = document.createElement("ul");
     s.ramos.forEach(ramo => {
@@ -112,8 +56,7 @@ function renderPlanner() {
       li.classList.add(clasePorTipo(ramo));
 
       const reqs = ramo.req.length ? ramo.req.join(", ") : "Ninguno";
-      const creditos = ramo.tipo === "INGLES" ? CREDITOS_INGLES : CREDITOS_RAMO;
-      li.setAttribute("data-tooltip", `Créditos: ${creditos} | Requisitos: ${reqs}`);
+      li.setAttribute("data-tooltip", `Requisitos: ${reqs}`);
 
       ul.appendChild(li);
     });
@@ -135,6 +78,7 @@ function renderPlanner() {
   const colIngles = document.createElement("div");
   colIngles.className = "semestre";
   colIngles.innerHTML = "<h3>Inglés</h3>";
+
   const ulIngles = document.createElement("ul");
   ingles.forEach(r => {
     const li = document.createElement("li");
@@ -144,41 +88,33 @@ function renderPlanner() {
   });
   colIngles.appendChild(ulIngles);
   contenedor.appendChild(colIngles);
+
+  renderObservaciones();
+  renderSugerencias();
 }
 
-// Observaciones
+// Observaciones sin créditos
 function renderObservaciones() {
   const obs = document.getElementById("observaciones");
   obs.innerHTML = "<h2>Observaciones</h2>";
 
-  const anuales = ramos.filter(r => r.anual);
-  if (anales.length)
-    obs.innerHTML += `<p>Ramos anuales: ${anales.map(r => r.id).join(", ")}</p>`;
-
-  const totalCreditos = estado.semestres.reduce((sum, s) => sum + s.creditos, 0);
-  obs.innerHTML += `<p>Total de créditos planificados: ${totalCreditos}</p>`;
+  const ramosAnuales = ramos.filter(r => r.anual && !estado.aprobados.has(r.id));
+  if (ramosAnuales.length > 0)
+    obs.innerHTML += `<p>Ramos anuales pendientes: ${ramosAnuales.map(r => r.id).join(", ")}</p>`;
 }
 
-// Sugerencias según semestre actual
+// Sugerencias de planificación semestral
 function renderSugerencias() {
   const sugerencias = document.getElementById("sugerencias");
   sugerencias.innerHTML = "<h2>Ideas de planificación semestral</h2>";
 
-  let semestreActual = parseInt(prompt("¿En qué semestre estás? (1-8)"), 10);
-  if (isNaN(semestreActual) || semestreActual < 1 || semestreActual > SEMESTRES_OBJETIVO)
-    semestreActual = 1;
+  const semestreActual = estado.semestres.find(s => s.ramos.some(r => !estado.aprobados.has(r.id))) || estado.semestres[0];
 
-  let ideas = [];
-  for (let s = semestreActual + 1; s <= SEMESTRES_OBJETIVO; s++) {
-    const rams = ramos.filter(r => r.semestre === s).map(r => r.id);
-    if (rams.length) ideas.push(`Semestre ${s}: ${rams.join(", ")}`);
-  }
-
-  if (ideas.length === 0) ideas.push("No hay ramos pendientes.");
-  sugerencias.innerHTML += `<ul>${ideas.map(i => `<li>${i}</li>`).join("")}</ul>`;
+  sugerencias.innerHTML += `<p>Considera planificar tu próximo semestre (Semestre ${semestreActual.numero}) priorizando los ramos que tienen menos requisitos y los ramos anuales.</p>`;
+  sugerencias.innerHTML += `<p>Revisa los OFG y opcionales para distribuir tu carga de manera equilibrada.</p>`;
 }
 
-// Scroll al siguiente semestre con ramos desbloqueados
+// Scroll al siguiente semestre con ramos disponibles
 function scrollAlSiguienteSemestre() {
   const semestres = document.querySelectorAll(".semestre");
   for (let s of semestres) {
@@ -195,6 +131,4 @@ function actualizarTodo() {
   generarPlan();
   renderPlanner();
   renderMalla();
-  renderObservaciones();
-  renderSugerencias();
 }
