@@ -39,38 +39,50 @@ function renderMalla() {
 
 function renderPlanner() {
   const contenedor = document.getElementById("planner");
-  contenedor.innerHTML = "<h2>Planner de Semestres</h2>";
+  contenedor.innerHTML = "";
 
-  estado.semestres.forEach(s => {
-    const divSem = document.createElement("div");
-    divSem.className = "semestre";
-    divSem.innerHTML = `<h3>Semestre ${s.numero} — Créditos: ${s.creditos}</h3>`;
+  // Columnas por semestre
+  for (let s = 1; s <= SEMESTRES_OBJETIVO; s++) {
+    const col = document.createElement("div");
+    col.className = "columna";
+    col.innerHTML = `<h3>Semestre ${s}</h3>`;
 
-    const ul = document.createElement("ul");
-    s.ramos.forEach(ramo => {
-      const li = document.createElement("li");
-      li.textContent = `${ramo.id} — ${ramo.nombre}`;
-      li.classList.add(clasePorTipo(ramo));
+    ramos.filter(r => r.semestre === s).forEach(r => {
+      const divRamo = document.createElement("div");
+      divRamo.className = "ramo " + clasePorTipo(r);
+      divRamo.textContent = `${r.id} — ${r.nombre}`;
 
-      const reqs = ramo.req.length ? ramo.req.join(", ") : "Ninguno";
-      const creditos = ramo.tipo === "INGLES" ? CREDITOS_INGLES : CREDITOS_RAMO;
-      li.setAttribute("data-tooltip", `Créditos: ${creditos} | Requisitos: ${reqs}`);
+      const aprobado = estado.aprobados.has(r.id);
+      const disponible = cumpleRequisitos(r, estado.aprobados);
 
-      ul.appendChild(li);
+      if (aprobado) divRamo.classList.add("aprobado");
+      else if (!disponible) divRamo.classList.add("bloqueado");
+      else divRamo.addEventListener("click", () => {
+        estado.aprobados.add(r.id);
+        actualizarTodo();
+      });
+
+      col.appendChild(divRamo);
     });
 
-    divSem.appendChild(ul);
+    contenedor.appendChild(col);
+  }
 
-    if (s.aviso) {
-      const aviso = document.createElement("p");
-      aviso.style.color = "red";
-      aviso.style.fontWeight = "bold";
-      aviso.textContent = s.aviso;
-      divSem.appendChild(aviso);
-    }
+  // Columna de Inglés
+  const colIngles = document.createElement("div");
+  colIngles.className = "columna";
+  colIngles.innerHTML = "<h3>Inglés</h3>";
 
-    contenedor.appendChild(divSem);
+  ingles.forEach(r => {
+    const divRamo = document.createElement("div");
+    divRamo.className = "ramo ingres";
+    divRamo.textContent = r.nombre;
+    colIngles.appendChild(divRamo);
   });
+
+  contenedor.appendChild(colIngles);
+}
+
 
   // Observaciones
   const obs = document.getElementById("observaciones");
