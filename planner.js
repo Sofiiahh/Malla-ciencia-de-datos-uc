@@ -1,54 +1,39 @@
-const estado = {
-  aprobados: new Set(),
-  semestres: []
-};
+function crearPlanner() {
+  const contenedor = document.getElementById("semestres");
+  contenedor.innerHTML = "";
 
-function cumpleRequisitos(ramo, aprobadosSimulados) {
-  return ramo.req.every(r => aprobadosSimulados.has(r));
+  semestres.forEach(semestre => {
+    const div = document.createElement("div");
+    div.className = "semestre";
+
+    const h3 = document.createElement("h3");
+    h3.textContent = semestre.nombre;
+    div.appendChild(h3);
+
+    semestre.ramos.forEach(ramo => {
+      const ramoDiv = document.createElement("div");
+      ramoDiv.className = "ramo";
+      ramoDiv.draggable = true;
+      ramoDiv.id = ramo.codigo;
+      ramoDiv.textContent = `${ramo.codigo} - ${ramo.nombre}`;
+      if(ramo.nota) {
+        const aviso = document.createElement("small");
+        aviso.textContent = " (" + ramo.nota + ")";
+        ramoDiv.appendChild(aviso);
+      }
+      div.appendChild(ramoDiv);
+    });
+
+    contenedor.appendChild(div);
+  });
 }
 
-function creditosRamo(ramo) {
-  if (ramo.tipo === "INGLES") return CREDITOS_INGLES;
-  return CREDITOS_RAMO;
-}
-
-// Genera un plan completo de semestres
-function generarPlan() {
-  estado.semestres = [];
-  let pendientes = ramos.filter(r => !estado.aprobados.has(r.id));
-  let aprobadosSimulados = new Set(estado.aprobados);
-
-  for (let s = 1; s <= SEMESTRES_OBJETIVO; s++) {
-    let semestre = { numero: s, ramos: [], creditos: 0 };
-    let elegibles = pendientes.filter(r => cumpleRequisitos(r, aprobadosSimulados));
-
-    for (let ramo of elegibles) {
-      let c = creditosRamo(ramo);
-      if (semestre.creditos + c > MAX_CREDITOS_SEMESTRE) continue;
-
-      semestre.ramos.push(ramo);
-      semestre.creditos += c;
-      aprobadosSimulados.add(ramo.id);
-    }
-
-    estado.semestres.push(semestre);
-    pendientes = pendientes.filter(r => !aprobadosSimulados.has(r.id));
-  }
-
-  // Si quedan ramos pendientes, generar semestres extra
-  let numExtra = SEMESTRES_OBJETIVO + 1;
-  while (pendientes.length > 0) {
-    let semestre = { numero: numExtra, ramos: [], creditos: 0, aviso: "Semestre extra por ramos pendientes" };
-    for (let ramo of pendientes) {
-      let c = creditosRamo(ramo);
-      if (semestre.creditos + c > MAX_CREDITOS_SEMESTRE) continue;
-
-      semestre.ramos.push(ramo);
-      semestre.creditos += c;
-      aprobadosSimulados.add(ramo.id);
-    }
-    estado.semestres.push(semestre);
-    pendientes = pendientes.filter(r => !aprobadosSimulados.has(r.id));
-    numExtra++;
-  }
+function mostrarObservaciones() {
+  const contenedor = document.getElementById("observaciones");
+  contenedor.innerHTML = "<h3>Ramos Anuales:</h3>";
+  ramosAnuales.forEach(ramo => {
+    const p = document.createElement("p");
+    p.textContent = ramo;
+    contenedor.appendChild(p);
+  });
 }
