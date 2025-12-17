@@ -1,100 +1,83 @@
-// Rellena checkboxes para marcar ramos aprobados
-function initFormulario() {
-  const cont = document.getElementById("checkboxes");
-  cont.innerHTML = "";
-  for (let s = 1; s <= 8; s++) {
-    const semDiv = document.createElement("div");
-    semDiv.innerHTML = `<h4>${s}° Semestre</h4>`;
-    ramos.filter(r => r.semestre === s).forEach(r => {
-      const label = document.createElement("label");
-      label.style.display = "block";
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.value = r.id;
-      checkbox.checked = estado.aprobados.has(r.id);
-      checkbox.addEventListener("change", () => {
-        if (checkbox.checked) estado.aprobados.add(r.id);
-        else estado.aprobados.delete(r.id);
-      });
-      label.appendChild(checkbox);
-      label.append(` ${r.id} – ${r.nombre}`);
-      semDiv.appendChild(label);
-    });
-    cont.appendChild(semDiv);
-  }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  initFormulario();
-  document.getElementById("enviarBtn").addEventListener("click", () => {
-    generarPlan();
+  document.getElementById("generarPlanBtn").addEventListener("click", () => {
+    const ramosPorSem = parseInt(document.getElementById("ramosPorSemestre").value);
+    generarPlan(ramosPorSem);
     renderPlanner();
-    renderObservaciones();
   });
+
+  renderMalla();
+  renderObservaciones();
 });
 
 function clasePorTipo(ramo) {
   if (ramo.tipo === "OFG") return "ofg";
-  if (ramo.id.startsWith("OPR")) return "opr";
   return "regular";
 }
 
-// Renderiza el planner en columnas
-function renderPlanner() {
-  const cont = document.getElementById("plannerGrid");
-  cont.innerHTML = "";
-  cont.style.display = "flex";
-  cont.style.gap = "10px";
+function renderMalla() {
+  const cont = document.getElementById("malla");
+  cont.innerHTML = "<h2>Malla Interactiva</h2>";
 
-  estado.semestres.forEach(s => {
-    const div = document.createElement("div");
-    div.className = "semestre";
-    div.innerHTML = `<h3>Sem ${s.numero}</h3>`;
-    const ul = document.createElement("ul");
-    s.ramos.forEach(r => {
-      const li = document.createElement("li");
-      li.textContent = `${r.id} – ${r.nombre}`;
-      li.classList.add(clasePorTipo(r));
-      ul.appendChild(li);
+  const grid = document.createElement("div");
+  grid.className = "grid-malla";
+
+  for (let s = 1; s <= SEMESTRES_OBJETIVO; s++) {
+    const col = document.createElement("div");
+    col.className = "columna";
+    col.innerHTML = `<h3>Semestre ${s}</h3>`;
+    ramos.filter(r => r.semestre === s).forEach(ramo => {
+      const div = document.createElement("div");
+      div.className = "ramo " + clasePorTipo(ramo);
+      div.textContent = `${ramo.id} - ${ramo.nombre}`;
+      div.addEventListener("click", () => {
+        if (estado.aprobados.has(ramo.id)) estado.aprobados.delete(ramo.id);
+        else estado.aprobados.add(ramo.id);
+      });
+      col.appendChild(div);
     });
-    div.appendChild(ul);
-    if (s.aviso) {
-      const aviso = document.createElement("p");
-      aviso.style.color = "red";
-      aviso.textContent = s.aviso;
-      div.appendChild(aviso);
-    }
-    cont.appendChild(div);
-  });
+    grid.appendChild(col);
+  }
+
+  cont.appendChild(grid);
 }
 
-// Observaciones
+function renderPlanner() {
+  const cont = document.getElementById("planner");
+  cont.innerHTML = "<h2>Planner de Semestres</h2>";
+  const grid = document.createElement("div");
+  grid.className = "grid-malla";
+
+  estado.semestres.forEach(s => {
+    const col = document.createElement("div");
+    col.className = "columna";
+    col.innerHTML = `<h3>Semestre ${s.numero}</h3>`;
+    s.ramos.forEach(ramo => {
+      const div = document.createElement("div");
+      div.className = "ramo " + clasePorTipo(ramo);
+      div.textContent = `${ramo.id} - ${ramo.nombre}`;
+      col.appendChild(div);
+    });
+    grid.appendChild(col);
+  });
+
+  cont.appendChild(grid);
+  renderObservaciones();
+}
+
 function renderObservaciones() {
-  const obs = document.getElementById("observaciones");
-  obs.innerHTML = "<h2>Observaciones</h2>";
+  const cont = document.getElementById("observaciones");
+  cont.innerHTML = "<h2>Observaciones</h2>";
 
   const anuales = ramos.filter(r => r.anual);
-  if (anuales.length) {
-    let html = "<strong>Ramos anuales:</strong><hr>";
-    const sem1 = anuales.filter(r => r.semestre === 1);
-    const sem2 = anuales.filter(r => r.semestre === 2);
-    if (sem1.length) html += "<p>1er semestre:</p><ul>" + sem1.map(r => `<li>${r.id} – ${r.nombre}</li>`).join("") + "</ul>";
-    if (sem2.length) html += "<p>2do semestre:</p><ul>" + sem2.map(r => `<li>${r.id} – ${r.nombre}</li>`).join("") + "</ul>";
-    html += "<hr>";
-    obs.innerHTML += html;
-  }
+  if (anuales.length > 0) {
+    const h3 = document.createElement("h3");
+    h3.textContent = "Ramos Anuales";
+    cont.appendChild(h3);
 
-  let htmlMalla = "<strong>Malla y prerrequisitos:</strong><hr>";
-  for (let s = 1; s <= 8; s++) {
-    htmlMalla += `<p><strong>${s}° semestre</strong></p><ul>`;
-    ramos.filter(r => r.semestre === s).forEach(r => {
-      const prereqs = r.req.length ? r.req.map(id => {
-        const rj = ramos.find(x => x.id === id);
-        return rj ? `${rj.id} (${rj.nombre})` : id;
-      }).join("; ") : "Sin prerrequisitos";
-      htmlMalla += `<li>${r.id} – ${r.nombre} → Requiere: ${prereqs}</li>`;
+    anuales.forEach(r => {
+      const p = document.createElement("p");
+      p.textContent = `${r.semestre}º semestre - ${r.id} - ${r.nombre}`;
+      cont.appendChild(p);
     });
-    htmlMalla += "</ul>";
   }
-  obs.innerHTML += htmlMalla;
 }
