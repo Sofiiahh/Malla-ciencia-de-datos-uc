@@ -9,75 +9,91 @@ header, footer {
   margin-bottom: 20px;
 }
 
-#selector-semestre {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-#semestreActual {
-  padding: 5px;
-}
-
 #malla {
-  display: grid;
-  grid-template-columns: repeat(9, 1fr); /* 8 semestres + columna de inglés */
+  display: flex;
   gap: 15px;
-  margin-top: 20px;
+  margin-bottom: 30px;
 }
 
 .semestre {
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   background: #fff;
+  padding: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  text-align: center;
 }
 
 .semestre h3 {
-  margin-bottom: 15px;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 ul {
-  list-style-type: none;
+  list-style: none;
   padding-left: 0;
 }
 
 ul li {
   margin: 5px 0;
   padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s;
-}
-
-ul li:hover {
-  background-color: #f0f0f0;
+  transition: 0.2s;
 }
 
 ul li.aprobado {
-  background-color: #c8f7c5;
+  background: #c8f7c5;
   text-decoration: line-through;
+  border-color: #2e8b57;
 }
 
-ul li.ingres {
-  background-color: #e0f7fa;
+ul li:hover {
+  background: #e0f0f8;
 }
 
-ul li.ofg {
-  background-color: #ffeb3b;
-}
-
-#observaciones, #sugerencias {
-  margin-top: 30px;
+#observaciones {
+  margin-top: 20px;
   padding: 15px;
   border: 1px dashed #ccc;
   border-radius: 8px;
   background: #fffbea;
 }
 
-button {
-  background-color: #2EC4B6;
-  color: white;
+#planner {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+li[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  white-space: nowrap;
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  margin-top: 2px;
+  z-index: 10;
+}
+
+button#actualizarBtn {
   padding: 10px 20px;
+  background: #2EC4B6;
+  color: #fff;
   border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+button#actualizarBtn:hover {
+  background: #27b3a2;
+}
