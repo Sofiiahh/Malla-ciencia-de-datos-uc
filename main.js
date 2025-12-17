@@ -1,9 +1,36 @@
-document.addEventListener("DOMContentLoaded", () => {
-  renderMalla(); // muestra la malla inicial
-});
+// Rellena checkboxes para marcar ramos aprobados
+function initFormulario() {
+  const cont = document.getElementById("checkboxes");
+  cont.innerHTML = "";
+  for (let s = 1; s <= 8; s++) {
+    const semDiv = document.createElement("div");
+    semDiv.innerHTML = `<h4>${s}° Semestre</h4>`;
+    ramos.filter(r => r.semestre === s).forEach(r => {
+      const label = document.createElement("label");
+      label.style.display = "block";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = r.id;
+      checkbox.checked = estado.aprobados.has(r.id);
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) estado.aprobados.add(r.id);
+        else estado.aprobados.delete(r.id);
+      });
+      label.appendChild(checkbox);
+      label.append(` ${r.id} – ${r.nombre}`);
+      semDiv.appendChild(label);
+    });
+    cont.appendChild(semDiv);
+  }
+}
 
-document.getElementById("actualizarBtn").addEventListener("click", () => {
-  actualizarTodo(); // genera planificación al presionar enviar
+document.addEventListener("DOMContentLoaded", () => {
+  initFormulario();
+  document.getElementById("enviarBtn").addEventListener("click", () => {
+    generarPlan();
+    renderPlanner();
+    renderObservaciones();
+  });
 });
 
 function clasePorTipo(ramo) {
@@ -12,72 +39,54 @@ function clasePorTipo(ramo) {
   return "regular";
 }
 
-// Renderiza la malla interactiva
-function renderMalla() {
-  const contenedor = document.getElementById("malla");
-  contenedor.innerHTML = "";
+// Renderiza el planner en columnas
+function renderPlanner() {
+  const cont = document.getElementById("plannerGrid");
+  cont.innerHTML = "";
+  cont.style.display = "flex";
+  cont.style.gap = "10px";
 
-  for (let s = 1; s <= 8; s++) {
-    const divSem = document.createElement("div");
-    divSem.className = "semestre";
-    divSem.innerHTML = `<h3>${s}° SEMESTRE</h3>`;
+  estado.semestres.forEach(s => {
+    const div = document.createElement("div");
+    div.className = "semestre";
+    div.innerHTML = `<h3>Sem ${s.numero}</h3>`;
     const ul = document.createElement("ul");
-
-    ramos.filter(r => r.semestre === s).forEach(ramo => {
+    s.ramos.forEach(r => {
       const li = document.createElement("li");
-      li.textContent = `${ramo.id} – ${ramo.nombre}`;
-      li.classList.add(clasePorTipo(ramo));
-
-      if (estado.aprobados.has(ramo.id)) li.classList.add("aprobado");
-
-      li.addEventListener("click", () => {
-        if (estado.aprobados.has(ramo.id)) {
-          estado.aprobados.delete(ramo.id);
-          li.classList.remove("aprobado");
-        } else {
-          estado.aprobados.add(ramo.id);
-          li.classList.add("aprobado");
-        }
-      });
-
+      li.textContent = `${r.id} – ${r.nombre}`;
+      li.classList.add(clasePorTipo(r));
       ul.appendChild(li);
     });
-
-    divSem.appendChild(ul);
-    contenedor.appendChild(divSem);
-  }
+    div.appendChild(ul);
+    if (s.aviso) {
+      const aviso = document.createElement("p");
+      aviso.style.color = "red";
+      aviso.textContent = s.aviso;
+      div.appendChild(aviso);
+    }
+    cont.appendChild(div);
+  });
 }
 
-// Observaciones con ramos anuales y prerrequisitos
+// Observaciones
 function renderObservaciones() {
   const obs = document.getElementById("observaciones");
   obs.innerHTML = "<h2>Observaciones</h2>";
 
-  // Ramos anuales
   const anuales = ramos.filter(r => r.anual);
-  if (anuales.length > 0) {
-    let html = "<strong>RAMOS ANUALES:</strong><hr>";
+  if (anuales.length) {
+    let html = "<strong>Ramos anuales:</strong><hr>";
     const sem1 = anuales.filter(r => r.semestre === 1);
     const sem2 = anuales.filter(r => r.semestre === 2);
-
-    if (sem1.length) {
-      html += "<p>1er semestre:</p><ul>";
-      sem1.forEach(r => html += `<li>${r.id} – ${r.nombre}</li>`);
-      html += "</ul>";
-    }
-    if (sem2.length) {
-      html += "<p>2do semestre:</p><ul>";
-      sem2.forEach(r => html += `<li>${r.id} – ${r.nombre}</li>`);
-      html += "</ul>";
-    }
+    if (sem1.length) html += "<p>1er semestre:</p><ul>" + sem1.map(r => `<li>${r.id} – ${r.nombre}</li>`).join("") + "</ul>";
+    if (sem2.length) html += "<p>2do semestre:</p><ul>" + sem2.map(r => `<li>${r.id} – ${r.nombre}</li>`).join("") + "</ul>";
     html += "<hr>";
     obs.innerHTML += html;
   }
 
-  // Malla con prerrequisitos
-  let htmlMalla = "<strong>MALLA Y REQUISITOS:</strong><hr>";
+  let htmlMalla = "<strong>Malla y prerrequisitos:</strong><hr>";
   for (let s = 1; s <= 8; s++) {
-    htmlMalla += `<p><strong>${s}° SEMESTRE</strong></p><ul>`;
+    htmlMalla += `<p><strong>${s}° semestre</strong></p><ul>`;
     ramos.filter(r => r.semestre === s).forEach(r => {
       const prereqs = r.req.length ? r.req.map(id => {
         const rj = ramos.find(x => x.id === id);
@@ -88,11 +97,4 @@ function renderObservaciones() {
     htmlMalla += "</ul>";
   }
   obs.innerHTML += htmlMalla;
-}
-
-// Actualiza la planificación dinámica
-function actualizarTodo() {
-  generarPlan(); // del planner.js
-  renderMalla();
-  renderObservaciones();
 }
