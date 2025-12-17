@@ -10,21 +10,19 @@ function clasePorTipo(ramo) {
   return "regular";
 }
 
-// Renderiza las columnas de semestres y la columna de inglés
-function renderPlanner() {
-  const contenedor = document.getElementById("planner");
+// Renderiza la Malla Interactiva con 8 columnas fijas
+function renderMalla() {
+  const contenedor = document.getElementById("malla");
   contenedor.innerHTML = "";
 
-  const semestreActual = parseInt(document.getElementById("semestreActual").value);
-
-  // Columnas fijas de semestres
-  for (let s = semestreActual + 1; s <= 8; s++) {
+  // Mostrar 8 columnas de semestres
+  for (let s = 1; s <= 8; s++) {
     const divSem = document.createElement("div");
     divSem.className = "semestre";
     divSem.innerHTML = `<h3>Semestre ${s}</h3>`;
 
     const ul = document.createElement("ul");
-    const semRamos = estado.semestres.find(se => se.numero === s)?.ramos || [];
+    const semRamos = ramos.filter(r => r.semestre === s);
     semRamos.forEach(ramo => {
       const li = document.createElement("li");
       li.textContent = `${ramo.id} — ${ramo.nombre}`;
@@ -52,10 +50,10 @@ function renderPlanner() {
   contenedor.appendChild(colIngles);
 
   renderObservaciones();
-  renderSugerencias(semestreActual);
+  renderSugerencias();
 }
 
-// Observaciones con ramos anuales por semestre
+// Observaciones con ramos anuales y su semestre
 function renderObservaciones() {
   const obs = document.getElementById("observaciones");
   obs.innerHTML = "<h2>Observaciones</h2>";
@@ -72,17 +70,44 @@ function renderObservaciones() {
   }
 }
 
-// Sugerencias semestrales
-function renderSugerencias(semestreActual) {
+// Sugerencias para planificación semestral
+function renderSugerencias() {
   const sugerencias = document.getElementById("sugerencias");
   sugerencias.innerHTML = "<h2>Ideas de planificación semestral</h2>";
-  sugerencias.innerHTML += `<p>Planifica desde el semestre ${semestreActual + 1} priorizando los ramos que tienen menos requisitos.</p>`;
-  sugerencias.innerHTML += `<p>Distribuye OFG y opcionales de forma equilibrada para no sobrecargar un semestre.</p>`;
+  sugerencias.innerHTML += `<p>Planifica desde el semestre actual, priorizando ramos que no tienen muchos requisitos previos.</p>`;
+  sugerencias.innerHTML += `<p>Distribuye los OFG y los ramos optativos de manera equilibrada.</p>`;
 }
 
-// Actualiza todo cuando se hace click en el botón
+// Actualiza todo el planner
 function actualizarTodo() {
   generarPlan();
   renderPlanner();
   renderMalla();
+}
+
+function renderPlanner() {
+  const contenedor = document.getElementById("planner");
+  contenedor.innerHTML = "";
+
+  const semestreActual = parseInt(document.getElementById("semestreActual").value);
+
+  // Renderiza los semestres a partir del siguiente semestre
+  for (let s = semestreActual + 1; s <= 8; s++) {
+    const divSem = document.createElement("div");
+    divSem.className = "semestre";
+    divSem.innerHTML = `<h3>Semestre ${s}</h3>`;
+
+    const ul = document.createElement("ul");
+    const semRamos = estado.semestres.find(se => se.numero === s)?.ramos || [];
+    semRamos.forEach(ramo => {
+      const li = document.createElement("li");
+      li.textContent = `${ramo.id} — ${ramo.nombre}`;
+      li.classList.add(clasePorTipo(ramo));
+      li.setAttribute("data-tooltip", `Requisitos: ${ramo.req.length ? ramo.req.join(", ") : "Ninguno"}`);
+      ul.appendChild(li);
+    });
+
+    divSem.appendChild(ul);
+    contenedor.appendChild(divSem);
+  }
 }
