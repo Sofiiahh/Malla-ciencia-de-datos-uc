@@ -1,57 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Planner Académico — Ciencia de Datos</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<header>
-  <h1>Planner Académico — Ciencia de Datos</h1>
-  <p>Planifica tus semestres con foco en terminar en 8.</p>
-</header>
+  <header>
+    <h1>Planner Académico — Ciencia de Datos</h1>
+    <p>Planifica tus semestres con foco en terminar en 8.</p>
+  </header>
 
-<section id="control">
-  <label for="semestreActual">¿En qué semestre estás?</label>
-  <select id="semestreActual">
-    <option value="1">Semestre 1</option>
-    <option value="2">Semestre 2</option>
-    <option value="3">Semestre 3</option>
-    <option value="4">Semestre 4</option>
-    <option value="5">Semestre 5</option>
-    <option value="6">Semestre 6</option>
-    <option value="7">Semestre 7</option>
-    <option value="8">Semestre 8</option>
-  </select>
-  <button id="actualizarBtn">Actualizar Planner</button>
-</section>
+  <section id="selector-semestre">
+    <label for="semestreActual">¿En qué semestre vas?</label>
+    <select id="semestreActual">
+      <option value="1">Semestre 1</option>
+      <option value="2">Semestre 2</option>
+      <option value="3">Semestre 3</option>
+      <option value="4">Semestre 4</option>
+      <option value="5">Semestre 5</option>
+      <option value="6">Semestre 6</option>
+      <option value="7">Semestre 7</option>
+      <option value="8">Semestre 8</option>
+    </select>
+  </section>
 
-<section id="malla">
-  <!-- Malla interactiva: columnas de semestres -->
-</section>
+  <section id="malla"></section>
 
-<section id="planner">
-  <!-- Planner de semestres se actualizará aquí -->
-</section>
+  <section id="observaciones">
+    <h2>Observaciones</h2>
+  </section>
 
-<aside id="observaciones">
-  <h2>Observaciones</h2>
-  <!-- Observaciones de ramos anuales -->
-</aside>
+  <section id="sugerencias">
+    <h2>Ideas de planificación semestral</h2>
+  </section>
 
-<aside id="sugerencias">
-  <h2>Ideas de planificación semestral</h2>
-</aside>
+  <button id="actualizarBtn">Enviar</button>
 
-<footer>
-  <p>Planner académico — proyecto personal</p>
-</footer>
+  <footer>
+    <p>Planner académico — proyecto personal</p>
+  </footer>
 
-<script src="data.js"></script>
-<script src="planner.js"></script>
-<script src="main.js"></script>
+  <script src="data.js"></script>
+  <script src="planner.js"></script>
+  <script src="main.js"></script>
 
 </body>
 </html>
